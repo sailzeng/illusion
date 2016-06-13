@@ -60,5 +60,7 @@ log
 bin
 lib
 log
+db3
+outer
 Debug
 Release
