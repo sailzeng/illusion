@@ -236,7 +236,7 @@ protected:
 
 
     //!Excel的处理对象,EXCEL的处理类
-    QtExcelEngine ils_excel_file_;
+    BikoQtExcelEngine ils_excel_file_;
 
     //!
     Illusion_Protobuf_Reflect ils_proto_reflect_;

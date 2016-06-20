@@ -30,19 +30,18 @@
 #define QT_EXCELENGINE_H
 
 
-
 /*!
 * @brief      
 *             
 * note       代码风格我打算全部采用Qt的代码风格。
 */
-class QtExcelEngine : protected QObject
+class BikoQtExcelEngine : protected QObject
 {
 public:
 
     //构造函数和析构函数
-    QtExcelEngine();
-    ~QtExcelEngine();
+    BikoQtExcelEngine();
+    ~BikoQtExcelEngine();
 
 public:
 
@@ -57,7 +56,7 @@ public:
     //!释放退出
     void finalize();
 
-    //
+    //打开一个XLS文件
     bool open(const QString &xls_file, int  sheet_index = 1);
 
     /*!
@@ -65,7 +64,7 @@ public:
     * @return     void
     * @param      sheet_name sheet的表名
     */
-    void insert_sheet(const QString &sheet_name);
+    void insertSheet(const QString &sheet_name);
 
     //保存xls报表
     void save();
@@ -74,24 +73,24 @@ public:
     void close();
 
     //得到sheet的总数
-    int sheets_count();
+    int sheetsCount();
 
     //得到某个sheet的名字
-    bool get_sheet_name(int sheet_index, QString &sheet_name);
+    bool sheetName(int sheet_index, QString &sheet_name);
 
     /*!
     * @brief      根据索引加载sheet，
     * @return     bool 返回是否成功加载
     * @param      sheet_index sheet索引，从1开始
     */
-    bool load_sheet(int sheet_index);
+    bool loadSheet(int sheet_index);
     
     /*!
     * @brief      根据sheet表格表名加载sheet，
     * @return     bool 返回是否成功加载
     * @param      sheet_name 要加载的sheet 的名字
     */
-    bool load_sheet(const QString &sheet_name);
+    bool loadSheet(const QString &sheet_name);
 
 	
 	/*!
@@ -99,17 +98,18 @@ public:
 	* @return     bool 有返回true，否则返回false
 	* @param      sheet_name
 	*/
-	bool has_sheet(const QString &sheet_name);
+	bool hasSheet(const QString &sheet_name);
 
     //保存数据到xls
-    bool write_tabledata(QTableWidget *tableWidget);
+    bool writeTableWidget(QTableWidget *table_widget);
+
     //从xls读取数据到ui
-    bool read_tabledata(QTableWidget *tableWidget);
+    bool readTableWidget(QTableWidget *table_widget);
 
 	/*!
     * @brief      获取指定单元数据
     * @return     QVariant  单元格对应的数据
-    * @param      row  单元格的行号
+    * @param      row  单元格的行号,注意行号，列号都是从1开始
     * @param      column 单元格的列号
     * @note       
     */
@@ -139,7 +139,7 @@ protected:
 
 public:
 
-	static char *QtExcelEngine::column_name(int column_no);
+	static char *BikoQtExcelEngine::column_name(int column_no);
 
 private:
 

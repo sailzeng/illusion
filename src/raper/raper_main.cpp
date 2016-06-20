@@ -1,9 +1,25 @@
 #include "raper_predefine.h"
 
+
+int test_excel()
+{
+	BikoQtExcelEngine excel_engine;
+	excel_engine.initialize(false);
+	QDir::setCurrent("E:\\");
+	excel_engine.open("0001.xls");
+	excel_engine.close();
+	excel_engine.finalize();
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
-	int ret = 0;
 	QCoreApplication a(argc, argv);
+
+	int ret = 0;
+	ret = test_excel();
+
+
 	BOOL bret = false;
 	bret = ::SetConsoleOutputCP(936);
 	if (bret == FALSE)

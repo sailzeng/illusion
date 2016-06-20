@@ -291,12 +291,12 @@ int Biko_Read_Config::read_one_excel(const QString &open_file,
     }
     //
     qDebug() << "Dream excecl file have sheet num["
-             << ils_excel_file_.sheets_count()
+             << ils_excel_file_.sheetsCount()
              << "].\n";
 
     //表格错误
-    if (ils_excel_file_.has_sheet("TABLE_CONFIG") == false ||
-        ils_excel_file_.has_sheet("ENUM_CONFIG") == false)
+    if (ils_excel_file_.hasSheet("TABLE_CONFIG") == false ||
+        ils_excel_file_.hasSheet("ENUM_CONFIG") == false)
     {
         //
         error_tips = QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[TABLE_CONFIG]"
@@ -330,7 +330,7 @@ int Biko_Read_Config::read_one_excel(const QString &open_file,
         return ret;
     }
 
-	if (excel_table_name && ils_excel_file_.has_sheet(*excel_table_name) == false)
+	if (excel_table_name && ils_excel_file_.hasSheet(*excel_table_name) == false)
 	{
 		error_tips = QString::fromLocal8Bit("没有一张表格被读取了!您设置的读取表格[%1]应该不存在").
 			arg(*excel_table_name);
@@ -378,7 +378,7 @@ int Biko_Read_Config::read_one_excel(const QString &open_file,
 int Biko_Read_Config::read_table_enum(EXCEL_FILE_DATA &file_cfg_data)
 {
     //前面检查过了
-    bool bret =  ils_excel_file_.load_sheet("ENUM_CONFIG");
+    bool bret =  ils_excel_file_.loadSheet("ENUM_CONFIG");
     if (bret == false)
     {
         return -1;
@@ -425,7 +425,7 @@ int Biko_Read_Config::read_table_config(EXCEL_FILE_DATA &file_cfg_data,
 											QString &error_tips)
 {
     //前面检查过了
-    bool bret = ils_excel_file_.load_sheet("TABLE_CONFIG");
+    bool bret = ils_excel_file_.loadSheet("TABLE_CONFIG");
     if (bret == false)
     {
 		error_tips = QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[TABLE_CONFIG]"
@@ -568,7 +568,7 @@ int Biko_Read_Config::read_sheet_pbcdata(TABLE_CONFIG &tc_data,
 {
 	int ret = 0;
 	//检查EXCEL文件中是否有这个表格
-	if (ils_excel_file_.load_sheet(tc_data.excel_table_name_) == false)
+	if (ils_excel_file_.loadSheet(tc_data.excel_table_name_) == false)
 	{
 		return -3;
 	}
@@ -710,7 +710,7 @@ int Biko_Read_Config::read_sheet_pbcdata(TABLE_CONFIG &tc_data,
 						tc_data.proto_field_ary_[col_no - 1].toStdString().c_str(),
 						tc_data.pb_fieldname_line_,
 						col_no,
-						QtExcelEngine::column_name(col_no)
+						BikoQtExcelEngine::column_name(col_no)
 				);
 				return ret;
 			}
@@ -761,7 +761,7 @@ int Biko_Read_Config::read_sheet_pbcdata(TABLE_CONFIG &tc_data,
 						field_desc->type_name(),
 						line_no,
 						col_no,
-						QtExcelEngine::column_name(col_no)
+						BikoQtExcelEngine::column_name(col_no)
 				);
 				return ret;
 			}
