@@ -23,6 +23,9 @@
     <ClCompile Include="biko_read_config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="biko_getopt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="biko_predefine.h">
@@ -35,6 +38,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="biko_read_config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="biko_getopt.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

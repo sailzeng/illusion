@@ -106,7 +106,6 @@ bool BikoQtExcelEngine::open(const QString &xls_file, int  sheet_index)
         is_open_ = false;
         return is_open_;
     }
-
 	
 	//如果指向的文件不存在，则需要新建一个
 	QFileInfo fi(xls_file_);
@@ -123,7 +122,7 @@ bool BikoQtExcelEngine::open(const QString &xls_file, int  sheet_index)
     if (!is_a_newfile_)
     {
         //打开xls对应的，获取工作簿
-		active_book_ = work_books_->querySubObject("Open(const QString&，QVariant)", xls_file_);
+		active_book_ = work_books_->querySubObject("Open(const QString&,QVariant)", xls_file_,0);
     }
     else
     {

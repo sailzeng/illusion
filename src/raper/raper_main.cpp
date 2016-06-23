@@ -1,31 +1,13 @@
 #include "raper_predefine.h"
 
 
-int test_excel()
-{
-	BikoQtExcelEngine excel_engine;
-	excel_engine.initialize(false);
-	QDir::setCurrent("E:\\");
-	excel_engine.open("0001.xls");
-	excel_engine.close();
-	excel_engine.finalize();
-	return 0;
-}
+
 
 int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
 	int ret = 0;
-	ret = test_excel();
-
-
-	BOOL bret = false;
-	bret = ::SetConsoleOutputCP(936);
-	if (bret == FALSE)
-	{
-	    return -1;
-	}
 
 	HANDLE handle_out = ::GetStdHandle(STD_OUTPUT_HANDLE);
 	if (handle_out == INVALID_HANDLE_VALUE)
@@ -35,7 +17,7 @@ int main(int argc, char *argv[])
 	//设置屏幕缓冲区和输出屏幕大小
 	
 	COORD coord = { 121,  301};
-	bret = ::SetConsoleScreenBufferSize(handle_out, coord);
+	BOOL bret = ::SetConsoleScreenBufferSize(handle_out, coord);
 	if (bret == FALSE)
 	{
 		DWORD ret_error= ::GetLastError();
