@@ -27,6 +27,7 @@
     <ClCompile Include="biko_protobuf_reflect.cpp" />
     <ClCompile Include="biko_qt_excel_engine.cpp" />
     <ClCompile Include="biko_read_config.cpp" />
+    <ClCompile Include="illusion.pb.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="biko_getopt.h" />
@@ -34,6 +35,7 @@
     <ClInclude Include="biko_protobuf_reflect.h" />
     <ClInclude Include="biko_qt_excel_engine.h" />
     <ClInclude Include="biko_read_config.h" />
+    <ClInclude Include="illusion.pb.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\depend\protobuf-2.6.1\vsprojects\libprotobuf.vcxproj">
