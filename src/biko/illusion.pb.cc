@@ -60,12 +60,12 @@ void protobuf_AddDesc_illusion_2eproto() {
     "uf.MessageOptions\030\320\206\003 \001(\t:7\n\014config_shee"
     "t\022\037.google.protobuf.MessageOptions\030\321\206\003 \001"
     "(\t::\n\017fieldsname_line\022\037.google.protobuf."
-    "MessageOptions\030\323\206\003 \001(\005:8\n\rfullname_line\022"
-    "\037.google.protobuf.MessageOptions\030\324\206\003 \001(\005"
+    "MessageOptions\030\322\206\003 \001(\005:8\n\rfullname_line\022"
+    "\037.google.protobuf.MessageOptions\030\323\206\003 \001(\005"
     ":4\n\tread_line\022\037.google.protobuf.MessageO"
-    "ptions\030\325\206\003 \001(\005:5\n\nouter_file\022\037.google.pr"
-    "otobuf.MessageOptions\030\326\206\003 \001(\t:4\n\013fields_"
-    "name\022\035.google.protobuf.FieldOptions\030\322\206\003 "
+    "ptions\030\324\206\003 \001(\005:5\n\nouter_file\022\037.google.pr"
+    "otobuf.MessageOptions\030\325\206\003 \001(\t:4\n\013fields_"
+    "name\022\035.google.protobuf.FieldOptions\030\270\216\003 "
     "\001(\t", 443);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "illusion.proto", &protobuf_RegisterTypes);
@@ -77,19 +77,19 @@ void protobuf_AddDesc_illusion_2eproto() {
     50001, 9, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::MessageOptions::default_instance(),
+    50002, 5, false, false);
+  ::google::protobuf::internal::ExtensionSet::RegisterExtension(
+    &::google::protobuf::MessageOptions::default_instance(),
     50003, 5, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::MessageOptions::default_instance(),
     50004, 5, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::MessageOptions::default_instance(),
-    50005, 5, false, false);
-  ::google::protobuf::internal::ExtensionSet::RegisterExtension(
-    &::google::protobuf::MessageOptions::default_instance(),
-    50006, 9, false, false);
+    50005, 9, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::FieldOptions::default_instance(),
-    50002, 9, false, false);
+    51000, 9, false, false);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_illusion_2eproto);
 }
 

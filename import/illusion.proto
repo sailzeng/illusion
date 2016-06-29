@@ -7,17 +7,17 @@ extend google.protobuf.MessageOptions
     //读取的表格SHEET名称
     optional string config_sheet = 50001;
     //字段名称写在第几行，导成EXCEL时实用
-    optional int32  fieldsname_line = 50003;
+    optional int32  fieldsname_line = 50002;
     //字段的FULLNAME
-    optional int32  fullname_line = 50004;
+    optional int32  fullname_line = 50003;
     //读取的行
-    optional int32  read_line = 50005;
+    optional int32  read_line = 50004;
     //输出的proto配置文件名称
-    optional string outer_file = 50006;
+    optional string outer_file = 50005;
 }
 
 extend google.protobuf.FieldOptions 
 {
     //域选项
-    optional string fields_name = 50002;
+    optional string fields_name = 51000;
 }

@@ -44,23 +44,23 @@ static const int kConfigSheetFieldNumber = 50001;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   config_sheet;
-static const int kFieldsnameLineFieldNumber = 50003;
+static const int kFieldsnameLineFieldNumber = 50002;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   fieldsname_line;
-static const int kFullnameLineFieldNumber = 50004;
+static const int kFullnameLineFieldNumber = 50003;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   fullname_line;
-static const int kReadLineFieldNumber = 50005;
+static const int kReadLineFieldNumber = 50004;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   read_line;
-static const int kOuterFileFieldNumber = 50006;
+static const int kOuterFileFieldNumber = 50005;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   outer_file;
-static const int kFieldsNameFieldNumber = 50002;
+static const int kFieldsNameFieldNumber = 51000;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   fields_name;
