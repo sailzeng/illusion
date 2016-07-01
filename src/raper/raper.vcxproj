@@ -51,7 +51,7 @@
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\ActiveQt;../biko;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(SolutionDir)../depend/protobuf-2.6.1/src;$(SolutionDir)../depend/sqlite-3.8.8.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\ActiveQt;$(SolutionDir)../depend/protobuf-2.6.1/src;$(SolutionDir)../depend/sqlite-3.8.8.1;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(SolutionDir)/import;$(SolutionDir)/biko;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>raper_predefine.h</PrecompiledHeaderFile>
@@ -69,7 +69,7 @@
       <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\ActiveQt;../biko;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(SolutionDir)../depend/protobuf-2.6.1/src;$(SolutionDir)../depend/sqlite-3.8.8.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\ActiveQt;$(SolutionDir)../depend/protobuf-2.6.1/src;$(SolutionDir)../depend/sqlite-3.8.8.1;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(SolutionDir)/import;$(SolutionDir)/biko;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>raper_predefine.h</PrecompiledHeaderFile>
@@ -105,7 +105,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="Qt.5.7.0" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2015" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -26,9 +26,6 @@
     <ClCompile Include="biko_getopt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="illusion.pb.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="biko_predefine.h">
@@ -44,9 +41,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="biko_getopt.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="illusion.pb.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

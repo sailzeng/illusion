@@ -167,6 +167,9 @@ using std::unordered_set;
 #include <google/protobuf/compiler/importer.h>
 #include <google/protobuf/text_format.h>
 
+
+#include <illusion.pb.h>
+
 #if defined (ZCE_OS_WINDOWS)
 #pragma warning ( pop )
 #elif defined (ZCE_OS_LINUX)
