@@ -3,9 +3,53 @@
 #include "biko_protobuf_reflect.h"
 #include "biko_qt_excel_engine.h"
 
+
+
+//===========================================================================================
+//
+class MESSAGE_CONFIG
+{
+	//!表格对应的protobuf的message名称
+	QString line_messge_name_;
+
+	//!对应的repeat line message 结构的名称，
+	QString list_messge_name_;
+
+	//!表格名称
+	QString excel_filename_;
+	//!表格名称
+	QString excel_sheetname_;
+
+	//!
+	int fieldsname_line_ = 1;
+	//!表格的第几行描述字段对应的protobuf
+	int fullname_line_ = 2;
+
+	//!表格数据从第几行读取
+	int read_data_line_ = 3;
+
+
+	//存放protobuf配置数据的的文件名称
+	QString outer_file_name_;
+
+
+	//!Protobuf item定义的数据
+	std::vector<QString>  fieldname_ary_;
+	//!
+	std::vector<QString>  fullname_ary_;
+	//!
+	std::vector<const google::protobuf::FieldDescriptor *> field_desc_ary_;
+	//!
+	std::vector<int> repeat_size_;
+};
+
+
+//===========================================================================================
+
 class Biko_Read_Config
 {
 public:
+
 
 
     struct TABLE_CONFIG
@@ -113,13 +157,9 @@ public:
 
 	
 
-    bool init_print_pbc(const QString &pbc_file,
-                        const QString &meta_struct_name,
-                        const QString &proto_dir,
-                        const QString *outer_dir);
 
-    //
-    void finalize();
+	//
+	void finalize();
 
 
 	int read_excel(QString &error_tips);
@@ -130,20 +170,12 @@ public:
     void clear();
 
 
-
-    //!从DB3文件里面读取某个配置表的配置
-    int read_db3_conftable(const std::string &db3_fname,
-                           const std::string &conf_message_name,
-                           unsigned int table_id,
-                           unsigned int index_1 = 0,
-                           unsigned int index_2 = 0);
-
 protected:
 
     //读枚举值
     int read_table_enum(EXCEL_FILE_DATA &file_cfg_data);
 
-    //!
+    
 	/*!
 	* @brief      读取sheet [TABLE_CONFIG] 的配置
 	* @return     int 返回成功与否 == 0标识成功
@@ -212,6 +244,11 @@ protected:
 					   const QString *excel_table_name,
 					   QString &error_tips);
 
+	//!
+	int read_proto_file(const QString &proto_file,
+						QStringList &error_tips);
+
+	
 protected:
 
     //单子实例

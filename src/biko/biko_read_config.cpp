@@ -146,7 +146,7 @@ int Biko_Read_Config::init_read(const QString &proto_dir,
 
 //初始化.proto文件目录，读取里面所有的proto文件
 int Biko_Read_Config::init_protodir(const QString &proto_dir,
-										QString &error_tips)
+									QString &error_tips)
 {
 	int ret = 0;
 	proto_path_.setPath(proto_dir);;
@@ -171,11 +171,7 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
 	//加载所有的.proto 文件
 	for (int i = 0; i < proto_fileary_.size(); ++i)
 	{
-		ret = ils_proto_reflect_.import_file(proto_fileary_[i].fileName().toStdString());
-		if (ret != 0)
-		{
-			return -1;
-		}
+
 	}
 	return 0;
 }
@@ -372,6 +368,40 @@ int Biko_Read_Config::read_one_excel(const QString &open_file,
 	}
     return 0;
 }
+
+int Biko_Read_Config::read_proto_file(const QString & proto_file,
+									  QStringList & tips_info)
+{
+	int ret = 0;
+	const google::protobuf::FileDescriptor *file_desc = NULL;
+	ret = ils_proto_reflect_.import_file(proto_file.toStdString(), 
+										 file_desc);
+	if (ret != 0 || NULL == file_desc )
+	{
+		return -1;
+	}
+
+
+
+	//处理所有的Message，找出我们要处理的，
+	int msg_count =file_desc->message_type_count();
+	for (int i = 0; i < msg_count; ++i)
+	{
+		const google::protobuf::Descriptor *listmsg_desc = file_desc->message_type(i);
+		
+		bool illusion_msg = mo.GetExtension(illusion::illusion_message);
+		if (illusion_msg && listmsg_desc->field_count() > 0)
+		{
+			
+			
+		}
+		
+	}
+
+	return 0;
+}
+
+
 
 
 //读取所有的枚举值

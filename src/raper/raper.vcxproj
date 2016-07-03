@@ -89,6 +89,9 @@
     <ProjectReference Include="..\biko\biko.vcxproj">
       <Project>{fab901a0-d5a8-45b1-bbad-bfe147b15a1e}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\import\import.vcxproj">
+      <Project>{55e4d03f-b506-48b2-aa6a-dea313849c64}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="raper_main.cpp" />
@@ -105,7 +108,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2015" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="Qt.5.6.0" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

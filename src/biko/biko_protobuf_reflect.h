@@ -89,7 +89,8 @@ public:
     void map_path(const std::string &path);
 
     //!导入一个proto 文件
-    int import_file(const std::string &file_name);
+    int import_file(const std::string &file_name,
+					const google::protobuf::FileDescriptor *&file_desc);
 
     //返回错误信息
     void error_info(PROTO_ERROR_ARRAY &error_ary);

@@ -1,1 +1,1 @@
-protoc --cpp_out=./../src/biko illusion.proto
+protoc --cpp_out=. illusion.proto

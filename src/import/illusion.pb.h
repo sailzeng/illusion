@@ -25,6 +25,8 @@
 #include "google/protobuf/descriptor.pb.h"
 // @@protoc_insertion_point(includes)
 
+namespace illusion {
+
 // Internal implementation detail -- do not call these.
 void  protobuf_AddDesc_illusion_2eproto();
 void protobuf_AssignDesc_illusion_2eproto();
@@ -36,27 +38,31 @@ void protobuf_ShutdownFile_illusion_2eproto();
 
 // ===================================================================
 
-static const int kExcelFileFieldNumber = 50000;
+static const int kIllusionMessageFieldNumber = 50001;
+extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
+    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+  illusion_message;
+static const int kExcelFileFieldNumber = 50002;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   excel_file;
-static const int kConfigSheetFieldNumber = 50001;
+static const int kExcelSheetFieldNumber = 50003;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
-  config_sheet;
-static const int kFieldsnameLineFieldNumber = 50002;
+  excel_sheet;
+static const int kFieldsnameLineFieldNumber = 50004;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   fieldsname_line;
-static const int kFullnameLineFieldNumber = 50003;
+static const int kFullnameLineFieldNumber = 50005;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   fullname_line;
-static const int kReadLineFieldNumber = 50004;
+static const int kReadLineFieldNumber = 50006;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   read_line;
-static const int kOuterFileFieldNumber = 50005;
+static const int kOuterFileFieldNumber = 50007;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   outer_file;
@@ -64,11 +70,17 @@ static const int kFieldsNameFieldNumber = 51000;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   fields_name;
+static const int kRepeatSizeFieldNumber = 51001;
+extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
+    ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
+  repeat_size;
 
 // ===================================================================
 
 
 // @@protoc_insertion_point(namespace_scope)
+
+}  // namespace illusion
 
 #ifndef SWIG
 namespace google {

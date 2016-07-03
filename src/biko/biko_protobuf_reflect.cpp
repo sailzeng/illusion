@@ -73,13 +73,12 @@ void Illusion_Protobuf_Reflect::map_path(const std::string &path)
 }
 
 //
-int Illusion_Protobuf_Reflect::import_file(const std::string &file_name)
+int Illusion_Protobuf_Reflect::import_file(const std::string &file_name,
+										   const google::protobuf::FileDescriptor *&file_desc)
 {
 
     error_collector_.clear_error();
-
-    const google::protobuf::FileDescriptor *file_desc =
-        protobuf_importer_->Import(file_name);
+    file_desc =  protobuf_importer_->Import(file_name);
     if (!file_desc)
     {
         fprintf(stderr,"Importer Import filename [%s] fail.",

@@ -24,6 +24,9 @@
   <ItemGroup>
     <ClInclude Include="illusion.pb.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="illusion.proto" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{55E4D03F-B506-48B2-AA6A-DEA313849C64}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -92,6 +95,7 @@
       <AdditionalIncludeDirectories>$(QTDIR)/include;$(SolutionDir)../depend/protobuf-2.6.1/src</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,6 +124,7 @@
       <AdditionalIncludeDirectories>$(QTDIR)/include;$(SolutionDir)../depend/protobuf-2.6.1/src</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
