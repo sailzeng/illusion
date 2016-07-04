@@ -46,26 +46,7 @@ struct ZCE_PROTO_ERROR
 typedef std::vector<ZCE_PROTO_ERROR> PROTO_ERROR_ARRAY;
 
 
-//错误收集
-class ZCE_Error_Collector : public google::protobuf::compiler::MultiFileErrorCollector
-{
-public:
-    ZCE_Error_Collector();
-    virtual ~ZCE_Error_Collector();
 
-public:
-
-    virtual void AddError(const std::string &filename,
-                          int line,
-                          int column,
-                          const std::string &message);
-
-    void clear_error();
-
-public:
-    //
-    PROTO_ERROR_ARRAY error_array_;
-};
 
 
 //======================================================================================
@@ -77,38 +58,6 @@ public:
 */
 class Illusion_Protobuf_Reflect
 {
-public:
-    //
-    Illusion_Protobuf_Reflect();
-    //
-    ~Illusion_Protobuf_Reflect();
-
-public:
-
-    //!映射一个路径
-    void map_path(const std::string &path);
-
-    //!导入一个proto 文件
-    int import_file(const std::string &file_name,
-					const google::protobuf::FileDescriptor *&file_desc);
-
-    //返回错误信息
-    void error_info(PROTO_ERROR_ARRAY &error_ary);
-
-    
-    /*!
-    * @brief      根据名称创建Message,new 的message 会保存做出当前处理的message对象
-    * @return     int
-    * @param      type_name
-    * @param      new_msg
-    * @note       
-    */
-    int new_mesage(const std::string &type_name,
-                   google::protobuf::Message *&new_msg);
-
-    //
-    void del_message(google::protobuf::Message *&del_msg);
-
     //
 public:
 
@@ -145,10 +94,12 @@ public:
                               bool message_add,
                               google::protobuf::Message *&sub_msg);
 
+
 	//!定位一个子结构
 	static int locate_msgfield(google::protobuf::Message *msg,
 							   const google::protobuf::FieldDescriptor *msg_field,
-							   google::protobuf::Message *&sub_msg);
+							   google::protobuf::Message *&sub_msg,
+							   bool message_add);
 
     //!打印输出一个Message的信息到ostream里面，
     static void protobuf_output(const google::protobuf::Message *msg,
@@ -162,25 +113,14 @@ public:
 
 	//!
 	static bool string_to_bool(const std::string& str);
+
 	
 	static void string_split(const std::string &source_str,
 							 const std::string &separator,
 							 std::vector<std::string> &v);
 
 
-protected:
 
-    //!
-    google::protobuf::compiler::Importer *protobuf_importer_;
-
-    //!
-    google::protobuf::compiler::DiskSourceTree *source_tree_;
-
-    //
-    google::protobuf::DynamicMessageFactory *msg_factory_;
-
-    //
-    ZCE_Error_Collector error_collector_;
 
 };
 

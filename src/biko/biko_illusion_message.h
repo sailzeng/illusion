@@ -14,7 +14,7 @@ public:
 	int init(const google::protobuf::Descriptor *table_msg_desc);
 
 
-	//!
+	//!New 一个 table message 就是那个有repeated line message 的message
 	int new_table_mesage(google::protobuf::DynamicMessageFactory *msg_factory,
 		                 google::protobuf::Message *&table_msg);
 
@@ -25,9 +25,9 @@ public:
 protected:
 
 	//!因为一个message可能有子message，必须递归处理
-	int recursive_proto(const google::protobuf::Descriptor *msg_desc,
-						int &field_count);
-
+	int recursive_proto(const google::protobuf::Descriptor *msg_desc);
+	//!
+	int recursive_msgfield(google::protobuf::Message *msg);
 	
 protected:
 
@@ -59,11 +59,8 @@ protected:
 	//存放protobuf配置数据的的文件名称
 	QString outer_file_name_;
 
-	//这个是一个结构的深度递归字段描述，用于生产动态的Message（比如插入几个repeated呀）
-	std::vector<const google::protobuf::FieldDescriptor *> illusion_desc_ary_;
-
 	//!对应表格的展开的字段数量，包括repeated,sub message的字段,都递归展开，记算
-	int tb_field_count_ = 0;
+	size_t tb_field_count_ = 0;
 
 	//!对应表格的展开的字段的名称的数组，用于插入EXCEL表格作为标题
 	std::vector<QString>  tb_fieldname_ary_;

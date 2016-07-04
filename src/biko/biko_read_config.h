@@ -7,40 +7,27 @@
 
 //===========================================================================================
 //
-class MESSAGE_CONFIG
+
+
+//错误收集
+class ZCE_Error_Collector : public google::protobuf::compiler::MultiFileErrorCollector
 {
-	//!表格对应的protobuf的message名称
-	QString line_messge_name_;
+public:
+	ZCE_Error_Collector();
+	virtual ~ZCE_Error_Collector();
 
-	//!对应的repeat line message 结构的名称，
-	QString list_messge_name_;
+public:
 
-	//!表格名称
-	QString excel_filename_;
-	//!表格名称
-	QString excel_sheetname_;
+	virtual void AddError(const std::string &filename,
+						  int line,
+						  int column,
+						  const std::string &message);
 
-	//!
-	int fieldsname_line_ = 1;
-	//!表格的第几行描述字段对应的protobuf
-	int fullname_line_ = 2;
+	void clear_error();
 
-	//!表格数据从第几行读取
-	int read_data_line_ = 3;
-
-
-	//存放protobuf配置数据的的文件名称
-	QString outer_file_name_;
-
-
-	//!Protobuf item定义的数据
-	std::vector<QString>  fieldname_ary_;
-	//!
-	std::vector<QString>  fullname_ary_;
-	//!
-	std::vector<const google::protobuf::FieldDescriptor *> field_desc_ary_;
-	//!
-	std::vector<int> repeat_size_;
+public:
+	//
+	PROTO_ERROR_ARRAY error_array_;
 };
 
 
@@ -275,8 +262,18 @@ protected:
     //!Excel的处理对象,EXCEL的处理类
     BikoQtExcelEngine ils_excel_file_;
 
-    //!
-    Illusion_Protobuf_Reflect ils_proto_reflect_;
+
+	//!
+	google::protobuf::compiler::Importer *protobuf_importer_ = NULL;
+
+	//!
+	google::protobuf::compiler::DiskSourceTree *source_tree_ = NULL;
+
+	//
+	google::protobuf::DynamicMessageFactory *msg_factory_ = NULL;
+
+	//
+	ZCE_Error_Collector error_collector_;
 
     //!文件对应的配置数据，用于我的查询
     MAP_FNAME_TO_CFGDATA   file_cfg_map_;

@@ -1,9 +1,38 @@
 #include "biko_predefine.h"
 #include "biko_read_config.h"
 
+//======================================================================================
+//分析的错误信息收集装置，
+ZCE_Error_Collector::ZCE_Error_Collector()
+{
+}
 
-char Biko_Read_Config::REPEATED_STRING[] = "list_data";
 
+ZCE_Error_Collector::~ZCE_Error_Collector()
+{
+}
+
+void ZCE_Error_Collector::AddError(const std::string &file_name,
+								   int line,
+								   int column,
+								   const std::string &message)
+{
+	ZCE_PROTO_ERROR proto_err;
+	proto_err.file_name_ = file_name;
+	proto_err.line_ = line;
+	proto_err.column_ = column;
+	proto_err.message_ = message;
+
+	error_array_.push_back(proto_err);
+}
+
+void ZCE_Error_Collector::clear_error()
+{
+	error_array_.clear();
+}
+
+
+//======================================================================================
 //处理的单子实例
 Biko_Read_Config *Biko_Read_Config::instance_ = NULL;
 
@@ -15,6 +44,22 @@ Biko_Read_Config::Biko_Read_Config()
 
 Biko_Read_Config::~Biko_Read_Config()
 {
+	//这3个的析构是有顺序的，注意
+	if (msg_factory_)
+	{
+		delete msg_factory_;
+		msg_factory_ = NULL;
+	}
+	if (source_tree_)
+	{
+		delete source_tree_;
+		source_tree_ = NULL;
+	}
+	if (protobuf_importer_)
+	{
+		delete protobuf_importer_;
+		protobuf_importer_ = NULL;
+	}
 }
 
 
@@ -166,7 +211,11 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
 			arg(proto_dir);
 		return -1;
 	}
-	ils_proto_reflect_.map_path(proto_path_.path().toStdString());
+
+	source_tree_ = new  google::protobuf::compiler::DiskSourceTree();
+	source_tree_->MapPath("", proto_path_.path().toStdString());
+	protobuf_importer_ = new google::protobuf::compiler::Importer(source_tree_, &error_collector_);
+	msg_factory_ = new google::protobuf::DynamicMessageFactory();
 
 	//加载所有的.proto 文件
 	for (int i = 0; i < proto_fileary_.size(); ++i)
@@ -374,8 +423,18 @@ int Biko_Read_Config::read_proto_file(const QString & proto_file,
 {
 	int ret = 0;
 	const google::protobuf::FileDescriptor *file_desc = NULL;
-	ret = ils_proto_reflect_.import_file(proto_file.toStdString(), 
-										 file_desc);
+
+	error_collector_.clear_error();
+	file_desc = protobuf_importer_->Import(proto_file.toStdString());
+	if (!file_desc)
+	{
+		fprintf(stderr, "Importer Import filename [%s] fail.",
+				proto_file.toStdString().c_str());
+		return -1;
+	}
+
+	
+
 	if (ret != 0 || NULL == file_desc )
 	{
 		return -1;
@@ -602,11 +661,11 @@ int Biko_Read_Config::read_sheet_pbcdata(TABLE_CONFIG &tc_data,
 		return -3;
 	}
 
-	ret = ils_proto_reflect_.new_mesage(tc_data.pb_list_message_.toStdString(), list_msg);
-	if (ret != 0)
-	{
-		return ret;
-	}
+	//ret = ils_proto_reflect_.new_mesage(tc_data.pb_list_message_.toStdString(), list_msg);
+	//if (ret != 0)
+	//{
+	//	return ret;
+	//}
 
 
 	int line_count = ils_excel_file_.row_count();

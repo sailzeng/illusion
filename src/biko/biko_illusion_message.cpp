@@ -1,4 +1,5 @@
 #include "biko_predefine.h"
+#include "biko_protobuf_reflect.h"
 #include "biko_illusion_message.h"
 
 Illusion_Message::Illusion_Message()
@@ -73,7 +74,7 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
 
 	line_msg_desc_ = list_field_desc->message_type();
 
-	ret = recursive_proto(line_msg_desc_, tb_field_count_);
+	ret = recursive_proto(line_msg_desc_);
 	if (0 != ret)
 	{
 		return ret;
@@ -86,8 +87,7 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
 }
 
 
-int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_desc,
-									  int &field_count)
+int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_desc)
 {
 	int ret = 0;
 	for (int j = 0; j < msg_desc->field_count(); ++j)
@@ -95,6 +95,13 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 		const google::protobuf::FieldDescriptor *field_desc =
 			msg_desc->field(j);
 		const google::protobuf::FieldOptions& fo = field_desc->options();
+
+		//如果这个域标识了不读取，跳过
+		bool is_read_filed = fo.GetExtension(illusion::illusion_field);
+		if (is_read_filed)
+		{
+			continue;
+		}
 
 		std::string fields_name = fo.GetExtension(illusion::fields_name);
 		
@@ -112,22 +119,16 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 		for (int k = 0; k < repeated_num; ++k)
 		{
 			//tb_field_desc_ary_ 是保持和读取的EXCEL一样的字段描述的，用于插入，
-			//illusion_desc_ary_ 是用于构建line message的。
 
-			int filed_num = 1;
 			//Message需要递归处理
 			if (field_desc->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
 			{
-				illusion_desc_ary_.push_back(field_desc);
-				int sub_field_count = 0;
 				const google::protobuf::Descriptor *sub_msg_desc = field_desc->message_type();
-				ret = recursive_proto(sub_msg_desc,
-									  sub_field_count);
-				if (0 != ret || 0 == sub_field_count)
+				ret = recursive_proto(sub_msg_desc);
+				if (0 != ret)
 				{
 					return ret;
 				}
-				filed_num = sub_field_count;
 			}
 			else
 			{
@@ -135,9 +136,8 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 				tb_fieldname_ary_.push_back(field_name);
 				tb_fullname_ary_.push_back(field_desc->full_name().c_str());
 				tb_field_desc_ary_.push_back(field_desc);
-				illusion_desc_ary_.push_back(field_desc);
+				++tb_field_count_;
 			}
-			field_count += filed_num;
 		}
 	}
 	return 0;
@@ -165,5 +165,89 @@ int Illusion_Message::new_table_mesage(google::protobuf::DynamicMessageFactory *
 int Illusion_Message::add_line(google::protobuf::Message *table_msg,
 							   std::vector<std::string> &line_str_ary)
 {
+	int ret = 0;
+	google::protobuf::Message *line_message = NULL;
+	const google::protobuf::FieldDescriptor *list_field_desc = table_msg_desc_->field(0);
+	ret = Illusion_Protobuf_Reflect::locate_msgfield(table_msg,
+											         list_field_desc,
+											         line_message,
+											         true);
+	if (0 != ret)
+	{
+		return ret;
+	}
+
+	ret = recursive_msgfield(line_message);
+	if (0 != ret)
+	{
+		return ret;
+	}
+
+	Q_ASSERT(line_str_ary.size() == tb_field_count_);
+
+	for (size_t i= 0;i<tb_field_count_;i++)
+	{
+		ret = Illusion_Protobuf_Reflect::set_fielddata(tb_message_ary_[i],
+													   tb_field_desc_ary_[i],
+													   line_str_ary[i]);
+		if (0 != ret)
+		{
+			return ret;
+		}
+	}
+
+	return 0;
+}
+
+//!
+int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg)
+{
+	int ret = 0;
+	const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
+	for (int j = 0; j < msg_desc->field_count(); ++j)
+	{
+
+		const google::protobuf::FieldDescriptor *field_desc =
+			msg_desc->field(j);
+		const google::protobuf::FieldOptions& fo = field_desc->options();
+
+		//如果这个域标识了不读取，跳过
+		bool is_read_filed = fo.GetExtension(illusion::illusion_field);
+		if (is_read_filed)
+		{
+			continue;
+		}
+
+		//
+		int repeated_num = 1;
+		if (field_desc->label() == google::protobuf::FieldDescriptor::LABEL_REPEATED)
+		{
+			repeated_num = fo.GetExtension(illusion::repeat_size);
+			if (repeated_num <= 0)
+			{
+				return -1;
+			}
+		}
+		for (int k = 0; k < repeated_num; ++k)
+		{
+			if (field_desc->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+			{
+				google::protobuf::Message *field_message = NULL;
+				ret = Illusion_Protobuf_Reflect::locate_msgfield(msg,
+																 field_desc,
+																 field_message,
+																 true);
+				ret = recursive_msgfield(field_message);
+				if (ret != 0)
+				{
+					return ret;
+				}
+			}
+			else
+			{
+				tb_message_ary_.push_back(msg);
+			}
+		}
+	}
 	return 0;
 }

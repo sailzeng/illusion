@@ -3,133 +3,49 @@
 
 
 
-//======================================================================================
-//分析的错误信息收集装置，
-ZCE_Error_Collector::ZCE_Error_Collector()
-{
-}
 
-
-ZCE_Error_Collector::~ZCE_Error_Collector()
-{
-}
-
-void ZCE_Error_Collector::AddError(const std::string &file_name,
-                                   int line,
-                                   int column,
-                                   const std::string &message)
-{
-    ZCE_PROTO_ERROR proto_err;
-    proto_err.file_name_ = file_name;
-    proto_err.line_ = line;
-    proto_err.column_ = column;
-    proto_err.message_ = message;
-
-    error_array_.push_back(proto_err);
-}
-
-void ZCE_Error_Collector::clear_error()
-{
-    error_array_.clear();
-}
 //======================================================================================
 
-//构造
-Illusion_Protobuf_Reflect::Illusion_Protobuf_Reflect():
-    protobuf_importer_(NULL),
-    source_tree_(NULL),
-    msg_factory_(NULL)
-{
 
-}
 
-Illusion_Protobuf_Reflect::~Illusion_Protobuf_Reflect()
-{
-    //这3个的析构是有顺序的，注意
-    if (msg_factory_)
-    {
-        delete msg_factory_;
-        msg_factory_ = NULL;
-    }
-    if (source_tree_)
-    {
-        delete source_tree_;
-        source_tree_ = NULL;
-    }
-    if (protobuf_importer_)
-    {
-        delete protobuf_importer_;
-        protobuf_importer_ = NULL;
-    }
-}
 
-//映射路径
-void Illusion_Protobuf_Reflect::map_path(const std::string &path)
-{
-    source_tree_ = new  google::protobuf::compiler::DiskSourceTree();
-    source_tree_->MapPath("", path);
-    protobuf_importer_ = new google::protobuf::compiler::Importer(source_tree_, &error_collector_);
-    msg_factory_ = new google::protobuf::DynamicMessageFactory();
-}
+
+////
+//void Illusion_Protobuf_Reflect::error_info(PROTO_ERROR_ARRAY &error_ary)
+//{
+//    error_ary = error_collector_.error_array_;
+//}
 
 //
-int Illusion_Protobuf_Reflect::import_file(const std::string &file_name,
-										   const google::protobuf::FileDescriptor *&file_desc)
-{
-
-    error_collector_.clear_error();
-    file_desc =  protobuf_importer_->Import(file_name);
-    if (!file_desc)
-    {
-        fprintf(stderr,"Importer Import filename [%s] fail.",
-                file_name.c_str());
-        return -1;
-    }
-
-    return 0;
-}
-
+//int Illusion_Protobuf_Reflect::new_mesage(const std::string &type_name,
+//                                          google::protobuf::Message *&new_msg)
+//{
 //
-void Illusion_Protobuf_Reflect::error_info(PROTO_ERROR_ARRAY &error_ary)
-{
-    error_ary = error_collector_.error_array_;
-}
-
+//    //根据名称得到结构描述
+//    const google::protobuf::Descriptor *proc_msg_desc =
+//        protobuf_importer_->pool()->FindMessageTypeByName(type_name);
+//    if (!proc_msg_desc)
+//    {
+//		fprintf(stderr, "Importer DescriptorPool FindMessageTypeByName by name [%s] fail.",
+//                type_name.c_str());
+//        return -1;
+//    }
 //
-int Illusion_Protobuf_Reflect::new_mesage(const std::string &type_name,
-                                          google::protobuf::Message *&new_msg)
-{
-
-    //根据名称得到结构描述
-    const google::protobuf::Descriptor *proc_msg_desc =
-        protobuf_importer_->pool()->FindMessageTypeByName(type_name);
-    if (!proc_msg_desc)
-    {
-		fprintf(stderr, "Importer DescriptorPool FindMessageTypeByName by name [%s] fail.",
-                type_name.c_str());
-        return -1;
-    }
-
-    // build a dynamic message by "proc_msg_desc" proto
-    const google::protobuf::Message *message = msg_factory_->GetPrototype(proc_msg_desc);
-    if (!message)
-    {
-		fprintf(stderr, "DynamicMessageFactory GetPrototype by name [%s] fail.",
-                type_name.c_str());
-        return -1;
-    }
-
-    new_msg = message->New();
-
-    return 0;
-}
-
+//    // build a dynamic message by "proc_msg_desc" proto
+//    const google::protobuf::Message *message = msg_factory_->GetPrototype(proc_msg_desc);
+//    if (!message)
+//    {
+//		fprintf(stderr, "DynamicMessageFactory GetPrototype by name [%s] fail.",
+//                type_name.c_str());
+//        return -1;
+//    }
 //
-void Illusion_Protobuf_Reflect::del_message(google::protobuf::Message *&del_msg)
-{
-    delete del_msg;
-    del_msg = NULL;
-}
+//    new_msg = message->New();
+//
+//    return 0;
+//}
+
+
 
 
 int Illusion_Protobuf_Reflect::set_fielddata(google::protobuf::Message *msg,
@@ -456,7 +372,8 @@ int Illusion_Protobuf_Reflect::locate_sub_msg(google::protobuf::Message *msg,
 
 int Illusion_Protobuf_Reflect::locate_msgfield(google::protobuf::Message * msg, 
 											   const google::protobuf::FieldDescriptor * msg_field, 
-											   google::protobuf::Message *& sub_msg)
+											   google::protobuf::Message *& sub_msg,
+											   bool message_add)
 {
 	//得到结构的描述和反射
 	const google::protobuf::Reflection *reflection = msg->GetReflection();

@@ -66,11 +66,15 @@ static const int kOuterFileFieldNumber = 50007;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   outer_file;
-static const int kFieldsNameFieldNumber = 51000;
+static const int kIllusionFieldFieldNumber = 51001;
+extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
+    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+  illusion_field;
+static const int kFieldsNameFieldNumber = 51002;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   fields_name;
-static const int kRepeatSizeFieldNumber = 51001;
+static const int kRepeatSizeFieldNumber = 51003;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   repeat_size;

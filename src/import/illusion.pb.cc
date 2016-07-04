@@ -68,10 +68,12 @@ void protobuf_AddDesc_illusion_2eproto() {
     "\037.google.protobuf.MessageOptions\030\325\206\003 \001(\005"
     ":\0012:7\n\tread_line\022\037.google.protobuf.Messa"
     "geOptions\030\326\206\003 \001(\005:\0013:5\n\nouter_file\022\037.goo"
-    "gle.protobuf.MessageOptions\030\327\206\003 \001(\t:4\n\013f"
-    "ields_name\022\035.google.protobuf.FieldOption"
-    "s\030\270\216\003 \001(\t:4\n\013repeat_size\022\035.google.protob"
-    "uf.FieldOptions\030\271\216\003 \001(\005", 583);
+    "gle.protobuf.MessageOptions\030\327\206\003 \001(\t:=\n\016i"
+    "llusion_field\022\035.google.protobuf.FieldOpt"
+    "ions\030\271\216\003 \001(\010:\004true:4\n\013fields_name\022\035.goog"
+    "le.protobuf.FieldOptions\030\272\216\003 \001(\t:4\n\013repe"
+    "at_size\022\035.google.protobuf.FieldOptions\030\273"
+    "\216\003 \001(\005", 646);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "illusion.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
@@ -97,10 +99,13 @@ void protobuf_AddDesc_illusion_2eproto() {
     50007, 9, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::FieldOptions::default_instance(),
-    51000, 9, false, false);
+    51001, 8, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::FieldOptions::default_instance(),
-    51001, 5, false, false);
+    51002, 9, false, false);
+  ::google::protobuf::internal::ExtensionSet::RegisterExtension(
+    &::google::protobuf::FieldOptions::default_instance(),
+    51003, 5, false, false);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_illusion_2eproto);
 }
 
@@ -134,6 +139,9 @@ const ::std::string outer_file_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   outer_file(kOuterFileFieldNumber, outer_file_default);
+::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
+    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+  illusion_field(kIllusionFieldFieldNumber, true);
 const ::std::string fields_name_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
