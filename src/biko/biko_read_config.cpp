@@ -389,8 +389,7 @@ int Biko_Read_Config::read_proto_file(const QString & proto_file,
 	{
 		const google::protobuf::Descriptor *listmsg_desc = file_desc->message_type(i);
 		
-		bool illusion_msg = mo.GetExtension(illusion::illusion_message);
-		if (illusion_msg && listmsg_desc->field_count() > 0)
+		if (listmsg_desc && listmsg_desc->field_count() > 0)
 		{
 			
 			

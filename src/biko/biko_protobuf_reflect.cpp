@@ -454,6 +454,72 @@ int Illusion_Protobuf_Reflect::locate_sub_msg(google::protobuf::Message *msg,
     return 0;
 }
 
+int Illusion_Protobuf_Reflect::locate_msgfield(google::protobuf::Message * msg, 
+											   const google::protobuf::FieldDescriptor * msg_field, 
+											   google::protobuf::Message *& sub_msg)
+{
+	//得到结构的描述和反射
+	const google::protobuf::Reflection *reflection = msg->GetReflection();
+	const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
+
+	//没有找到对应的字段描述
+	if (!msg_field)
+	{
+		return -1;
+	}
+
+	if (msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED ||
+		msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_OPTIONAL)
+	{
+		//如果是字段是一个普通结构
+		if (msg_field->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
+		{
+			sub_msg = reflection->MutableMessage(msg, msg_field, NULL);
+			if (!sub_msg)
+			{
+				return -1;
+			}
+		}
+	}
+	else if (msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REPEATED)
+	{
+		// Length-delimited message.
+		if (msg_field->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
+		{
+			//如果要增加一个repeated的数据
+			if (message_add)
+			{
+				sub_msg = reflection->AddMessage(msg, msg_field, NULL);
+				if (!sub_msg)
+				{
+					return -1;
+				}
+			}
+			//如果不用增加，使用repeated 数组的最后一个数据，
+			else
+			{
+				int ary_size = reflection->FieldSize(*msg, msg_field);
+				if (ary_size == 0)
+				{
+					return -1;
+				}
+				sub_msg = reflection->MutableRepeatedMessage(msg, msg_field, ary_size - 1);
+				if (!sub_msg)
+				{
+					return -1;
+				}
+			}
+		}
+	}
+	else
+	{
+		assert(false);
+		return -1;
+	}
+
+	return 0;
+}
+
 
 int Illusion_Protobuf_Reflect::get_fielddesc(google::protobuf::Message *msg,
                                              const std::string &full_name,

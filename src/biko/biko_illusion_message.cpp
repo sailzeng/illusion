@@ -78,6 +78,10 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
 	{
 		return ret;
 	}
+
+	Q_ASSERT(tb_fieldname_ary_.size() == tb_field_count_);
+	Q_ASSERT(tb_fullname_ary_.size() == tb_field_count_);
+	Q_ASSERT(tb_field_desc_ary_.size() == tb_field_count_);
 	return 0;
 }
 
@@ -107,11 +111,14 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 
 		for (int k = 0; k < repeated_num; ++k)
 		{
-			//
+			//tb_field_desc_ary_ 是保持和读取的EXCEL一样的字段描述的，用于插入，
+			//illusion_desc_ary_ 是用于构建line message的。
+
 			int filed_num = 1;
-			//
+			//Message需要递归处理
 			if (field_desc->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
 			{
+				illusion_desc_ary_.push_back(field_desc);
 				int sub_field_count = 0;
 				const google::protobuf::Descriptor *sub_msg_desc = field_desc->message_type();
 				ret = recursive_proto(sub_msg_desc,
@@ -126,8 +133,9 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 			{
 				QString field_name = QString("%1-%2").arg(fields_name.c_str()).arg(k+1);
 				tb_fieldname_ary_.push_back(field_name);
-				tb_fieldname_ary_.push_back(field_desc->full_name().c_str());
+				tb_fullname_ary_.push_back(field_desc->full_name().c_str());
 				tb_field_desc_ary_.push_back(field_desc);
+				illusion_desc_ary_.push_back(field_desc);
 			}
 			field_count += filed_num;
 		}
@@ -135,10 +143,27 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 	return 0;
 }
 
-//!
+//
 int Illusion_Message::new_table_mesage(google::protobuf::DynamicMessageFactory *msg_factory,
 									   google::protobuf::Message *&table_msg)
 {
+	// build a dynamic message by "table_msg_desc_" proto
+	const google::protobuf::Message *message = msg_factory->GetPrototype(table_msg_desc_);
+	if (!message)
+	{
+		fprintf(stderr, "DynamicMessageFactory GetPrototype by name [%s] fail.",
+				table_msg_desc_->full_name().c_str());
+		return -1;
+	}
+
+	table_msg = message->New();
+
 	return 0;
 }
 
+//!
+int Illusion_Message::add_line(google::protobuf::Message *table_msg,
+							   std::vector<std::string> &line_str_ary)
+{
+	return 0;
+}

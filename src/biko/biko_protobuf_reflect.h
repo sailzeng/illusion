@@ -145,6 +145,11 @@ public:
                               bool message_add,
                               google::protobuf::Message *&sub_msg);
 
+	//!定位一个子结构
+	static int locate_msgfield(google::protobuf::Message *msg,
+							   const google::protobuf::FieldDescriptor *msg_field,
+							   google::protobuf::Message *&sub_msg);
+
     //!打印输出一个Message的信息到ostream里面，
     static void protobuf_output(const google::protobuf::Message *msg,
                                 std::ostream *out);

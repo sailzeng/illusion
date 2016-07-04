@@ -59,15 +59,21 @@ protected:
 	//存放protobuf配置数据的的文件名称
 	QString outer_file_name_;
 
+	//这个是一个结构的深度递归字段描述，用于生产动态的Message（比如插入几个repeated呀）
+	std::vector<const google::protobuf::FieldDescriptor *> illusion_desc_ary_;
+
 	//!对应表格的展开的字段数量，包括repeated,sub message的字段,都递归展开，记算
 	int tb_field_count_ = 0;
 
-	//!对应表格的展开的字段的名称的数组
+	//!对应表格的展开的字段的名称的数组，用于插入EXCEL表格作为标题
 	std::vector<QString>  tb_fieldname_ary_;
-	//!对应表格的展开的字段的fullname数组
+	//!对应表格的展开的字段的fullname数组，用于插入EXCEL表格作为标题2
 	std::vector<QString>  tb_fullname_ary_;
-	//!
+
+	//!字段描述注意字段描述和Message 是对应关系，用于设置处理而已，其他地方不用关心
 	std::vector<const google::protobuf::FieldDescriptor *> tb_field_desc_ary_;
+	//!每个字段对应的Message，用于方便插入操作处理的临时数据而已(每次都必须更新)，其他地方不用关心
+	std::vector<google::protobuf::Message *> tb_message_ary_;
 
 };
 
