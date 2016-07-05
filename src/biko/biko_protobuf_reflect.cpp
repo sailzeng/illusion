@@ -48,7 +48,7 @@
 
 
 
-int Illusion_Protobuf_Reflect::set_fielddata(google::protobuf::Message *msg,
+int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
                                              const google::protobuf::FieldDescriptor *field,
                                              const std::string &set_data)
 {
@@ -300,7 +300,7 @@ int Illusion_Protobuf_Reflect::set_fielddata(google::protobuf::Message *msg,
 }
 
 //定位一个子结构
-int Illusion_Protobuf_Reflect::locate_sub_msg(google::protobuf::Message *msg,
+int Protobuf_Reflect_AUX::locate_sub_msg(google::protobuf::Message *msg,
                                               const std::string &submsg_field_name,
                                               bool message_add,
                                               google::protobuf::Message *&sub_msg)
@@ -370,7 +370,7 @@ int Illusion_Protobuf_Reflect::locate_sub_msg(google::protobuf::Message *msg,
     return 0;
 }
 
-int Illusion_Protobuf_Reflect::locate_msgfield(google::protobuf::Message * msg, 
+int Protobuf_Reflect_AUX::locate_msgfield(google::protobuf::Message * msg, 
 											   const google::protobuf::FieldDescriptor * msg_field, 
 											   google::protobuf::Message *& sub_msg,
 											   bool message_add)
@@ -438,7 +438,7 @@ int Illusion_Protobuf_Reflect::locate_msgfield(google::protobuf::Message * msg,
 }
 
 
-int Illusion_Protobuf_Reflect::get_fielddesc(google::protobuf::Message *msg,
+int Protobuf_Reflect_AUX::get_fielddesc(google::protobuf::Message *msg,
                                              const std::string &full_name,
                                              bool message_add,
                                              google::protobuf::Message *&field_msg,
@@ -459,7 +459,7 @@ int Illusion_Protobuf_Reflect::get_fielddesc(google::protobuf::Message *msg,
     {
         for (size_t i = 0; i < level_num - 1; ++i)
         {
-            ret = Illusion_Protobuf_Reflect::locate_sub_msg(src_msg,
+            ret = Protobuf_Reflect_AUX::locate_sub_msg(src_msg,
                                                             v[i],
                                                             message_add,
                                                             field_msg);
@@ -484,7 +484,7 @@ int Illusion_Protobuf_Reflect::get_fielddesc(google::protobuf::Message *msg,
 }
 
 //根据fullname，也就是 phone_book.number 设置一个Message的field
-int Illusion_Protobuf_Reflect::set_field(google::protobuf::Message *msg,
+int Protobuf_Reflect_AUX::set_field(google::protobuf::Message *msg,
                                          const std::string &full_name,
                                          const std::string &set_data,
                                          bool repeated_add)
@@ -494,7 +494,7 @@ int Illusion_Protobuf_Reflect::set_field(google::protobuf::Message *msg,
     google::protobuf::Message *sub_msg = NULL;
 
     //取得字段的描述
-    ret = Illusion_Protobuf_Reflect::get_fielddesc(msg,
+    ret = Protobuf_Reflect_AUX::get_fielddesc(msg,
                                                    full_name,
                                                    repeated_add,
                                                    sub_msg,
@@ -505,7 +505,7 @@ int Illusion_Protobuf_Reflect::set_field(google::protobuf::Message *msg,
     }
 
     //根据描述，设置字段的数据
-    ret = Illusion_Protobuf_Reflect::set_fielddata(sub_msg, field, set_data);
+    ret = Protobuf_Reflect_AUX::set_fielddata(sub_msg, field, set_data);
     if (0 != ret)
     {
         return ret;
@@ -515,7 +515,7 @@ int Illusion_Protobuf_Reflect::set_field(google::protobuf::Message *msg,
 }
 
 //用UTF8 的coding 编码方式输出一个MESSAGE的信息，方便查看。
-void Illusion_Protobuf_Reflect::protobuf_output(const google::protobuf::Message *msg,
+void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
                                                 std::ostream *out)
 {
     const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
@@ -774,7 +774,7 @@ void Illusion_Protobuf_Reflect::protobuf_output(const google::protobuf::Message 
 }
 
 
-void Illusion_Protobuf_Reflect::message_set_default(google::protobuf::Message *msg)
+void Protobuf_Reflect_AUX::message_set_default(google::protobuf::Message *msg)
 {
     const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
     const google::protobuf::Reflection *reflection = msg->GetReflection();
@@ -1008,7 +1008,7 @@ void Illusion_Protobuf_Reflect::message_set_default(google::protobuf::Message *m
 }
 
 
-bool Illusion_Protobuf_Reflect::string_to_bool(const std::string& str)
+bool Protobuf_Reflect_AUX::string_to_bool(const std::string& str)
 {
 
 	if (0 == stricmp("TRUE", str.c_str()))
@@ -1022,7 +1022,7 @@ bool Illusion_Protobuf_Reflect::string_to_bool(const std::string& str)
 	return false;
 }
 
-void Illusion_Protobuf_Reflect::string_split(const std::string &source_str,
+void Protobuf_Reflect_AUX::string_split(const std::string &source_str,
 						 const std::string &separator,
 						 std::vector<std::string> &v)
 {

@@ -16,18 +16,31 @@ public:
 
 	//!New 一个 table message 就是那个有repeated line message 的message
 	int new_table_mesage(google::protobuf::DynamicMessageFactory *msg_factory,
-		                 google::protobuf::Message *&table_msg);
+		                 google::protobuf::Message *&table_msg) const;
 
 	//!
 	int add_line(google::protobuf::Message *table_msg,
-				 std::vector<std::string> &line_str_ary);
+				 std::vector<std::string> &line_str_ary) const;
+
+	/*!
+	* @brief      将数据保存到Proto buf config 配置文件里面
+	* @return     int
+	* @param      table_cfg
+	* @param      line_msg
+	* @param      error_tips
+	* @note
+	*/
+	int save_to_protocfg(const google::protobuf::Message * table_msg,
+										   const QDir &out_pbc_path,
+										   QString & error_tips) const;
 
 protected:
 
 	//!因为一个message可能有子message，必须递归处理
 	int recursive_proto(const google::protobuf::Descriptor *msg_desc);
 	//!
-	int recursive_msgfield(google::protobuf::Message *msg);
+	int recursive_msgfield(google::protobuf::Message *msg,
+						   std::vector<google::protobuf::Message *> *tb_message_ary) const;
 	
 protected:
 
@@ -40,7 +53,7 @@ protected:
 	QString line_messge_name_;
 
 	//!对应的repeat line message 结构的名称，
-	QString list_messge_name_;
+	QString table_messge_name_;
 
 	//!表格名称
 	QString excel_filename_;
@@ -69,9 +82,11 @@ protected:
 
 	//!字段描述注意字段描述和Message 是对应关系，用于设置处理而已，其他地方不用关心
 	std::vector<const google::protobuf::FieldDescriptor *> tb_field_desc_ary_;
-	//!每个字段对应的Message，用于方便插入操作处理的临时数据而已(每次都必须更新)，其他地方不用关心
-	std::vector<google::protobuf::Message *> tb_message_ary_;
+	
 
 };
 
+
+//!
+typedef std::vector<const Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
 

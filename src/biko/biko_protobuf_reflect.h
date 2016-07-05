@@ -32,22 +32,6 @@
 #define _ILLUSION_PROTOBUF_REFLECT_H_
 
 
-//======================================================================================
-
-//
-struct ZCE_PROTO_ERROR
-{
-    std::string file_name_;
-    int line_;
-    int column_;
-    std::string message_;
-};
-
-typedef std::vector<ZCE_PROTO_ERROR> PROTO_ERROR_ARRAY;
-
-
-
-
 
 //======================================================================================
 
@@ -56,7 +40,7 @@ typedef std::vector<ZCE_PROTO_ERROR> PROTO_ERROR_ARRAY;
 *
 * @note
 */
-class Illusion_Protobuf_Reflect
+class Protobuf_Reflect_AUX
 {
     //
 public:

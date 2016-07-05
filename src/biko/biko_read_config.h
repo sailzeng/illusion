@@ -1,13 +1,23 @@
 #pragma once
 
-#include "biko_protobuf_reflect.h"
+
 #include "biko_qt_excel_engine.h"
+#include "biko_illusion_message.h"
 
 
 
 //===========================================================================================
 //
+//
+struct ZCE_PROTO_ERROR
+{
+	std::string file_name_;
+	int line_;
+	int column_;
+	std::string message_;
+};
 
+typedef std::vector<ZCE_PROTO_ERROR> PROTO_ERROR_ARRAY;
 
 //错误收集
 class ZCE_Error_Collector : public google::protobuf::compiler::MultiFileErrorCollector
@@ -30,70 +40,17 @@ public:
 	PROTO_ERROR_ARRAY error_array_;
 };
 
-
 //===========================================================================================
+class Illusion_Message;
+
 
 class Biko_Read_Config
 {
-public:
+protected:
 
-
-
-    struct TABLE_CONFIG
-    {
-        //!表格名称
-        QString excel_table_name_;
-
-        //!表格数据从第几行读取
-        int read_data_start_ = 3;
-
-        //!表格对应的protobuf的message名称
-        QString pb_line_message_;
-
-        //!表格的第几行描述字段对应的protobuf
-        int pb_fieldname_line_ = 2;
-		
-		//存放protobuf配置数据的的文件名称
-		QString save_pb_config_;
-		//!对应的repeat line message 结构的名称，
-		QString pb_list_message_;
-
-        //!Protobuf item定义的数据
-        std::vector<QString>  proto_field_ary_;
-
-        //!假设结构如下，record是一个repeated 的message，
-        //!phonebook.master
-        //!phonebook.record.name
-        //!phonebook.record.tele_number
-        //!phonebook.record.email
-        //!phonebook.record.name
-        //!phonebook.record.tele_number
-        //!phonebook.record.email
-        //!那么phonebook.record.name出现的位置会被标识为item_msg_firstshow_ 为1
-        std::vector<int> item_msg_firstshow_;
-
-        //!在上面的例子  会被记录为phonebook.record.name
-        QString firstshow_field_;
-        //!在上面的例子 会被记录为phonebook.record
-        QString firstshow_msg_;
-
-    };
 
     //!枚举值的对应关系表
     typedef std::map <QString, QString >  MAP_QSTRING_TO_QSTRING;
-
-    //!
-    typedef std::map <QString, TABLE_CONFIG> MAP_TABLE_TO_CONFIG;
-
-    //!
-    struct EXCEL_FILE_DATA
-    {
-        MAP_QSTRING_TO_QSTRING  xls_enum_;
-
-        MAP_TABLE_TO_CONFIG  xls_table_cfg_;
-    };
-
-    typedef std::map <QString, EXCEL_FILE_DATA> MAP_FNAME_TO_CFGDATA;
 
 protected: // 仅从序列化创建
     Biko_Read_Config();
@@ -121,11 +78,11 @@ public:
     int init_read_all(const QString &excel_dir,
                       const QString &proto_dir,
                       const QString *outer_dir,
-					  QString &error_tips);
+					  QStringList &error_tips);
 
     //!所有的目录都在一个目录下的快捷处理方式
 	int init_read_all2(const QString &allinone_dir,
-					   QString &error_tips);
+					   QStringList &error_tips);
 
 	/*!
 	* @brief      初始化，准备读取一个EXCEL文件，转换为配置文件
@@ -140,7 +97,7 @@ public:
 					  const QString *excel_table_name,
 					  const QString &proto_dir,
 					  const QString *outer_dir,
-					  QString &error_tips);
+					  QStringList &error_tips);
 
 	
 
@@ -149,7 +106,7 @@ public:
 	void finalize();
 
 
-	int read_excel(QString &error_tips);
+	int read_excel(QStringList &error_tips);
 
 
 
@@ -160,37 +117,7 @@ public:
 protected:
 
     //读枚举值
-    int read_table_enum(EXCEL_FILE_DATA &file_cfg_data);
-
-    
-	/*!
-	* @brief      读取sheet [TABLE_CONFIG] 的配置
-	* @return     int 返回成功与否 == 0标识成功
-	* @param      file_cfg_data
-	* @param      error_tips
-	* @note       
-	*/
-	int read_table_config(EXCEL_FILE_DATA &file_cfg_data,
-						  QString &error_tips);
-
-
-	int read_sheet_pbcdata(TABLE_CONFIG &table_cfg,
-						   google::protobuf::Message *&list_msg,
-						   QString &error_tips);
-
-
-    
-	/*!
-	* @brief      将数据保存到Proto buf config 配置文件里面
-	* @return     int
-	* @param      table_cfg
-	* @param      line_msg
-	* @param      error_tips
-	* @note       
-	*/
-	int save_to_protocfg(const TABLE_CONFIG &table_cfg,
-						 const google::protobuf::Message *line_msg,
-						 QString &error_tips);
+    int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map);
 
 	/*!
 	* @brief      读取EXCEL初始化的内部实现，对接几个读取初始化接口
@@ -198,7 +125,7 @@ protected:
 	*/
 	int init_read(const QString &proto_dir,
 				  const QString *outer_dir,
-				  QString &error_tips);
+				  QStringList &error_tips);
 
 
 	/*!
@@ -208,7 +135,7 @@ protected:
 	* @param[out] error_tips 错误信息，输出参数
 	*/
 	int init_outdir(const QString *outer_dir,
-					QString &error_tips);
+					QStringList &error_tips);
 
 
 	/*!
@@ -218,7 +145,7 @@ protected:
 	* @param[out] error_tips 错误信息，输出参数
 	*/
 	int init_protodir(const QString &proto_dir,
-					  QString &error_tips);
+					  QStringList &error_tips);
 
 
 	/*!
@@ -229,10 +156,10 @@ protected:
 	*/
 	int read_one_excel(const QString &open_file,
 					   const QString *excel_table_name,
-					   QString &error_tips);
+					   QStringList &error_tips);
 
 	//!
-	int read_proto_file(const QString &proto_file,
+	int read_proto_file(const QFileInfo	&proto_file,
 						QStringList &error_tips);
 
 	
@@ -265,19 +192,22 @@ protected:
 
 	//!
 	google::protobuf::compiler::Importer *protobuf_importer_ = NULL;
-
 	//!
 	google::protobuf::compiler::DiskSourceTree *source_tree_ = NULL;
-
 	//
 	google::protobuf::DynamicMessageFactory *msg_factory_ = NULL;
-
 	//
 	ZCE_Error_Collector error_collector_;
 
-    //!文件对应的配置数据，用于我的查询
-    MAP_FNAME_TO_CFGDATA   file_cfg_map_;
+	//!
+	std::vector <const Illusion_Message *> illusion_msg_ary_;
 
+    //!文件对应的配置数据，用于我的查询
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_cfg_map_;
+	//!
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> proto_cfg_map_;
+	//!
+	std::map <QString, const Illusion_Message *> outer_cfg_map_;
 
 	//!EXCEL文件列表
 	QFileInfoList excel_fileary_;
