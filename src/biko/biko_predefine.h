@@ -4,7 +4,7 @@
 
 
 // 在WINDOWS下和POSIX标准兼容的宏，VS2003以下版本如何，我没有测试，2003以后，Windows对于很多代码宏会使用"_"前缀，
-#ifndef _CRT_NONSTDC_NO_DEPRECATE 
+#ifndef _CRT_NONSTDC_NO_DEPRECATE
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 #endif
 #ifndef _CRT_NONSTDC_NO_WARNINGS
@@ -141,7 +141,7 @@ using std::unordered_set;
 #include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 #include <QtCore/QVariant>
-#include <QtCore/QDir> 
+#include <QtCore/QDir>
 
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTableView>

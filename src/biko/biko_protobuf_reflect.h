@@ -45,7 +45,7 @@ class Protobuf_Reflect_AUX
     //
 public:
 
-    
+
     /*!
     * @brief      根据fullname，也就是 phone_book.number 设置一个Message的field
     * @return     int
@@ -79,11 +79,11 @@ public:
                               google::protobuf::Message *&sub_msg);
 
 
-	//!定位一个子结构
-	static int locate_msgfield(google::protobuf::Message *msg,
-							   const google::protobuf::FieldDescriptor *msg_field,
-							   google::protobuf::Message *&sub_msg,
-							   bool message_add);
+    //!定位一个子结构
+    static int locate_msgfield(google::protobuf::Message *msg,
+                               const google::protobuf::FieldDescriptor *msg_field,
+                               google::protobuf::Message *&sub_msg,
+                               bool message_add);
 
     //!打印输出一个Message的信息到ostream里面，
     static void protobuf_output(const google::protobuf::Message *msg,
@@ -95,13 +95,13 @@ public:
     static void message_set_default(google::protobuf::Message *msg);
 
 
-	//!
-	static bool string_to_bool(const std::string& str);
+    //!
+    static bool string_to_bool(const std::string &str);
 
-	
-	static void string_split(const std::string &source_str,
-							 const std::string &separator,
-							 std::vector<std::string> &v);
+
+    static void string_split(const std::string &source_str,
+                             const std::string &separator,
+                             std::vector<std::string> &v);
 
 
 

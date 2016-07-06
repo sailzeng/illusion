@@ -10,7 +10,7 @@
 
 
 
-////
+//!
 //void Illusion_Protobuf_Reflect::error_info(PROTO_ERROR_ARRAY &error_ary)
 //{
 //    error_ary = error_collector_.error_array_;
@@ -26,7 +26,7 @@
 //        protobuf_importer_->pool()->FindMessageTypeByName(type_name);
 //    if (!proc_msg_desc)
 //    {
-//		fprintf(stderr, "Importer DescriptorPool FindMessageTypeByName by name [%s] fail.",
+//      fprintf(stderr, "Importer DescriptorPool FindMessageTypeByName by name [%s] fail.",
 //                type_name.c_str());
 //        return -1;
 //    }
@@ -35,7 +35,7 @@
 //    const google::protobuf::Message *message = msg_factory_->GetPrototype(proc_msg_desc);
 //    if (!message)
 //    {
-//		fprintf(stderr, "DynamicMessageFactory GetPrototype by name [%s] fail.",
+//      fprintf(stderr, "DynamicMessageFactory GetPrototype by name [%s] fail.",
 //                type_name.c_str());
 //        return -1;
 //    }
@@ -49,8 +49,8 @@
 
 
 int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
-                                             const google::protobuf::FieldDescriptor *field,
-                                             const std::string &set_data)
+                                        const google::protobuf::FieldDescriptor *field,
+                                        const std::string &set_data)
 {
     assert(field);
 
@@ -61,7 +61,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
     {
         if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED)
         {
-			fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.",
+            fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.",
                     field->full_name().c_str());
             return -1;
         }
@@ -141,7 +141,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
             }
             else
             {
-				fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].",
+                fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].",
                         set_data.c_str(),
                         enum_desc->full_name().c_str());
                 return -1;
@@ -171,7 +171,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
         else
         {
             //不支持的类型，这个地方如果出现TYPE_MESSAGE。也是不正常的。
-			fprintf(stderr, "I don't field [%s] support this type.%d %s",
+            fprintf(stderr, "I don't field [%s] support this type.%d %s",
                     field->full_name().c_str(),
                     field->type(),
                     field->type_name());
@@ -249,7 +249,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
             }
             else
             {
-				fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].",
+                fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].",
                         set_data.c_str(),
                         enum_desc->full_name().c_str());
                 return -1;
@@ -278,7 +278,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
         }
         else
         {
-			fprintf(stderr, "I don't field [%s] support this type.%d %s",
+            fprintf(stderr, "I don't field [%s] support this type.%d %s",
                     field->full_name().c_str(),
                     field->type(),
                     field->type_name());
@@ -288,7 +288,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
     }
     else
     {
-		fprintf(stderr, "I don't field [%s] support this type.%d %s",
+        fprintf(stderr, "I don't field [%s] support this type.%d %s",
                 field->full_name().c_str(),
                 field->type(),
                 field->type_name());
@@ -301,9 +301,9 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
 
 //定位一个子结构
 int Protobuf_Reflect_AUX::locate_sub_msg(google::protobuf::Message *msg,
-                                              const std::string &submsg_field_name,
-                                              bool message_add,
-                                              google::protobuf::Message *&sub_msg)
+                                         const std::string &submsg_field_name,
+                                         bool message_add,
+                                         google::protobuf::Message *&sub_msg)
 {
     //得到结构的描述和反射
     const google::protobuf::Reflection *reflection = msg->GetReflection();
@@ -370,79 +370,79 @@ int Protobuf_Reflect_AUX::locate_sub_msg(google::protobuf::Message *msg,
     return 0;
 }
 
-int Protobuf_Reflect_AUX::locate_msgfield(google::protobuf::Message * msg, 
-											   const google::protobuf::FieldDescriptor * msg_field, 
-											   google::protobuf::Message *& sub_msg,
-											   bool message_add)
+int Protobuf_Reflect_AUX::locate_msgfield(google::protobuf::Message *msg,
+                                          const google::protobuf::FieldDescriptor *msg_field,
+                                          google::protobuf::Message *& sub_msg,
+                                          bool message_add)
 {
-	//得到结构的描述和反射
-	const google::protobuf::Reflection *reflection = msg->GetReflection();
-	const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
+    //得到结构的描述和反射
+    const google::protobuf::Reflection *reflection = msg->GetReflection();
+    const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
 
-	//没有找到对应的字段描述
-	if (!msg_field)
-	{
-		return -1;
-	}
+    //没有找到对应的字段描述
+    if (!msg_field)
+    {
+        return -1;
+    }
 
-	if (msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED ||
-		msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_OPTIONAL)
-	{
-		//如果是字段是一个普通结构
-		if (msg_field->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
-		{
-			sub_msg = reflection->MutableMessage(msg, msg_field, NULL);
-			if (!sub_msg)
-			{
-				return -1;
-			}
-		}
-	}
-	else if (msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REPEATED)
-	{
-		// Length-delimited message.
-		if (msg_field->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
-		{
-			//如果要增加一个repeated的数据
-			if (message_add)
-			{
-				sub_msg = reflection->AddMessage(msg, msg_field, NULL);
-				if (!sub_msg)
-				{
-					return -1;
-				}
-			}
-			//如果不用增加，使用repeated 数组的最后一个数据，
-			else
-			{
-				int ary_size = reflection->FieldSize(*msg, msg_field);
-				if (ary_size == 0)
-				{
-					return -1;
-				}
-				sub_msg = reflection->MutableRepeatedMessage(msg, msg_field, ary_size - 1);
-				if (!sub_msg)
-				{
-					return -1;
-				}
-			}
-		}
-	}
-	else
-	{
-		assert(false);
-		return -1;
-	}
+    if (msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED ||
+        msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_OPTIONAL)
+    {
+        //如果是字段是一个普通结构
+        if (msg_field->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
+        {
+            sub_msg = reflection->MutableMessage(msg, msg_field, NULL);
+            if (!sub_msg)
+            {
+                return -1;
+            }
+        }
+    }
+    else if (msg_field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REPEATED)
+    {
+        // Length-delimited message.
+        if (msg_field->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
+        {
+            //如果要增加一个repeated的数据
+            if (message_add)
+            {
+                sub_msg = reflection->AddMessage(msg, msg_field, NULL);
+                if (!sub_msg)
+                {
+                    return -1;
+                }
+            }
+            //如果不用增加，使用repeated 数组的最后一个数据，
+            else
+            {
+                int ary_size = reflection->FieldSize(*msg, msg_field);
+                if (ary_size == 0)
+                {
+                    return -1;
+                }
+                sub_msg = reflection->MutableRepeatedMessage(msg, msg_field, ary_size - 1);
+                if (!sub_msg)
+                {
+                    return -1;
+                }
+            }
+        }
+    }
+    else
+    {
+        assert(false);
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 
 int Protobuf_Reflect_AUX::get_fielddesc(google::protobuf::Message *msg,
-                                             const std::string &full_name,
-                                             bool message_add,
-                                             google::protobuf::Message *&field_msg,
-                                             const google::protobuf::FieldDescriptor *&field_desc)
+                                        const std::string &full_name,
+                                        bool message_add,
+                                        google::protobuf::Message *&field_msg,
+                                        const google::protobuf::FieldDescriptor *&field_desc)
 {
     int ret = 0;
 
@@ -460,9 +460,9 @@ int Protobuf_Reflect_AUX::get_fielddesc(google::protobuf::Message *msg,
         for (size_t i = 0; i < level_num - 1; ++i)
         {
             ret = Protobuf_Reflect_AUX::locate_sub_msg(src_msg,
-                                                            v[i],
-                                                            message_add,
-                                                            field_msg);
+                                                       v[i],
+                                                       message_add,
+                                                       field_msg);
             if (0 != ret)
             {
                 return ret;
@@ -485,9 +485,9 @@ int Protobuf_Reflect_AUX::get_fielddesc(google::protobuf::Message *msg,
 
 //根据fullname，也就是 phone_book.number 设置一个Message的field
 int Protobuf_Reflect_AUX::set_field(google::protobuf::Message *msg,
-                                         const std::string &full_name,
-                                         const std::string &set_data,
-                                         bool repeated_add)
+                                    const std::string &full_name,
+                                    const std::string &set_data,
+                                    bool repeated_add)
 {
     int ret = 0;
     const google::protobuf::FieldDescriptor *field = NULL;
@@ -495,10 +495,10 @@ int Protobuf_Reflect_AUX::set_field(google::protobuf::Message *msg,
 
     //取得字段的描述
     ret = Protobuf_Reflect_AUX::get_fielddesc(msg,
-                                                   full_name,
-                                                   repeated_add,
-                                                   sub_msg,
-                                                   field);
+                                              full_name,
+                                              repeated_add,
+                                              sub_msg,
+                                              field);
     if (0 != ret)
     {
         return ret;
@@ -516,7 +516,7 @@ int Protobuf_Reflect_AUX::set_field(google::protobuf::Message *msg,
 
 //用UTF8 的coding 编码方式输出一个MESSAGE的信息，方便查看。
 void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
-                                                std::ostream *out)
+                                           std::ostream *out)
 {
     const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
     const google::protobuf::Reflection *reflection = msg->GetReflection();
@@ -605,7 +605,7 @@ void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
             }
             else
             {
-				fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -686,7 +686,7 @@ void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
                     std::string utf8_string = reflection->GetRepeatedString(*msg, field_desc, j);
 
                     *out << "\t" << field_desc->full_name() << ":" <<
-                        utf8_string << std::endl;
+                         utf8_string << std::endl;
                 }
             }
             else if (field_desc->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
@@ -757,7 +757,7 @@ void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
             }
             else
             {
-				fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -767,7 +767,7 @@ void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
         }
         else
         {
-			assert(false);
+            assert(false);
         }
     }
     return;
@@ -858,7 +858,7 @@ void Protobuf_Reflect_AUX::message_set_default(google::protobuf::Message *msg)
             }
             else
             {
-				fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -991,7 +991,7 @@ void Protobuf_Reflect_AUX::message_set_default(google::protobuf::Message *msg)
             }
             else
             {
-				fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -1008,68 +1008,68 @@ void Protobuf_Reflect_AUX::message_set_default(google::protobuf::Message *msg)
 }
 
 
-bool Protobuf_Reflect_AUX::string_to_bool(const std::string& str)
+bool Protobuf_Reflect_AUX::string_to_bool(const std::string &str)
 {
 
-	if (0 == stricmp("TRUE", str.c_str()))
-	{
-		return true;
-	}
-	else if (1 == ::atoi(str.c_str()))
-	{
-		return true;
-	}
-	return false;
+    if (0 == stricmp("TRUE", str.c_str()))
+    {
+        return true;
+    }
+    else if (1 == ::atoi(str.c_str()))
+    {
+        return true;
+    }
+    return false;
 }
 
 void Protobuf_Reflect_AUX::string_split(const std::string &source_str,
-						 const std::string &separator,
-						 std::vector<std::string> &v)
+                                        const std::string &separator,
+                                        std::vector<std::string> &v)
 {
 
-	std::string::const_iterator fs = source_str.begin();
-	std::string::const_iterator ls = source_str.end();
-	std::string::const_iterator fo = separator.begin();
-	std::string::const_iterator lo = separator.end();
+    std::string::const_iterator fs = source_str.begin();
+    std::string::const_iterator ls = source_str.end();
+    std::string::const_iterator fo = separator.begin();
+    std::string::const_iterator lo = separator.end();
 
-	//使用尾部插入的迭代器
-	std::back_insert_iterator<std::vector<std::string> > o = std::back_inserter(v);
-	if (fo == lo)
-	{
-		*o = std::vector<std::string>::value_type(fs, ls);
-		return;
-	}
+    //使用尾部插入的迭代器
+    std::back_insert_iterator<std::vector<std::string> > o = std::back_inserter(v);
+    if (fo == lo)
+    {
+        *o = std::vector<std::string>::value_type(fs, ls);
+        return;
+    }
 
-	// current position old_str in str
-	std::string::const_iterator  pos = std::search(fs, ls, fo, lo,
-								 std::equal_to<std::string::value_type>());
+    // current position old_str in str
+    std::string::const_iterator  pos = std::search(fs, ls, fo, lo,
+                                                   std::equal_to<std::string::value_type>());
 
-	if (pos == ls)
-	{
-		if (fs < ls)
-		{
-			*o = std::vector<std::string>::value_type(fs, ls);
-		}
+    if (pos == ls)
+    {
+        if (fs < ls)
+        {
+            *o = std::vector<std::string>::value_type(fs, ls);
+        }
 
-		return;
-	}
+        return;
+    }
 
-	size_t old_size = std::distance(fo, lo);
+    size_t old_size = std::distance(fo, lo);
 
-	for (; pos != ls;)
-	{
-		// append src string
-		*o = std::vector<std::string>::value_type(fs, pos);
-		// ignore old_str
-		fs = pos + old_size;
-		// find next
-		pos = std::search(fs, ls, fo, lo, std::equal_to<std::string::value_type>());
-	}
+    for (; pos != ls;)
+    {
+        // append src string
+        *o = std::vector<std::string>::value_type(fs, pos);
+        // ignore old_str
+        fs = pos + old_size;
+        // find next
+        pos = std::search(fs, ls, fo, lo, std::equal_to<std::string::value_type>());
+    }
 
-	if (fs != ls)
-	{
-		*o = std::vector<std::string>::value_type(fs, ls);
-	}
+    if (fs != ls)
+    {
+        *o = std::vector<std::string>::value_type(fs, ls);
+    }
 
-	return;
+    return;
 }

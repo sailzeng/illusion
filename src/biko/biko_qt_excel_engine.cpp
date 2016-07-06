@@ -39,11 +39,11 @@ BikoQtExcelEngine::~BikoQtExcelEngine()
 bool BikoQtExcelEngine::initialize(bool visible)
 {
 
-	HRESULT r = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    HRESULT r = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (r != S_OK && r != S_FALSE)
     {
         qDebug("Qt: Could not initialize OLE (error %x)", (unsigned int)r);
-		return false;
+        return false;
     }
     is_visible_ = visible;
     //
@@ -52,13 +52,13 @@ bool BikoQtExcelEngine::initialize(bool visible)
         excel_instance_ = new QAxObject("Excel.Application");
         if (excel_instance_->isNull())
         {
-			is_valid_ = false;
-			is_open_ = false;
-			return is_open_;
+            is_valid_ = false;
+            is_open_ = false;
+            return is_open_;
         }
         else
         {
-			is_valid_ = true;
+            is_valid_ = true;
         }
 
         excel_instance_->dynamicCall("SetVisible(bool)", is_visible_);
@@ -84,7 +84,7 @@ void BikoQtExcelEngine::finalize()
         is_save_already_ = true;
     }
 
-	::CoUninitialize();
+    ::CoUninitialize();
 }
 
 
@@ -106,34 +106,34 @@ bool BikoQtExcelEngine::open(const QString &xls_file, int  sheet_index)
         is_open_ = false;
         return is_open_;
     }
-	
-	//如果指向的文件不存在，则需要新建一个
-	QFileInfo fi(xls_file_);
-	if (!fi.exists())
-	{
-		is_a_newfile_ = true;
-	}
-	else
-	{
-		is_a_newfile_ = false;
-	}
 
-	work_books_ = excel_instance_->querySubObject("WorkBooks");
+    //如果指向的文件不存在，则需要新建一个
+    QFileInfo fi(xls_file_);
+    if (!fi.exists())
+    {
+        is_a_newfile_ = true;
+    }
+    else
+    {
+        is_a_newfile_ = false;
+    }
+
+    work_books_ = excel_instance_->querySubObject("WorkBooks");
     if (!is_a_newfile_)
     {
         //打开xls对应的，获取工作簿
-		active_book_ = work_books_->querySubObject("Open(const QString&,QVariant)", xls_file_,0);
+        active_book_ = work_books_->querySubObject("Open(const QString&,QVariant)", xls_file_, 0);
     }
     else
     {
         //新建一个xls，添加一个新的工作薄
         work_books_->dynamicCall("Add()");
-		active_book_ = excel_instance_->querySubObject("ActiveWorkBook");
+        active_book_ = excel_instance_->querySubObject("ActiveWorkBook");
     }
-	
-	work_sheets_ = active_book_->querySubObject("WorkSheets");
 
-	//至此已打开
+    work_sheets_ = active_book_->querySubObject("WorkSheets");
+
+    //至此已打开
     loadSheet(curr_sheet_);
 
     is_open_ = true;
@@ -212,7 +212,7 @@ bool BikoQtExcelEngine::loadSheet(int sheet_index)
     {
         return false;
     }
-	load_sheet_internal();
+    load_sheet_internal();
     return true;
 }
 
@@ -227,44 +227,44 @@ bool BikoQtExcelEngine::loadSheet(const QString &sheet_name)
     {
         return false;
     }
-	load_sheet_internal();
+    load_sheet_internal();
     return true;
 }
 
-bool BikoQtExcelEngine::hasSheet(const QString & sheet_name)
+bool BikoQtExcelEngine::hasSheet(const QString &sheet_name)
 {
-	QAxObject *temp_sheet = active_book_->querySubObject("WorkSheets(QString)", sheet_name);
-	if (!temp_sheet)
-	{
-		return false;
-	}
-	return true;
+    QAxObject *temp_sheet = active_book_->querySubObject("WorkSheets(QString)", sheet_name);
+    if (!temp_sheet)
+    {
+        return false;
+    }
+    return true;
 }
 
 void BikoQtExcelEngine::load_sheet_internal()
 {
-	//获取该sheet的使用范围对象
-	QAxObject *used_range = active_sheet_->querySubObject("UsedRange");
-	QAxObject *rows = used_range->querySubObject("Rows");
-	QAxObject *columns = used_range->querySubObject("Columns");
+    //获取该sheet的使用范围对象
+    QAxObject *used_range = active_sheet_->querySubObject("UsedRange");
+    QAxObject *rows = used_range->querySubObject("Rows");
+    QAxObject *columns = used_range->querySubObject("Columns");
 
-	//因为excel可以从任意行列填数据而不一定是从0,0开始，因此要获取首行列下标
-	//第一行的起始位置
-	start_row_ = used_range->property("Row").toInt();
-	//第一列的起始位置
-	start_column_ = used_range->property("Column").toInt();
-	//获取行数
-	row_count_ = rows->property("Count").toInt();
-	//获取列数
-	column_count_ = columns->property("Count").toInt();
-	return;
+    //因为excel可以从任意行列填数据而不一定是从0,0开始，因此要获取首行列下标
+    //第一行的起始位置
+    start_row_ = used_range->property("Row").toInt();
+    //第一列的起始位置
+    start_column_ = used_range->property("Column").toInt();
+    //获取行数
+    row_count_ = rows->property("Count").toInt();
+    //获取列数
+    column_count_ = columns->property("Count").toInt();
+    return;
 }
 
 
 //!打开的xls文件名称
 QString BikoQtExcelEngine::open_filename() const
 {
-	return xls_file_;
+    return xls_file_;
 }
 
 /**
@@ -395,7 +395,7 @@ QVariant BikoQtExcelEngine::get_cell(int row, int column)
   *@return 修改是否成功 true : 成功
   *                   false: 失败
   */
-bool BikoQtExcelEngine::set_cell(int row, int column,const QVariant &data)
+bool BikoQtExcelEngine::set_cell(int row, int column, const QVariant &data)
 {
     bool op = false;
 
@@ -470,32 +470,32 @@ void BikoQtExcelEngine::insertSheet(const QString &sheet_name)
     a->setProperty("Name", sheet_name);
     active_sheet_ = a;
 
-	load_sheet_internal();
+    load_sheet_internal();
 }
 
 
 //取得列的名称，比如27->AA
 char *BikoQtExcelEngine::column_name(int column_no)
 {
-	static char column_name[64];
-	size_t str_len = 0;
+    static char column_name[64];
+    size_t str_len = 0;
 
-	while (column_no > 0)
-	{
-		int num_data = column_no % 26;
-		column_no /= 26;
-		if (num_data == 0)
-		{
-			num_data = 26;
-			column_no--;
-		}
-		//不知道这个对不，
-		column_name[str_len] = (char)((num_data - 1) + ('A'));
-		str_len++;
-	}
-	column_name[str_len] = '\0';
-	//反转
-	strrev(column_name);
+    while (column_no > 0)
+    {
+        int num_data = column_no % 26;
+        column_no /= 26;
+        if (num_data == 0)
+        {
+            num_data = 26;
+            column_no--;
+        }
+        //不知道这个对不，
+        column_name[str_len] = (char)((num_data - 1) + ('A'));
+        str_len++;
+    }
+    column_name[str_len] = '\0';
+    //反转
+    strrev(column_name);
 
-	return column_name;
+    return column_name;
 }

@@ -3,26 +3,26 @@
 * @copyright  2004-2016  Apache License, Version 2.0 FULLSAIL
 * @filename   populous_qt_excel_engine.h
 * @author     yaoboyuan 254200341@qq.com 原创    Sailzeng 改写 <sailerzeng@gmail.com>
-* @version    
+* @version
 * @date       2016年6月10日
 * @brief      这是一个便于Qt读写excel封装的类，同时，便于把excel中的数据
 *             显示到界面上，或者把界面上的数据写入excel中，同GUI进行交互，关系如下：
 *             Qt tableWidget <--> ExcelEngine <--> xls file.
-* @details    
-*             
-*             
-*             
+* @details
+*
+*
+*
 * @note       ExcelEngine类只负责读/写数据，不负责解析，做中间层
-*           
-* @history      
-* @author     yaoboyuan 254200341@qq.com 
+*
+* @history
+* @author     yaoboyuan 254200341@qq.com
 * @date       2012-4-12
 * @note       原创
 * @author     Sailzeng 改写 <sailerzeng@gmail.com>
 * @data       2016-6-7 端午节前夕
 * @note       对原有的代码做了一些改动，更加符合Qt的编码格式等。
 *             增加了一些常用函数，更加方便实用
-*             
+*
 */
 
 
@@ -31,8 +31,8 @@
 
 
 /*!
-* @brief      
-*             
+* @brief
+*
 * note       代码风格我打算全部采用Qt的代码风格。
 */
 class BikoQtExcelEngine : protected QObject
@@ -45,7 +45,7 @@ public:
 
 public:
 
-    
+
     /*!
     * @brief      初始化EXCEL OLE对象，打开EXCEL 进程，
     * @return     bool  返回是否成功打开
@@ -84,7 +84,7 @@ public:
     * @param      sheet_index sheet索引，从1开始
     */
     bool loadSheet(int sheet_index);
-    
+
     /*!
     * @brief      根据sheet表格表名加载sheet，
     * @return     bool 返回是否成功加载
@@ -92,13 +92,13 @@ public:
     */
     bool loadSheet(const QString &sheet_name);
 
-	
-	/*!
-	* @brief      检查是否有这个名字的sheet
-	* @return     bool 有返回true，否则返回false
-	* @param      sheet_name
-	*/
-	bool hasSheet(const QString &sheet_name);
+
+    /*!
+    * @brief      检查是否有这个名字的sheet
+    * @return     bool 有返回true，否则返回false
+    * @param      sheet_name
+    */
+    bool hasSheet(const QString &sheet_name);
 
     //保存数据到xls
     bool writeTableWidget(QTableWidget *table_widget);
@@ -106,24 +106,24 @@ public:
     //从xls读取数据到ui
     bool readTableWidget(QTableWidget *table_widget);
 
-	/*!
+    /*!
     * @brief      获取指定单元数据
     * @return     QVariant  单元格对应的数据
     * @param      row  单元格的行号,注意行号，列号都是从1开始
     * @param      column 单元格的列号
-    * @note       
+    * @note
     */
     QVariant get_cell(int  row, int  column);
 
     //修改指定单元数据
-    bool  set_cell(int  row, int  column,const QVariant &data);
+    bool  set_cell(int  row, int  column, const QVariant &data);
 
-	//!打开的xls文件名称
-	QString open_filename() const;
+    //!打开的xls文件名称
+    QString open_filename() const;
 
-	//!
+    //!
     int  row_count()const;
-	//!
+    //!
     int  column_count()const;
 
 
@@ -134,12 +134,12 @@ protected:
 
     void clear();
 
-	//!加载，内部函数，以后可以考虑增加一个预加载，加快读取速度。
-	void load_sheet_internal();
+    //!加载，内部函数，以后可以考虑增加一个预加载，加快读取速度。
+    void load_sheet_internal();
 
 public:
 
-	static char *BikoQtExcelEngine::column_name(int column_no);
+    static char *BikoQtExcelEngine::column_name(int column_no);
 
 private:
 
