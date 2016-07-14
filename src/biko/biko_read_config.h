@@ -84,32 +84,15 @@ public:
     int init_read_all2(const QString &allinone_dir,
                        QStringList &error_tips);
 
-    /*!
-    * @brief      初始化，准备读取一个EXCEL文件，转换为配置文件
-    * @return     int
-    * @param      excel_file
-    * @param      proto_dir 根据proto_dir目录下的meta文件反射，
-    * @param      outer_dir 转换成位置文件输出到outer_dir目录
-    * @param      table_name 表名，为NULL标识，全文件进行转换
-    * @param[out] error_tips 错误信息，输出参数
-    */
-	int init_read_one(const QString &proto_dir,
-					  const QString &messge_full_name,
-					  const QString &outer_dir,
-					  QStringList &error_tips);
-
-
     //!12312
     void finalize();
 
 
-    int read_all_message(QStringList &error_tips);
+	int read_all_message(QStringList &tips_info);
 
 
-	int read_one_message(const QString &proto_dir,
-					   const QString &messge_full_name,
-					   const QString &outer_dir,
-					   QStringList &error_tips);
+	int read_one_message(const QString &messge_full_name,
+						 QStringList &error_tips);
 
     //清理所有的读取数据
     void clear();
@@ -150,6 +133,14 @@ protected:
     int read_proto_file(const QFileInfo &proto_file,
                         QStringList &error_tips);
 
+	//!
+	int open_illusion_excel(const QString &excel_file_name,
+							bool read_enum_sheet,
+						    QStringList &error_tips);
+
+	//!
+	int read_illusion_excel(const Illusion_Message *ils_msg,
+							QStringList &error_tips);
 
 protected:
 

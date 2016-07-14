@@ -128,31 +128,6 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
 	return 0;
 }
 
-//初始化，准备读取一个EXCEL文件，转换为配置文件
-int Biko_Read_Config::init_read_one(const QString &proto_dir,
-							        const QString &messge_full_name,
-                                    const QString &outer_dir,
-                                    QStringList &error_tips)
-{
-    int ret = 0;
-	//
-	ret = init_protodir(proto_dir, error_tips);
-	if (ret != 0)
-	{
-		return -1;
-	}
-	auto iter = msgname_2_illusion_map_.find(messge_full_name);
-	if (iter == msgname_2_illusion_map_.end())
-	{
-		error_tips.append(QString::fromLocal8Bit("[%1] Message 名称无法找到，请检查您的输入或者.proto文件。")
-			.arg(messge_full_name));
-		return -1;
-	}
-
-    return 0;
-}
-
-
 //初始化.proto文件目录，读取里面所有的proto文件
 int Biko_Read_Config::init_protodir(const QString &proto_dir,
                                     QStringList &error_tips)
@@ -273,115 +248,46 @@ void Biko_Read_Config::clear()
 //把扫描或者参数的EXCEL文件都进行一次读取
 int Biko_Read_Config::read_all_message(QStringList &error_tips)
 {
+	int ret = 0;
 	for (size_t i = 0; i < illusion_msg_ary_.size(); ++i)
 	{
-		ret = read_one_message()
+		ret = open_illusion_excel(illusion_msg_ary_[i]->excel_file_name_,
+								  false,
+								  error_tips);
+		if (0 != ret)
+		{
+			return ret;
+		}
 	}
     return 0;
 }
 
-int Biko_Read_Config::read_one_message(const QString & proto_dir, const QString & messge_full_name, const QString & outer_dir, QStringList & error_tips)
+int Biko_Read_Config::read_one_message(const QString & messge_full_name, 
+									   QStringList & error_tips)
 {
+	int ret = 0;
+	auto iter = msgname_2_illusion_map_.find(messge_full_name);
+	if (iter == msgname_2_illusion_map_.end())
+	{
+		error_tips.append(QString::fromLocal8Bit("[%1] Message 名称无法找到，请检查您的输入或者.proto文件。")
+						  .arg(messge_full_name));
+		return -1;
+	}
+
+	ret = open_illusion_excel(iter->second->excel_file_name_,
+							  false,
+							  error_tips);
+	if (0 != ret)
+	{
+		return ret;
+	}
 	return 0;
 }
 
-///读取一个EXCEL文件，如果制定了表格，只读取特定表格
-//int Biko_Read_Config::read_one_excel(const QString &open_file,
-//                                       const QString *excel_table_name,
-//                                       QString &error_tips)
-//{
-//    clear();
-//
-//    bool bret = ils_excel_file_.open(open_file);
-//    //Excel文件打开失败
-//    if (bret != true)
-//    {
-//        return -1;
-//    }
-//    //
-//    qDebug() << "Dream excecl file have sheet num["
-//             << ils_excel_file_.sheetsCount()
-//             << "].\n";
-//
-//    //表格错误
-//    if (ils_excel_file_.hasSheet("TABLE_CONFIG") == false ||
-//        ils_excel_file_.hasSheet("ENUM_CONFIG") == false)
-//    {
-//        //
-//        error_tips = QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[TABLE_CONFIG]"
-//                                          " or [ENUM_CONFIG]"
-//                                          "，请重现检查后打开。!");
-//        return -1;
-//    }
-//
-//    //file_cfg_map_[open_file] = excel_data;
-//    EXCEL_FILE_DATA excel_data;
-//    auto result = file_cfg_map_.insert(std::make_pair(open_file, excel_data));
-//    if (!result.second)
-//    {
-//        return -1;
-//    }
-//
-//    //
-//    EXCEL_FILE_DATA &xls_data = (*result.first).second;
-//    int ret = read_table_enum(xls_data);
-//    if (0 != ret)
-//    {
-//        error_tips = QString::fromLocal8Bit("你选择的配置EXCEL文件中的[ENUM_CONFIG]表不正确，请重现检查后打开。!");
-//        return ret;
-//    }
-//
-//    //
-//    ret = read_table_config(xls_data, error_tips);
-//    if (0 != ret)
-//    {
-//        error_tips = QString::fromLocal8Bit("你选择的配置EXCEL文件中的TABLE_CONFIG表不正确，请重现检查后打开。!");
-//        return ret;
-//    }
-//
-//  if (excel_table_name && ils_excel_file_.hasSheet(*excel_table_name) == false)
-//  {
-//      error_tips = QString::fromLocal8Bit("没有一张表格被读取了!您设置的读取表格[%1]应该不存在").
-//          arg(*excel_table_name);
-//      return -1;
-//  }
-//
-//  bool already_read = false;
-//    auto iter_tmp = xls_data.xls_table_cfg_.begin();
-//    for (; iter_tmp != xls_data.xls_table_cfg_.end(); ++iter_tmp)
-//    {
-//      //如果标识了table name，只读取这个table
-//      if (excel_table_name && *excel_table_name != iter_tmp->second.excel_table_name_)
-//      {
-//          continue;
-//      }
-//      already_read = true;
-//
-//      if (iter_tmp->second.save_pb_config_.isEmpty() == false)
-//      {
-//          google::protobuf::Message *list_msg = NULL;
-//          ret = read_sheet_pbcdata(iter_tmp->second, list_msg, error_tips);
-//          if (0 != ret)
-//          {
-//              return ret;
-//          }
-//
-//          ret = save_to_protocfg(iter_tmp->second, list_msg, error_tips);
-//          if (0 != ret)
-//          {
-//              return ret;
-//          }
-//      }
-//    }
-//  //如果没有读取,理论上前面检查了表格是否存在
-//  if (!already_read)
-//  {
-//      error_tips = QString::fromLocal8Bit("没有一张表格被读取了!原因不明，我的确不明。");
-//      return -1;
-//  }
-//    return 0;
-//}
 
+
+
+//
 int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
                                       QStringList &tips_info)
 {
@@ -517,385 +423,149 @@ int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map)
 }
 
 
-//!/读取表格配置
-//int Biko_Read_Config::read_table_config(EXCEL_FILE_DATA &file_cfg_data,
-//                                          QString &error_tips)
-//{
-//    //前面检查过了
-//    bool bret = ils_excel_file_.loadSheet("TABLE_CONFIG");
-//    if (bret == false)
-//    {
-//      error_tips = QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[TABLE_CONFIG]"
-//                                          "，请重现检查后打开。!");
-//        return -1;
-//    }
-//
-//    long row_count = ils_excel_file_.row_count();
-//    long col_count = ils_excel_file_.column_count();
-//    qDebug() << "TABLE_CONFIG table have col_count = " << col_count << " row_count =" << row_count << "\n";
-//
-//    //注意行列的下标都是从1开始。
-//    const int COL_TC_KEY = 1;
-//    const int COL_TC_VALUE = 2;
-//  bool info_imperfect = false;
-//  QString cur_process_sheet;
-//
-//    for (int row_no = 1; row_no <= row_count; ++row_no)
-//    {
-//
-//        QString tc_key = ils_excel_file_.get_cell(row_no, COL_TC_KEY).toString();
-//
-//        QString temp_value;
-//        TABLE_CONFIG tc_data;
-//
-//      //发现一个这个名称，就读取一排数据
-//        if (tc_key == QString::fromLocal8Bit("读取的SHEET名称"))
-//        {
-//            tc_data.excel_table_name_ = ils_excel_file_.get_cell(row_no, COL_TC_VALUE).toString();
-//            if (tc_data.excel_table_name_.isEmpty())
-//            {
-//                continue;
-//            }
-//          cur_process_sheet = tc_data.excel_table_name_;
-//          //如果剩余的数据不够，认为发生错误
-//            ++row_no;
-//            if (row_no > row_count)
-//            {
-//              info_imperfect = true;
-//                break;
-//            }
-//
-//            tc_data.read_data_start_ = ils_excel_file_.get_cell(row_no, COL_TC_VALUE).toInt();
-//            if (tc_data.read_data_start_ <= 0)
-//            {
-//              error_tips = QString::fromLocal8Bit("SHEET[%1]的起始读取行字段错误，行号从1开始。").
-//                  arg(tc_data.excel_table_name_);
-//                return -1;
-//            }
-//            ++row_no;
-//            if (row_no > row_count)
-//            {
-//              info_imperfect = true;
-//              break;
-//            }
-//
-//            tc_data.pb_line_message_ = ils_excel_file_.get_cell(row_no, COL_TC_VALUE).toString();
-//            if (tc_data.pb_line_message_.isEmpty())
-//            {
-//              error_tips = QString::fromLocal8Bit("SHEET[%1]的对应的Protobuf 对应的行Message必须填写。").
-//                  arg(tc_data.excel_table_name_);
-//                return -1;
-//            }
-//            ++row_no;
-//            if (row_no > row_count)
-//            {
-//              info_imperfect = true;
-//              break;
-//            }
-//
-//            tc_data.pb_fieldname_line_ = ils_excel_file_.get_cell(row_no, COL_TC_VALUE).toInt();
-//            if (tc_data.pb_fieldname_line_ <= 0)
-//            {
-//              error_tips = QString::fromLocal8Bit("SHEET[%1]的对应的Protobuf 对应的行Message必须填写。").
-//                  arg(tc_data.excel_table_name_);
-//                return -1;
-//            }
-//            ++row_no;
-//            if (row_no > row_count)
-//            {
-//              info_imperfect = true;
-//              break;
-//            }
-//
-//          //PB 的配置文件部分，可以为空
-//          tc_data.save_pb_config_ = ils_excel_file_.get_cell(row_no, COL_TC_VALUE).toString();
-//          if (tc_data.save_pb_config_.isEmpty())
-//          {
-//              error_tips = QString::fromLocal8Bit("SHEET[%1]必须导成导成PB编码文件，必选其一。").
-//                  arg(cur_process_sheet);
-//              return -1;
-//          }
-//          ++row_no;
-//          if (row_no > row_count)
-//          {
-//              info_imperfect = true;
-//              break;
-//          }
-//          tc_data.pb_list_message_ = ils_excel_file_.get_cell(row_no, COL_TC_VALUE).toString();
-//          if (false ==tc_data.save_pb_config_.isEmpty() && true == tc_data.pb_list_message_.isEmpty())
-//          {
-//              error_tips = QString::fromLocal8Bit("SHEET[%1]如果要求导出Protobuf文件，必须填写对应的List Message结构名称").
-//                  arg(tc_data.excel_table_name_);
-//              return -1;
-//          }
-//          ++row_no;
-//          //最后一行可以不做检查
-//          //if (row_no > row_count)
-//
-//            auto result = file_cfg_data.xls_table_cfg_.insert(std::make_pair(tc_data.excel_table_name_, tc_data));
-//            if (false == result.second)
-//            {
-//              error_tips = QString::fromLocal8Bit("SHEET[%1]的描述重复，请检查").
-//                  arg(cur_process_sheet);
-//                return -2;
-//            }
-//        }
-//        else
-//        {
-//            continue;
-//        }
-//    }
-//
-//  if (info_imperfect)
-//  {
-//      error_tips = QString::fromLocal8Bit("SHEET[%1]的描述信息缺失，请检查").
-//          arg(cur_process_sheet);
-//      return -3;
-//  }
-//
-//    return 0;
-//}
+//!
+int Biko_Read_Config::open_illusion_excel(const QString &excel_file_name,
+										  bool read_enum_sheet,
+										  QStringList &error_tips)
+{
+	QString excel_path = excel_path_.path() + excel_file_name;
+	bool bret = ils_excel_file_.open(excel_path);
+	//Excel文件打开失败
+	if (bret != true)
+	{
+		return -1;
+	}
+	fprintf(stderr, "Dream excecl file have sheet num[%d].\n",
+			ils_excel_file_.sheetsCount());
 
+	//表格错误
+	MAP_QSTRING_TO_QSTRING enum_map;
+	if (read_enum_sheet)
+	{
+		if (ils_excel_file_.hasSheet("ENUM_CONFIG") == false)
+		{
+			error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[ENUM_CONFIG]."
+													 "没有枚举值需要读取。"));
+		}
+		else
+		{
+			//
+			int ret = read_table_enum(enum_map);
+			if (0 != ret)
+			{
+				error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL文件中的"
+														 "[ENUM_CONFIG]表不正确，请重现检查后打开。!"));
+				return ret;
+			}
+		}
+	}
 
+	return 0;
+}
 
+//!
+int Biko_Read_Config::read_illusion_excel(const Illusion_Message *ils_msg,
+										  QStringList &error_tips)
+{
+	int ret = 0;
+	
+	QString excel_file = ils_msg->excel_file_name_;
+	QString sheet_name = ils_msg->excel_sheetname_;
+	QString table_message = ils_msg->table_messge_name_;
+	QString line_message = ils_msg->line_messge_name_;
 
-//int Biko_Read_Config::read_sheet_pbcdata(TABLE_CONFIG &tc_data,
-//                                           google::protobuf::Message *&list_msg,
-//                                           QString & error_tips)
-//{
-//  int ret = 0;
-//  //检查EXCEL文件中是否有这个表格
-//  if (ils_excel_file_.loadSheet(tc_data.excel_table_name_) == false)
-//  {
-//      return -3;
-//  }
-//
-//  //ret = ils_proto_reflect_.new_mesage(tc_data.pb_list_message_.toStdString(), list_msg);
-//  //if (ret != 0)
-//  //{
-//  //  return ret;
-//  //}
-//
-//
-//  int line_count = ils_excel_file_.row_count();
-//  int col_count = ils_excel_file_.column_count();
-//  qDebug() << tc_data.excel_table_name_ <<
-//      " table have col_count = "
-//      << col_count
-//      << " row_count ="
-//      << line_count
-//      << "\n";
-//
-//
-//  //如果标识了pb字段行等，但其实没有那么多行
-//  if (tc_data.pb_fieldname_line_ > line_count || tc_data.read_data_start_ > line_count)
-//  {
-//      return -4;
-//  }
-//
-//  QString field_name_string;
-//  for (int col_no = 1; col_no <= col_count; ++col_no)
-//  {
-//      field_name_string = ils_excel_file_.get_cell(tc_data.pb_fieldname_line_, col_no).toString();
-//      tc_data.proto_field_ary_.push_back(field_name_string);
-//
-//      //这段到底在干嘛，我自己也只能说个大概了，因为repeated 的字段需要先add message，
-//      //所以就必须把一次出现的地方找出来
-//      int find_pos = tc_data.proto_field_ary_[col_no - 1].lastIndexOf('.');
-//      if (find_pos != -1)
-//      {
-//          if (tc_data.firstshow_field_ == field_name_string)
-//          {
-//              tc_data.item_msg_firstshow_.push_back(true);
-//          }
-//          else
-//          {
-//              if (tc_data.firstshow_msg_.length() > 0 &&
-//                  true == field_name_string.startsWith(tc_data.firstshow_msg_))
-//              {
-//                  tc_data.item_msg_firstshow_.push_back(false);
-//              }
-//              else
-//              {
-//                  tc_data.firstshow_field_ = field_name_string;
-//                  tc_data.firstshow_msg_.append(field_name_string.constData(),
-//                                                find_pos + 1);
-//                  tc_data.item_msg_firstshow_.push_back(true);
-//              }
-//          }
-//      }
-//      else
-//      {
-//          tc_data.item_msg_firstshow_.push_back(false);
-//      }
-//
-//  }
-//
-//  std::vector<google::protobuf::Message *> field_msg_ary;
-//  std::vector<const google::protobuf::FieldDescriptor *> field_desc_ary;
-//
-//  //吧啦吧啦吧啦吧啦吧啦吧啦吧啦，这段啰嗦的代码只是为了搞个日志的名字,EXCEFILENAE_TABLENAME.log
-//  QString xls_file_name;
-//  xls_file_name = ils_excel_file_.open_filename();
-//  QFileInfo xls_fileinfo(xls_file_name);
-//  QString file_basename = xls_fileinfo.baseName();
-//
-//  QString log_file_name = file_basename;
-//  log_file_name += "_";
-//  log_file_name += tc_data.excel_table_name_;
-//  log_file_name += ".log";
-//  QString outlog_filename = out_log_path_.path();
-//  outlog_filename += "/";
-//  outlog_filename += log_file_name;
-//
-//  QFile read_table_log(outlog_filename);
-//  read_table_log.open(QIODevice::ReadWrite);
-//  if (!read_table_log.isWritable())
-//  {
-//      fprintf(stderr, "Read excel file data log file [%s] open fail.",
-//              outlog_filename.toStdString().c_str());
-//      return -1;
-//  }
-//  std::stringstream sstr_stream;
-//
-//  //什么？为啥不用google pb 的debugstring直接输出？为啥，自己考虑
-//  sstr_stream << "Read excel file:" << xls_file_name.toStdString().c_str() << " line count" << line_count
-//      << "column count " << col_count << std::endl;
-//  sstr_stream << "Read table:" << tc_data.excel_table_name_.toStdString().c_str() << std::endl;
-//
-//  fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.",
-//          xls_file_name.toStdString().c_str(),
-//          tc_data.excel_table_name_.toStdString().c_str(),
-//          line_count,
-//          col_count);
-//
-//  QString read_data;
-//  std::string set_data;
-//
-//  for (int line_no = tc_data.read_data_start_; line_no <= line_count; ++line_no)
-//  {
-//      google::protobuf::Message *line_msg = NULL;
-//      Protobuf_Reflect_AUX::locate_sub_msg(list_msg,
-//                                                "list_data",
-//                                                true,
-//                                                line_msg);
-//
-//      google::protobuf::Message *field_msg = NULL;
-//      const google::protobuf::FieldDescriptor *field_desc = NULL;
-//      field_msg_ary.clear();
-//      field_desc_ary.clear();
-//      for (int col_no = 1; col_no <= col_count; ++col_no)
-//      {
-//          //如果为空表示不需要关注这列
-//          if (tc_data.proto_field_ary_[col_no - 1].length() == 0)
-//          {
-//              field_msg_ary.push_back(NULL);
-//              field_desc_ary.push_back(NULL);
-//              continue;
-//          }
-//
-//          //取得字段的描述
-//          ret = Protobuf_Reflect_AUX::get_fielddesc(line_msg,
-//                                                         tc_data.proto_field_ary_[col_no - 1].toStdString(),
-//                                                         tc_data.item_msg_firstshow_[col_no - 1] == 1 ? true : false,
-//                                                         field_msg,
-//                                                         field_desc);
-//          if (0 != ret)
-//          {
-//              fprintf(stderr, "Message [%s] don't find field_desc [%s] field_desc name define in Line/Column[%d/%d(%s)]",
-//                      tc_data.pb_line_message_.toStdString().c_str(),
-//                      tc_data.proto_field_ary_[col_no - 1].toStdString().c_str(),
-//                      tc_data.pb_fieldname_line_,
-//                      col_no,
-//                      BikoQtExcelEngine::column_name(col_no)
-//              );
-//              return ret;
-//          }
-//          field_msg_ary.push_back(field_msg);
-//          field_desc_ary.push_back(field_desc);
-//      }
-//      fprintf(stderr, "Read line [%d] ", line_no);
-//      sstr_stream << "Read line:" << line_no << std::endl << "{" << std::endl;
-//
-//      for (long col_no = 1; col_no <= col_count; ++col_no)
-//      {
-//          //如果为空表示不需要关注这列
-//          if (tc_data.proto_field_ary_[col_no - 1].length() == 0)
-//          {
-//              continue;
-//          }
-//
-//          //读出EXCEL数据，注意这个地方是根据MFC的编码决定CString数据的编码
-//          read_data = ils_excel_file_.get_cell(line_no, col_no).toString();
-//
-//          //取得字段的描述
-//          field_msg = field_msg_ary[col_no - 1];
-//          field_desc = field_desc_ary[col_no - 1];
-//
-//          //如果是string 类型，Google PB之支持UTF8
-//          if (field_desc->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
-//          {
-//              set_data = read_data.toStdString();
-//          }
-//          //对于BYTES，
-//          else if (field_desc->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
-//          {
-//              set_data = read_data.toLocal8Bit();
-//          }
-//          //其他字段类型统一转换为UTF8的编码
-//          else
-//          {
-//              set_data = read_data.toStdString();
-//          }
-//          //根据描述，设置字段的数据
-//          ret = Protobuf_Reflect_AUX::set_fielddata(field_msg, field_desc, set_data);
-//          if (0 != ret)
-//          {
-//              fprintf(stderr, "Message [%s] field_desc [%s] type [%d][%s] set_fielddata fail. Line,Colmn[%d|%d(%s)]",
-//                      tc_data.pb_line_message_.toStdString().c_str(),
-//                      field_desc->full_name().c_str(),
-//                      field_desc->type(),
-//                      field_desc->type_name(),
-//                      line_no,
-//                      col_no,
-//                      BikoQtExcelEngine::column_name(col_no)
-//              );
-//              return ret;
-//          }
-//
-//          sstr_stream << "\t" << tc_data.proto_field_ary_[col_no - 1].toStdString().c_str() << ":" << set_data.c_str()
-//              << std::endl;
-//      }
-//
-//      //如果没有初始化
-//      if (!line_msg->IsInitialized())
-//      {
-//          fprintf(stderr, "Read line [%d] message [%s] is not IsInitialized, please check your excel or proto file.",
-//                  line_no,
-//                  tc_data.pb_line_message_.toStdString().c_str());
-//
-//          fprintf(stderr, "Read line [%d] message [%s] InitializationErrorString :%s;",
-//                  line_no,
-//                  tc_data.pb_line_message_.toStdString().c_str(),
-//                  line_msg->InitializationErrorString().c_str());
-//          return -1;
-//      }
-//
-//      std::cout << line_msg->DebugString() << std::endl;
-//  }
-//
-//  std::string out_string;
-//  out_string.reserve(64 * 1024 * 1024);
-//  out_string = sstr_stream.str();
-//
-//  fprintf(stderr, "\n%s", out_string.c_str());
-//  read_table_log.write(out_string.c_str(), out_string.length());
-//  read_table_log.close();
-//  fprintf(stderr, "Read excel file:%s table :%s end.",
-//          xls_file_name.toStdString().c_str(),
-//          tc_data.excel_table_name_.toStdString().c_str());
-//  return 0;
-//}
+	//检查EXCEL文件中是否有这个表格
+	if (ils_excel_file_.loadSheet(sheet_name) == false)
+	{
+		error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL文件[%1]中的"
+												 "[%2]表不存在或者不正确，请重现检查后打开。!")
+						  .arg(excel_file)
+						  .arg(sheet_name));
+	    return -3;
+	}
+	
+	
+	int line_count = ils_excel_file_.row_count();
+	int col_count = ils_excel_file_.column_count();
+	fprintf(stderr, "Read excel table %s table have col_count %d row_count %d.\n",
+			sheet_name.toStdString().c_str(),
+			col_count,
+			line_count);
+	    
+
+	//如果标识了pb字段行等，但其实没有那么多行
+	if (ils_msg->read_data_line_ > line_count ||
+		ils_msg->fieldsname_line_ > line_count ||
+		ils_msg->tb_field_count_ > col_count)
+	{
+		error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL[%1]文件中的"
+												 "[%2]表没有足够的数据以供读取。!")
+						  .arg(excel_file)
+						  .arg(sheet_name));
+	    return -4;
+	}
+	
+	fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.",
+			excel_file.toStdString().c_str(),
+			sheet_name.toStdString().c_str(),
+	        line_count,
+	        col_count);
+	
+	google::protobuf::Message *table_msg = NULL;
+	ils_msg->new_table_mesage(msg_factory_,
+							  table_msg);
+	
+	int readcol_num = 0;
+
+	if (col_count > ils_msg->tb_field_count_)
+	{
+		for (int col_no = 1; col_no <= col_count; ++col_no)
+		{
+			if (readcol_num >= )
+		}
+	}
+	
+
+	for (int line_no = ils_msg->read_data_line_; line_no <= line_count; ++line_no)
+	{
+
+	    fprintf(stderr, "Read line [%d] ", line_no);
+	    for (int col_no = 1; col_no <= col_count; ++col_no)
+	    {
+
+	    }
+	
+		//fprintf(stderr, "Message [%s] field_desc [%s] type [%d][%s] set_fielddata fail. Line,Colmn[%d|%d(%s)]",
+		//        tc_data.pb_line_message_.toStdString().c_str(),
+		//        field_desc->full_name().c_str(),
+		//        field_desc->type(),
+		//        field_desc->type_name(),
+		//        line_no,
+		//        col_no,
+		//        BikoQtExcelEngine::column_name(col_no)
+		//);
+	
+	    
+	}
+	//如果没有初始化
+	if (!table_msg->IsInitialized())
+	{
+		fprintf(stderr, "Read line [%d] message [%s] is not IsInitialized, please check your excel or proto file.",
+				line_no,
+				tc_data.pb_line_message_.toStdString().c_str());
+
+		fprintf(stderr, "Read line [%d] message [%s] InitializationErrorString :%s;",
+				line_no,
+				tc_data.pb_line_message_.toStdString().c_str(),
+				line_msg->InitializationErrorString().c_str());
+		return -1;
+	}
+	std::cout << line_msg->DebugString() << std::endl;
+	fprintf(stderr, "Read excel file:%s table :%s end.",
+			excel_file.toStdString().c_str(),
+			sheet_name.toStdString().c_str());
+	return 0;
+}
 
 
 
