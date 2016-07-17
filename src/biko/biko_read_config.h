@@ -165,7 +165,7 @@ protected:
 
 
     //!Excel的处理对象,EXCEL的处理类
-    BikoQtExcelEngine ils_excel_file_;
+    QtAxExcelEngine ils_excel_file_;
 
 
     //!

@@ -588,7 +588,7 @@ int Biko_Read_Config::read_illusion_excel(const Illusion_Message *ils_msg,
                                  .arg(sheet_name)
                                  .arg(excel_file)
                                  .arg(read_col[error_field_no])
-                                 .arg(BikoQtExcelEngine::column_name(read_col[error_field_no]));
+                                 .arg(QtAxExcelEngine::column_name(read_col[error_field_no]));
             fprintf(stderr, "%s", error_info.toStdString().c_str());
             error_tips.append(error_info);
             return ret;

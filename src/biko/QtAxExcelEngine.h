@@ -29,9 +29,52 @@
 */
 
 
-#ifndef QT_EXCELENGINE_H
-#define QT_EXCELENGINE_H
+#ifndef QT_ACTIVEX_EXCELENGINE_H
+#define QT_ACTIVEX_EXCELENGINE_H
 
+
+// 在WINDOWS下和POSIX标准兼容的宏，VS2003以下版本如何，我没有测试，2003以后，Windows对于很多代码宏会使用"_"前缀，
+#ifndef _CRT_NONSTDC_NO_DEPRECATE
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+#endif
+#ifndef _CRT_NONSTDC_NO_WARNINGS
+#define _CRT_NONSTDC_NO_WARNINGS  1
+#endif
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS 1
+#endif
+
+// 用于告诉VC++，我不强迫使用_s类型的API，_CRT_SECURE_NO_DEPRECATE是_CRT_SECURE_NO_WARNINGS的老版本
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS   1
+#endif
+#ifndef _CRT_SECURE_NO_DEPRECATE
+#define _CRT_SECURE_NO_DEPRECATE  1
+#endif
+
+#include <windows.h>
+
+#pragma warning ( push )
+#pragma warning ( disable : 4127)
+
+#include <QtCore/QObject>
+#include <QtCore/QFile>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
+#include <ActiveQt/QAxBase>
+#include <ActiveQt/QAxObject>
+
+#include <QtCore/QDebug>
+#include <QtGui/QKeyEvent>
+#include <QtCore/QVariant>
+#include <QtCore/QDir>
+
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QTableWidgetItem>
+
+#pragma warning ( pop )
 
 /*!
 * @brief
@@ -60,14 +103,9 @@ public:
     void finalize();
 
     //打开一个XLS文件
-    bool open(const QString &xls_file, int  sheet_index = 1);
+	bool open(const QString &xls_file);
 
-    /*!
-    * @brief      插入一个sheet，同时加载这个表格，
-    * @return     void
-    * @param      sheet_name sheet的表名
-    */
-    void insertSheet(const QString &sheet_name);
+
 
     //保存xls报表
     void save();
@@ -85,15 +123,19 @@ public:
     * @brief      根据索引加载sheet，
     * @return     bool 返回是否成功加载
     * @param      sheet_index sheet索引，从1开始
+	* @param      pre_load 是否进行预加载，预加载会读取整个EXCEL的sheet表，加快后面的读取处理
     */
-    bool loadSheet(int sheet_index);
+    bool loadSheet(int sheet_index,
+				   bool pre_load = false);
 
     /*!
     * @brief      根据sheet表格表名加载sheet，
     * @return     bool 返回是否成功加载
     * @param      sheet_name 要加载的sheet 的名字
+	* @param      pre_load 是否进行预加载，预加载会读取整个EXCEL的sheet表，加快后面的读取处理
     */
-    bool loadSheet(const QString &sheet_name);
+    bool loadSheet(const QString &sheet_name,
+				   bool pre_load = false);
 
 
     /*!
@@ -103,7 +145,26 @@ public:
     */
     bool hasSheet(const QString &sheet_name);
 
-    //保存数据到xls
+
+	/*!
+	* @brief      插入一个sheet，同时加载这个表格，
+	* @param      sheet_name sheet的表名
+	*/
+	void insertSheet(const QString &sheet_name);
+
+	
+	/*!
+	* @brief      对当前的Sheet进行改名操作，
+	* @param      new_name 新的名字
+	*/
+	void renameSheet(const QString &new_name);
+
+
+    /*!
+    * @brief      把tableWidget中的数据保存到excel中
+    * @return     bool
+    * @param      table_widget
+    */
     bool writeTableWidget(QTableWidget *table_widget);
 
     //从xls读取数据到ui
@@ -116,18 +177,30 @@ public:
     * @param      column 单元格的列号
     * @note
     */
-    QVariant get_cell(int  row, int  column);
+    QVariant getCell(int row, int column);
 
-    //修改指定单元数据
-    bool  set_cell(int  row, int  column, const QVariant &data);
+    
+    /*!
+    * @brief      修改指定单元数据
+    * @return     bool  是否修改成功
+    * @param      row    行号
+    * @param      column 列号
+    * @param      data   修改的数据
+    */
+    bool  setCell(int row, int column, const QVariant &data);
 
     //!打开的xls文件名称
-    QString open_filename() const;
+    QString openFilename() const;
 
-    //!行数
-    int  row_count()const;
-    //!列数
-    int  column_count()const;
+    //!当前Sheet的行数,包括空行 
+    int  rowCount() const;
+    //!当前Sheet的列数,包括空行 
+    int  columnCount() const;
+
+	//!当前的Sheet的起始行数，如果第1,2行是空，没有数据，那么返回3
+	int startRow() const;
+	//!当前的Sheet的起始列数，如果第1,2,3列是空，没有数据，那么返回4
+	int startColumn() const;
 
 
     bool is_open();
@@ -135,14 +208,17 @@ public:
 
 protected:
 
-    void clear();
-
     //!加载，内部函数，以后可以考虑增加一个预加载，加快读取速度。
-    void load_sheet_internal(bool pre_load);
+    void loadSheet_internal(bool pre_load);
 
 public:
 
-    static char *QtAxExcelEngine::column_name(int column_no);
+    /*!
+    * @brief      取得列的名称，比如27->AA
+    * @return     QString
+    * @param      column_no
+    */
+    static QString columnName(int column_no);
 
 private:
 
@@ -155,28 +231,27 @@ private:
     //!指向sXlsFile对应的工作簿
     QAxObject *active_book_ = NULL;
 
-    //!
-    QAxObject *work_sheets_ = NULL;
-
     //指向工作簿中的某个sheet表单
     QAxObject *active_sheet_ = NULL;
 
     //!xls文件路径
     QString xls_file_;
 
-    //!当前打开的第几个sheet
-    int curr_sheet_ = 1;
+	//预加载的表的数据
+	QVariantList preload_sheet_data_;
+
     //!excel是否可见
     bool is_visible_ = false;
-    //行数
+
+    //!行数,包括起始的空行
     int row_count_ = 0;
-    //!列数
+    //!列数,包括起始的空列
     int column_count_ = 0;
 
     //!开始有数据的行下标值
-    int start_row_ = 0;
+    int start_row_ = 1;
     //!开始有数据的列下标值
-    int start_column_ = 0;
+    int start_column_ = 1;
 
     //!是否已打开
     bool is_open_ = false;
@@ -187,8 +262,7 @@ private:
     //!防止重复保存
     bool is_save_already_ = false;
 
-	//预加载的表的数据
-	QVariantList pre_load_data_;
+	
 
 };
 
