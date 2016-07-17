@@ -20,7 +20,9 @@ public:
 
     //!
     int add_line(google::protobuf::Message *table_msg,
-                 std::vector<std::string> &line_str_ary) const;
+                 std::vector<std::string> &line_str_ary,
+				 int &error_field_no,
+				 const google::protobuf::FieldDescriptor *&error_field_desc) const;
 
     /*!
     * @brief      将数据保存到Proto buf config 配置文件里面
@@ -69,13 +71,10 @@ public:
     int fullname_line_ = 2;
     //!表格数据从第几行读取
     int read_data_line_ = 3;
-
-
-
     
 
     //!对应表格的展开的字段数量，包括repeated,sub message的字段,都递归展开，记算
-    size_t tb_field_count_ = 0;
+    int tb_field_count_ = 0;
 
     //!对应表格的展开的字段的名称的数组，用于插入EXCEL表格作为标题
     std::vector<QString>  tb_fieldname_ary_;
@@ -83,7 +82,7 @@ public:
     std::vector<QString>  tb_fullname_ary_;
 
     //!字段描述注意字段描述和Message 是对应关系，用于设置处理而已，其他地方不用关心
-    std::vector<const google::protobuf::FieldDescriptor *> tb_field_desc_ary_;
+    std::vector<const google::protobuf::FieldDescriptor *> line_field_desc_ary_;
 
 
 };

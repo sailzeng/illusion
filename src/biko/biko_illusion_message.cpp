@@ -80,7 +80,7 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
 
     Q_ASSERT(tb_fieldname_ary_.size() == tb_field_count_);
     Q_ASSERT(tb_fullname_ary_.size() == tb_field_count_);
-    Q_ASSERT(tb_field_desc_ary_.size() == tb_field_count_);
+    Q_ASSERT(line_field_desc_ary_.size() == tb_field_count_);
     return 0;
 }
 
@@ -133,7 +133,7 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
                 QString field_name = QString("%1-%2").arg(fields_name.c_str()).arg(k + 1);
                 tb_fieldname_ary_.push_back(field_name);
                 tb_fullname_ary_.push_back(field_desc->full_name().c_str());
-                tb_field_desc_ary_.push_back(field_desc);
+                line_field_desc_ary_.push_back(field_desc);
                 ++tb_field_count_;
             }
         }
@@ -161,7 +161,9 @@ int Illusion_Message::new_table_mesage(google::protobuf::DynamicMessageFactory *
 
 //!
 int Illusion_Message::add_line(google::protobuf::Message *table_msg,
-                               std::vector<std::string> &line_str_ary) const
+                               std::vector<std::string> &line_str_ary,
+							   int &error_field_no,
+							   const google::protobuf::FieldDescriptor *&error_field_desc) const
 {
     int ret = 0;
     google::protobuf::Message *line_message = NULL;
@@ -176,8 +178,8 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
     }
 
     //!每个字段对应的Message，用于方便插入操作处理的临时数据而已(每次都必须更新)，其他地方不用关心
-    std::vector<google::protobuf::Message *> tb_message_ary;
-    ret = recursive_msgfield(line_message, &tb_message_ary);
+    std::vector<google::protobuf::Message *> line_fieldmsg_ary;
+    ret = recursive_msgfield(line_message, &line_fieldmsg_ary);
     if (0 != ret)
     {
         return ret;
@@ -185,13 +187,15 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
 
     Q_ASSERT(line_str_ary.size() == tb_field_count_);
 
-    for (size_t i = 0; i < tb_field_count_; i++)
+    for (int i = 0; i < tb_field_count_; i++)
     {
-        ret = Protobuf_Reflect_AUX::set_fielddata(tb_message_ary[i],
-                                                  tb_field_desc_ary_[i],
+        ret = Protobuf_Reflect_AUX::set_fielddata(line_fieldmsg_ary[i],
+                                                  line_field_desc_ary_[i],
                                                   line_str_ary[i]);
         if (0 != ret)
         {
+			error_field_no = i;
+			error_field_desc = line_field_desc_ary_[i];
             return ret;
         }
     }

@@ -122,7 +122,7 @@ bool BikoQtExcelEngine::open(const QString &xls_file, int  sheet_index)
     if (!is_a_newfile_)
     {
         //打开xls对应的，获取工作簿
-        active_book_ = work_books_->querySubObject("Open(const QString&,QVariant)", xls_file_, 0);
+        active_book_ = work_books_->querySubObject("Open(const QString&)", xls_file_);
     }
     else
     {
@@ -241,7 +241,7 @@ bool BikoQtExcelEngine::hasSheet(const QString &sheet_name)
     return true;
 }
 
-void BikoQtExcelEngine::load_sheet_internal()
+void BikoQtExcelEngine::load_sheet_internal(bool pre_load)
 {
     //获取该sheet的使用范围对象
     QAxObject *used_range = active_sheet_->querySubObject("UsedRange");
@@ -257,6 +257,14 @@ void BikoQtExcelEngine::load_sheet_internal()
     row_count_ = rows->property("Count").toInt();
     //获取列数
     column_count_ = columns->property("Count").toInt();
+
+	//预加载的数据，存放	
+	if (pre_load)
+	{
+		pre_load_data_ = used_range->dynamicCall("Value2()").toList();
+	}
+	delete used_range;
+	delete rows;
     return;
 }
 

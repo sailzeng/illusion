@@ -1,11 +1,14 @@
 
 /*!
 * @copyright  2004-2016  Apache License, Version 2.0 FULLSAIL
-* @filename   populous_qt_excel_engine.h
-* @author     yaoboyuan 254200341@qq.com 原创    Sailzeng 改写 <sailerzeng@gmail.com>
+* @filename   QtAxExcelEngine.h
+* @author     yaoboyuan 254200341@qq.com 原创    Sailzeng <sailerzeng@gmail.com> 改写
 * @version
 * @date       2016年6月10日
-* @brief      这是一个便于Qt读写excel封装的类，同时，便于把excel中的数据
+* @brief      这是一个使用 Qt's ActiveX(OLE)，QAxObject 读写EXCEL的封装类，便于操作在使用Qt
+*             的代码操作EXCEL，既然是实用OLE,你当然必须先安装EXCEL。
+*             
+*             这是一个便于Qt读写excel封装的类，同时，便于把excel中的数据
 *             显示到界面上，或者把界面上的数据写入excel中，同GUI进行交互，关系如下：
 *             Qt tableWidget <--> ExcelEngine <--> xls file.
 * @details
@@ -35,13 +38,13 @@
 *
 * note       代码风格我打算全部采用Qt的代码风格。
 */
-class BikoQtExcelEngine : protected QObject
+class QtAxExcelEngine : protected QObject
 {
 public:
 
     //构造函数和析构函数
-    BikoQtExcelEngine();
-    ~BikoQtExcelEngine();
+    QtAxExcelEngine();
+    ~QtAxExcelEngine();
 
 public:
 
@@ -53,7 +56,7 @@ public:
     */
     bool initialize(bool visible);
 
-    //!释放退出
+    //!释放退出，关闭EXCEL进程
     void finalize();
 
     //打开一个XLS文件
@@ -121,9 +124,9 @@ public:
     //!打开的xls文件名称
     QString open_filename() const;
 
-    //!
+    //!行数
     int  row_count()const;
-    //!
+    //!列数
     int  column_count()const;
 
 
@@ -135,11 +138,11 @@ protected:
     void clear();
 
     //!加载，内部函数，以后可以考虑增加一个预加载，加快读取速度。
-    void load_sheet_internal();
+    void load_sheet_internal(bool pre_load);
 
 public:
 
-    static char *BikoQtExcelEngine::column_name(int column_no);
+    static char *QtAxExcelEngine::column_name(int column_no);
 
 private:
 
@@ -159,30 +162,33 @@ private:
     QAxObject *active_sheet_ = NULL;
 
     //!xls文件路径
-    QString   xls_file_;
+    QString xls_file_;
 
     //!当前打开的第几个sheet
-    int       curr_sheet_ = 1;
+    int curr_sheet_ = 1;
     //!excel是否可见
-    bool      is_visible_ = false;
+    bool is_visible_ = false;
     //行数
-    int       row_count_ = 0;
+    int row_count_ = 0;
     //!列数
-    int       column_count_ = 0;
+    int column_count_ = 0;
 
     //!开始有数据的行下标值
-    int       start_row_ = 0;
+    int start_row_ = 0;
     //!开始有数据的列下标值
-    int       start_column_ = 0;
+    int start_column_ = 0;
 
     //!是否已打开
-    bool      is_open_ = false;
+    bool is_open_ = false;
     //!是否有效
-    bool      is_valid_ = false;
+    bool is_valid_ = false;
     //!是否是一个新建xls文件，用来区分打开的excel是已存在文件还是有本类新建的
-    bool      is_a_newfile_ = false;
+    bool is_a_newfile_ = false;
     //!防止重复保存
-    bool      is_save_already_ = false;
+    bool is_save_already_ = false;
+
+	//预加载的表的数据
+	QVariantList pre_load_data_;
 
 };
 
