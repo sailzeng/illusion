@@ -17,9 +17,6 @@
     <ClCompile Include="biko_protobuf_reflect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="biko_qt_excel_engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="biko_read_config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -27,6 +24,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="biko_illusion_message.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QtAxExcelEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -37,9 +37,6 @@
     <ClInclude Include="biko_protobuf_reflect.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="biko_qt_excel_engine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="biko_read_config.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -47,6 +44,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="biko_illusion_message.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QtAxExcelEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

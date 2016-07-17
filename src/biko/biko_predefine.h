@@ -135,13 +135,17 @@ using std::unordered_set;
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
+#include <QtCore/QDateTime>
+#include <QtCore/QDebug>
+#include <QtCore/QVariant>
+#include <QtCore/QDir>
+
+
 #include <ActiveQt/QAxBase>
 #include <ActiveQt/QAxObject>
 
-#include <QtCore/QDebug>
+
 #include <QtGui/QKeyEvent>
-#include <QtCore/QVariant>
-#include <QtCore/QDir>
 
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTableView>

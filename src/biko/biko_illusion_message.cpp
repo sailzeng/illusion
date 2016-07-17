@@ -60,9 +60,9 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
     }
 
     table_messge_name_ = table_messge_name.c_str();
-    line_messge_name_ = line_messge_name.c_str();
+    line_message_name_ = line_messge_name.c_str();
     excel_file_name_ = excel_filename.c_str();
-    excel_sheetname_ = excel_sheetname.c_str();
+    excel_sheet_name_ = excel_sheetname.c_str();
 
     fieldsname_line_ = fieldsname_line;
     fullname_line_ = fullname_line;
@@ -78,9 +78,9 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
         return ret;
     }
 
-    Q_ASSERT(tb_fieldname_ary_.size() == tb_field_count_);
-    Q_ASSERT(tb_fullname_ary_.size() == tb_field_count_);
-    Q_ASSERT(line_field_desc_ary_.size() == tb_field_count_);
+    Q_ASSERT(column_fieldname_ary_.size() == column_field_count_);
+    Q_ASSERT(column_fullname_ary_.size() == column_field_count_);
+    Q_ASSERT(line_field_desc_ary_.size() == column_field_count_);
     return 0;
 }
 
@@ -131,10 +131,10 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
             else
             {
                 QString field_name = QString("%1-%2").arg(fields_name.c_str()).arg(k + 1);
-                tb_fieldname_ary_.push_back(field_name);
-                tb_fullname_ary_.push_back(field_desc->full_name().c_str());
+                column_fieldname_ary_.push_back(field_name);
+                column_fullname_ary_.push_back(field_desc->full_name().c_str());
                 line_field_desc_ary_.push_back(field_desc);
-                ++tb_field_count_;
+                ++column_field_count_;
             }
         }
     }
@@ -185,9 +185,9 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
         return ret;
     }
 
-    Q_ASSERT(line_str_ary.size() == tb_field_count_);
+    Q_ASSERT(line_str_ary.size() == column_field_count_);
 
-    for (int i = 0; i < tb_field_count_; i++)
+    for (int i = 0; i < column_field_count_; i++)
     {
         ret = Protobuf_Reflect_AUX::set_fielddata(line_fieldmsg_ary[i],
                                                   line_field_desc_ary_[i],
@@ -256,60 +256,5 @@ int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg,
     }
     return 0;
 }
-
-
-int Illusion_Message::save_to_protocfg(const google::protobuf::Message *table_msg,
-                                       const QDir &out_pbc_path,
-                                       QString &error_tips) const
-{
-    QString pbc_file = out_pbc_path.path() + "/";
-    pbc_file += outer_file_name_;
-    QString txt_file = pbc_file + ".txt";
-    QFile pbc_config(pbc_file);
-    pbc_config.open(QIODevice::ReadWrite);
-    if (!pbc_config.isWritable())
-    {
-        return -1;
-    }
-    QFile txt_config(txt_file);
-    txt_config.open(QIODevice::ReadWrite);
-    if (!txt_config.isWritable())
-    {
-        return -1;
-    }
-    if (!table_msg->IsInitialized())
-    {
-        fprintf(stderr, "class [%s] protobuf encode fail, IsInitialized return false.error string [%s].",
-                table_msg->GetTypeName().c_str(),
-                table_msg->InitializationErrorString().c_str());
-        return -1;
-    }
-    std::string bin_string, txt_string;
-    bool succ = table_msg->SerializeToString(&bin_string);
-    if (!succ)
-    {
-        return -2;
-    }
-    succ = google::protobuf::TextFormat::PrintToString(*table_msg, &txt_string);
-    if (!succ)
-    {
-        return -2;
-    }
-    qint64 wt_len = pbc_config.write(bin_string.c_str(), bin_string.length());
-    if (wt_len < 0)
-    {
-        return -3;
-    }
-    pbc_config.close();
-
-    wt_len = txt_config.write(txt_string.c_str(), txt_string.length());
-    if (wt_len < 0)
-    {
-        return -4;
-    }
-    txt_config.close();
-    return 0;
-}
-
 
 

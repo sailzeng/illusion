@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "biko_qt_excel_engine.h"
+#include "QtAxExcelEngine.h"
 #include "biko_illusion_message.h"
 
 
@@ -71,12 +71,12 @@ public:
     /*!
     * @brief      初始化读取操作，准备进行目录的批量转换
     * @return     int
-	* @param[in]  proto_dir 根据proto_dir目录下的meta文件反射，
+    * @param[in]  proto_dir 根据proto_dir目录下的meta文件反射，
     * @param[in]  excel_dir 读取excel_dir目录下所有的EXCEL文件
     * @param[in]  outer_dir 转换成位置文件输出到outer_dir目录，如果为NULL，则表示用当前目录输出
     */
     int init_read_all(const QString &proto_dir,
-                      const QString &excel_dir, 
+                      const QString &excel_dir,
                       const QString &outer_dir,
                       QStringList &error_tips);
 
@@ -88,11 +88,11 @@ public:
     void finalize();
 
 
-	int read_all_message(QStringList &tips_info);
+    int read_all_message(QStringList &tips_info);
 
 
-	int read_one_message(const QString &messge_full_name,
-						 QStringList &error_tips);
+    int read_one_message(const QString &messge_full_name,
+                         QStringList &error_tips);
 
     //清理所有的读取数据
     void clear();
@@ -123,8 +123,8 @@ protected:
                       QStringList &error_tips);
 
 
-	int init_exceldir(const QString &excel_dir,
-					  QStringList &error_tips);
+    int init_exceldir(const QString &excel_dir,
+                      QStringList &error_tips);
 
 
 
@@ -133,14 +133,31 @@ protected:
     int read_proto_file(const QFileInfo &proto_file,
                         QStringList &error_tips);
 
-	//!
-	int open_illusion_excel(const QString &excel_file_name,
-							bool read_enum_sheet,
-						    QStringList &error_tips);
+    //!
+    int open_excel_file(const QString &excel_file_name,
+                        bool read_enum_sheet,
+                        QStringList &error_tips);
+    //
 
-	//!
-	int read_illusion_excel(const Illusion_Message *ils_msg,
-							QStringList &error_tips);
+
+    //!
+    int read_excel_table(const Illusion_Message *ils_msg,
+                         QStringList &error_tips);
+
+    //!保存EXCEL的表头
+    int save_excel_tablehead(const Illusion_Message *ils_msg,
+                             QStringList &error_tips);
+
+    /*!
+    * @brief      将数据保存到Proto buf config 配置文件里面
+    * @return     int
+    * @param      ils_msg
+    * @param      table_cfg
+    * @param      error_tips
+    */
+    int save_to_protocfg(const Illusion_Message *ils_msg,
+                         const google::protobuf::Message *table_msg,
+                         QStringList &error_tips) const;
 
 protected:
 
@@ -151,8 +168,8 @@ protected:
     static char REPEATED_STRING[];
 protected:
 
-	//!proto文件存放的路径
-	QDir proto_path_;
+    //!proto文件存放的路径
+    QDir proto_path_;
 
     //!EXCEL配置存放的目录
     QDir excel_path_;
@@ -179,13 +196,13 @@ protected:
 
     //!每个分析的Message分析得到Illusion_Message，在这儿保存他们
     std::vector <const Illusion_Message *> illusion_msg_ary_;
-	//!outer输出文件对用的proto配置的信息
-	std::map <QString, const Illusion_Message *> msgname_2_illusion_map_;
-    
+    //!outer输出文件对用的proto配置的信息
+    std::map <QString, const Illusion_Message *> msgname_2_illusion_map_;
+
     //!proto 名称对应
     std::map <QString, ILLUSION_MESSAGE_ARRAY> proto_cfg_map_;
-	//!EXCEL 文件名称对应proto配置的信息
-	std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_cfg_map_;
+    //!EXCEL 文件名称对应proto配置的信息
+    std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_cfg_map_;
 
     //!outer输出文件对用的proto配置的信息
     std::map <QString, const Illusion_Message *> outer_cfg_map_;

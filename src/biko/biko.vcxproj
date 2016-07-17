@@ -26,16 +26,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="biko_protobuf_reflect.cpp" />
-    <ClCompile Include="biko_qt_excel_engine.cpp" />
     <ClCompile Include="biko_read_config.cpp" />
+    <ClCompile Include="QtAxExcelEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="biko_getopt.h" />
     <ClInclude Include="biko_illusion_message.h" />
     <ClInclude Include="biko_predefine.h" />
     <ClInclude Include="biko_protobuf_reflect.h" />
-    <ClInclude Include="biko_qt_excel_engine.h" />
     <ClInclude Include="biko_read_config.h" />
+    <ClInclude Include="QtAxExcelEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\depend\protobuf-2.6.1\vsprojects\libprotobuf.vcxproj">

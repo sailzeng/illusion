@@ -1,4 +1,5 @@
 
+#include "biko_predefine.h"
 #include "QtAxExcelEngine.h"
 
 
