@@ -75,14 +75,15 @@ public:
     * @param[in]  excel_dir 读取excel_dir目录下所有的EXCEL文件
     * @param[in]  outer_dir 转换成位置文件输出到outer_dir目录，如果为NULL，则表示用当前目录输出
     */
-    int init_read_all(const QString &proto_dir,
+    int init_read_all(const QStringList *import_dir,
+		              const QString &proto_dir,
                       const QString &excel_dir,
                       const QString &outer_dir,
-                      QStringList &error_tips);
+                      QStringList &tips_ary);
 
     //!所有的目录都在一个目录下的快捷处理方式
     int init_read_all2(const QString &allinone_dir,
-                       QStringList &error_tips);
+                       QStringList &tips_ary);
 
     //!12312
     void finalize();
@@ -92,7 +93,7 @@ public:
 
 
     int read_one_message(const QString &messge_full_name,
-                         QStringList &error_tips);
+                         QStringList &tips_ary);
 
     //清理所有的读取数据
     void clear();
@@ -100,64 +101,79 @@ public:
 
 protected:
 
-    //读枚举值
-    int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map);
+
+	
+	/*!
+	* @brief      Proto 的import的目录，可以是多个
+	* @param      import_dir  import的目录列表
+	* @param      tips_ary
+	*/
+	void init_importdir(const QStringList *import_dir, 
+						QStringList &tips_ary);
 
     /*!
     * @brief
     * @return     int
     * @param      outer_dir
-    * @param[out] error_tips 错误信息，
+    * @param[out] tips_ary 错误信息，
     */
     int init_outdir(const QString &outer_dir,
-                    QStringList &error_tips);
+                    QStringList &tips_ary);
 
 
     /*!
     * @brief      map proto 文件的目录，同时加载里面所有的.proto文件
     * @return     int
     * @param      proto_dir
-    * @param[out] error_tips 错误信息，
+    * @param[out] tips_ary 错误信息，
     */
     int init_protodir(const QString &proto_dir,
-                      QStringList &error_tips);
+                      QStringList &tips_ary);
 
 
+    /*!
+    * @brief      
+    * @return     int
+    * @param      excel_dir EXCEL 目录
+    * @param      tips_ary  提示信息
+    */
     int init_exceldir(const QString &excel_dir,
-                      QStringList &error_tips);
-
-
+                      QStringList &tips_ary);
 
 
     //!
     int read_proto_file(const QFileInfo &proto_file,
-                        QStringList &error_tips);
+                        QStringList &tips_ary);
 
-    //!
+    //!打开EXCEL文件
     int open_excel_file(const QString &excel_file_name,
                         bool read_enum_sheet,
-                        QStringList &error_tips);
-    //
+                        QStringList &tips_ary);
+    
+	//关闭EXCEL 文件
+	void close_excel_file();
 
+	//读枚举值
+	int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map);
 
     //!
     int read_excel_table(const Illusion_Message *ils_msg,
-                         QStringList &error_tips);
+                         QStringList &tips_ary);
 
     //!保存EXCEL的表头
     int save_excel_tablehead(const Illusion_Message *ils_msg,
-                             QStringList &error_tips);
+                             QStringList &tips_ary);
 
     /*!
     * @brief      将数据保存到Proto buf config 配置文件里面
     * @return     int
     * @param      ils_msg
     * @param      table_cfg
-    * @param      error_tips
+    * @param      tips_ary
     */
     int save_to_protocfg(const Illusion_Message *ils_msg,
                          const google::protobuf::Message *table_msg,
-                         QStringList &error_tips) const;
+                         QStringList &tips_ary) const;
 
 protected:
 

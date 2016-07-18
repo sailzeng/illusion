@@ -95,7 +95,7 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
         const google::protobuf::FieldOptions &fo = field_desc->options();
 
         //如果这个域标识了不读取，跳过
-        bool is_read_filed = fo.GetExtension(illusion::illusion_field);
+        bool is_read_filed = fo.GetExtension(illusion::cfg_field);
         if (is_read_filed)
         {
             continue;
@@ -217,7 +217,7 @@ int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg,
         const google::protobuf::FieldOptions &fo = field_desc->options();
 
         //如果这个域标识了不读取，跳过
-        bool is_read_filed = fo.GetExtension(illusion::illusion_field);
+        bool is_read_filed = fo.GetExtension(illusion::cfg_field);
         if (is_read_filed)
         {
             continue;

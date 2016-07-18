@@ -38,10 +38,10 @@ void protobuf_ShutdownFile_illusion_2eproto();
 
 // ===================================================================
 
-static const int kIllusionMessageFieldNumber = 50001;
+static const int kCfgMessageFieldNumber = 50001;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
-  illusion_message;
+  cfg_message;
 static const int kExcelFileFieldNumber = 50002;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
@@ -50,6 +50,10 @@ static const int kExcelSheetFieldNumber = 50003;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   excel_sheet;
+static const int kOuterFileFieldNumber = 50007;
+extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
+    ::google::protobuf::internal::StringTypeTraits, 9, false >
+  outer_file;
 static const int kFieldsnameLineFieldNumber = 50004;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
@@ -62,14 +66,10 @@ static const int kReadLineFieldNumber = 50006;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   read_line;
-static const int kOuterFileFieldNumber = 50007;
-extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
-    ::google::protobuf::internal::StringTypeTraits, 9, false >
-  outer_file;
-static const int kIllusionFieldFieldNumber = 51001;
+static const int kCfgFieldFieldNumber = 51001;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
-  illusion_field;
+  cfg_field;
 static const int kFieldsNameFieldNumber = 51002;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >

@@ -40,6 +40,7 @@ Biko_Read_Config *Biko_Read_Config::instance_ = NULL;
 //
 Biko_Read_Config::Biko_Read_Config()
 {
+	source_tree_ = new  google::protobuf::compiler::DiskSourceTree();
 }
 
 
@@ -84,35 +85,41 @@ void Biko_Read_Config::clean_instance()
 
 //!所有的目录都在一个目录下的快捷处理方式
 int Biko_Read_Config::init_read_all2(const QString &allinone_dir,
-                                     QStringList &error_tips)
+                                     QStringList &tips_ary)
 {
-    return init_read_all(allinone_dir + "/excel",
-                         allinone_dir + "/proto",
+    return init_read_all(NULL,
+						 allinone_dir + "/proto",
+						 allinone_dir + "/excel",
                          allinone_dir + "/outer",
-                         error_tips);
+                         tips_ary);
 }
 
 //读取excel_dir目录下所有的EXCEL文件，根据proto_dir目录下的meta文件，反射，转换成位置文件输出到outer_dir目录
-int Biko_Read_Config::init_read_all(const QString &proto_dir,
+int Biko_Read_Config::init_read_all(const QStringList *import_dir,
+	                                const QString &proto_dir,
                                     const QString &excel_dir,
                                     const QString &outer_dir,
-                                    QStringList &error_tips)
+                                    QStringList &tips_ary)
 {
 
     int ret = 0;
+	if (import_dir)
+	{
+		init_importdir(import_dir, tips_ary);
+	}
     //各个部分都进行初始化处理
-    ret = init_protodir(proto_dir, error_tips);
+    ret = init_protodir(proto_dir, tips_ary);
     if (ret != 0)
     {
         return -1;
     }
-    ret = init_exceldir(excel_dir, error_tips);
+    ret = init_exceldir(excel_dir, tips_ary);
     if (ret != 0)
     {
         return -1;
     }
 
-    ret = init_outdir(outer_dir, error_tips);
+    ret = init_outdir(outer_dir, tips_ary);
     if (ret != 0)
     {
         return -1;
@@ -121,23 +128,34 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
     bool bret = ils_excel_file_.initialize(false);
     if (false == bret)
     {
-        error_tips.append(QString::fromLocal8Bit("OLE不能启动EXCEL，实用OLE读取EXCEL必须安装了EXCEL。"));
+        tips_ary.append(QString::fromLocal8Bit("OLE不能启动EXCEL，实用OLE读取EXCEL必须安装了EXCEL。"));
         return -1;
     }
 
     return 0;
 }
 
+void Biko_Read_Config::init_importdir(const QStringList *import_dir,
+					QStringList & /*tips_ary*/)
+{
+	Q_ASSERT(import_dir);
+	for (int i = 0; i < import_dir->size(); ++i)
+	{
+		source_tree_->MapPath("", (*import_dir)[i].toStdString());
+	}
+	
+}
+
 //初始化.proto文件目录，读取里面所有的proto文件
 int Biko_Read_Config::init_protodir(const QString &proto_dir,
-                                    QStringList &error_tips)
+                                    QStringList &tips_ary)
 {
     int ret = 0;
-    proto_path_.setPath(proto_dir);;
+    proto_path_.setPath(proto_dir);
     if (false == proto_path_.exists())
     {
-        error_tips.append(QString::fromLocal8Bit("目录[%1]并不存在，请检查参数。").
-                          arg(proto_dir));
+        tips_ary.append(QString::fromLocal8Bit("目录[%1]并不存在，请检查参数。").
+                        arg(proto_dir));
         return -1;
     }
     //读取.proto 文件
@@ -146,12 +164,12 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
     proto_fileary_ = proto_path_.entryInfoList(filters, QDir::Files | QDir::Readable);
     if (proto_fileary_.size() <= 0)
     {
-        error_tips.append(QString::fromLocal8Bit("目录[%1]下没有任何protobuf meta(.proto)文件，请检查参数。").
-                          arg(proto_dir));
+        tips_ary.append(QString::fromLocal8Bit("目录[%1]下没有任何protobuf meta(.proto)文件，请检查参数。").
+                        arg(proto_dir));
         return -1;
     }
 
-    source_tree_ = new  google::protobuf::compiler::DiskSourceTree();
+    
     source_tree_->MapPath("", proto_path_.path().toStdString());
     protobuf_importer_ = new google::protobuf::compiler::Importer(source_tree_, &error_collector_);
     msg_factory_ = new google::protobuf::DynamicMessageFactory();
@@ -159,7 +177,7 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
     //加载所有的.proto 文件
     for (int i = 0; i < proto_fileary_.size(); ++i)
     {
-        ret = read_proto_file(proto_fileary_[i], error_tips);
+        ret = read_proto_file(proto_fileary_[i], tips_ary);
         if (0 != ret)
         {
             return -1;
@@ -170,14 +188,14 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
 
 //
 int Biko_Read_Config::init_exceldir(const QString &excel_dir,
-                                    QStringList &error_tips)
+                                    QStringList &tips_ary)
 {
     int ret = 0;
     excel_path_.setPath(excel_dir);
     if (false == excel_path_.exists())
     {
-        error_tips.append(QString::fromLocal8Bit("目录[%1]并不存在，请检查参数。").
-                          arg(excel_dir));
+        tips_ary.append(QString::fromLocal8Bit("目录[%1]并不存在，请检查参数。").
+                        arg(excel_dir));
         return -1;
     }
     //读取.xls , .xlsx 文件
@@ -186,15 +204,15 @@ int Biko_Read_Config::init_exceldir(const QString &excel_dir,
     excel_fileary_ = excel_path_.entryInfoList(filters, QDir::Files | QDir::Readable);
     if (excel_fileary_.size() <= 0)
     {
-        error_tips.append(QString::fromLocal8Bit("目录[%1]下没有任何Excel文件，请检查参数。").
-                          arg(excel_dir));
+        tips_ary.append(QString::fromLocal8Bit("目录[%1]下没有任何Excel文件，请检查参数。").
+                        arg(excel_dir));
         return -1;
     }
     return 0;
 }
 
 int Biko_Read_Config::init_outdir(const QString &outer_dir,
-                                  QStringList &error_tips)
+                                  QStringList &tips_ary)
 {
     QString path_str;
 
@@ -246,41 +264,60 @@ void Biko_Read_Config::clear()
 }
 
 //把扫描或者参数的EXCEL文件都进行一次读取
-int Biko_Read_Config::read_all_message(QStringList &error_tips)
+int Biko_Read_Config::read_all_message(QStringList &tips_ary)
 {
     int ret = 0;
-    for (size_t i = 0; i < illusion_msg_ary_.size(); ++i)
+    for (auto iter = excel_cfg_map_.begin(); iter != excel_cfg_map_.end(); ++iter)
     {
-        ret = open_excel_file(illusion_msg_ary_[i]->excel_file_name_,
-                                  false,
-                                  error_tips);
+        //打开EXCEL文件
+        ret = open_excel_file(iter->first,
+                              false,
+                              tips_ary);
         if (0 != ret)
         {
             return ret;
         }
+
+        //读取每一个Message
+        for (size_t i = 0; i < iter->second.size(); ++i)
+        {
+            ret = read_excel_table(iter->second[i], tips_ary);
+			if (0 != ret)
+			{
+				return ret;
+			}
+        }
+
+        //关闭EXCEL 文件
+        close_excel_file();
     }
     return 0;
 }
 
+
 int Biko_Read_Config::read_one_message(const QString &messge_full_name,
-                                       QStringList &error_tips)
+                                       QStringList &tips_ary)
 {
     int ret = 0;
     auto iter = msgname_2_illusion_map_.find(messge_full_name);
     if (iter == msgname_2_illusion_map_.end())
     {
-        error_tips.append(QString::fromLocal8Bit("[%1] Message 名称无法找到，请检查您的输入或者.proto文件。")
-                          .arg(messge_full_name));
+        tips_ary.append(QString::fromLocal8Bit("[%1] Message 名称无法找到，请检查您的输入或者.proto文件。")
+                        .arg(messge_full_name));
         return -1;
     }
 
     ret = open_excel_file(iter->second->excel_file_name_,
-                              false,
-                              error_tips);
+                          false,
+                          tips_ary);
     if (0 != ret)
     {
         return ret;
     }
+
+	//关闭EXCEL 文件
+	close_excel_file();
+
     return 0;
 }
 
@@ -295,16 +332,14 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
     const google::protobuf::FileDescriptor *file_desc = NULL;
 
     error_collector_.clear_error();
-    QString proto_path;
     QString proto_fname;
-    proto_path = proto_file.path();
     proto_fname = proto_file.fileName();
 
-    file_desc = protobuf_importer_->Import(proto_path.toStdString());
+    file_desc = protobuf_importer_->Import(proto_fname.toStdString());
     if (!file_desc)
     {
         fprintf(stderr, "Importer Import filename [%s] fail.",
-                proto_path.toStdString().c_str());
+				proto_fname.toStdString().c_str());
         return -1;
     }
 
@@ -317,7 +352,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
         if (table_msg_desc && table_msg_desc->field_count() > 0 )
         {
             const google::protobuf::MessageOptions &mo = table_msg_desc->options();
-            if (false == mo.GetExtension(illusion::illusion_message))
+            if (false == mo.GetExtension(illusion::cfg_message))
             {
                 continue;
             }
@@ -425,8 +460,8 @@ int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map)
 
 //!
 int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
-                                          bool read_enum_sheet,
-                                          QStringList &error_tips)
+                                      bool read_enum_sheet,
+                                      QStringList &tips_ary)
 {
     QString excel_path = excel_path_.path() + excel_file_name;
     bool bret = ils_excel_file_.open(excel_path);
@@ -444,8 +479,8 @@ int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
     {
         if (ils_excel_file_.hasSheet("ENUM_CONFIG") == false)
         {
-            error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[ENUM_CONFIG]."
-                                                     "没有枚举值需要读取。"));
+            tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[ENUM_CONFIG]."
+                                                   "没有枚举值需要读取。"));
         }
         else
         {
@@ -453,8 +488,8 @@ int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
             int ret = read_table_enum(enum_map);
             if (0 != ret)
             {
-                error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL文件中的"
-                                                         "[ENUM_CONFIG]表不正确，请重现检查后打开。!"));
+                tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL文件中的"
+                                                       "[ENUM_CONFIG]表不正确，请重现检查后打开。!"));
                 return ret;
             }
         }
@@ -463,18 +498,23 @@ int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
     return 0;
 }
 
+void Biko_Read_Config::close_excel_file()
+{
+	ils_excel_file_.close();
+}
+
 //
 int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
-                                          QStringList &error_tips)
+                                       QStringList &tips_ary)
 {
-	int ret = 0;
+    int ret = 0;
     //检查EXCEL文件中是否有这个表格
     if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == false)
     {
-        error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL文件[%1]中的"
-                                                 "[%2]表不存在或者不正确，请重现检查后打开。!")
-                          .arg(ils_msg->excel_file_name_)
-                          .arg(ils_msg->excel_sheet_name_));
+        tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL文件[%1]中的"
+                                               "[%2]表不存在或者不正确，请重现检查后打开。!")
+                        .arg(ils_msg->excel_file_name_)
+                        .arg(ils_msg->excel_sheet_name_));
         return -3;
     }
 
@@ -482,7 +522,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     int line_count = ils_excel_file_.rowCount();
     int col_count = ils_excel_file_.columnCount();
     fprintf(stderr, "Read excel table %s table have col_count %d row_count %d.\n",
-			ils_msg->excel_sheet_name_.toStdString().c_str(),
+            ils_msg->excel_sheet_name_.toStdString().c_str(),
             col_count,
             line_count);
 
@@ -492,16 +532,16 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
         ils_msg->fieldsname_line_ > line_count ||
         ils_msg->column_field_count_ > col_count)
     {
-        error_tips.append(QString::fromLocal8Bit("你选择的配置EXCEL[%1]文件中的"
-                                                 "[%2]表没有足够的数据以供读取。!").
-                          arg(ils_msg->excel_file_name_).
-                          arg(ils_msg->excel_sheet_name_));
+        tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL[%1]文件中的"
+                                               "[%2]表没有足够的数据以供读取。!").
+                        arg(ils_msg->excel_file_name_).
+                        arg(ils_msg->excel_sheet_name_));
         return -4;
     }
 
     fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.",
-			ils_msg->excel_file_name_.toStdString().c_str(),
-			ils_msg->excel_sheet_name_.toStdString().c_str(),
+            ils_msg->excel_file_name_.toStdString().c_str(),
+            ils_msg->excel_sheet_name_.toStdString().c_str(),
             line_count,
             col_count);
 
@@ -518,10 +558,11 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     }
     else if (col_count > ils_msg->column_field_count_)
     {
-        for (int col_no = 1; col_no <= col_count && read_col.size() < ils_msg->column_field_count_; ++col_no)
+        for (int col_no = 1;
+             col_no <= col_count && static_cast<int>(read_col.size()) < ils_msg->column_field_count_; ++col_no)
         {
             QVariant data = ils_excel_file_.getCell(ils_msg->fieldsname_line_,
-                                                     col_no);
+                                                    col_no);
             QString field_name = data.toString();
             QChar first_char = field_name.at(0);
             if (first_char == '#' || first_char == '%' ||  first_char == '!')
@@ -575,7 +616,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
         {
             QString error_info = QString::fromLocal8Bit("!动态写入Message失败，Table Message [%1] Line Message [%2] 字段名称[%3]."
                                                         "对应字段是的EXCEL 文件[%4]Sheet 名称[%5].行号列号[%6|%7]%8")
-								 .arg(ils_msg->table_messge_name_)
+                                 .arg(ils_msg->table_messge_name_)
                                  .arg(ils_msg->line_message_name_)
                                  .arg(error_field_desc->full_name().c_str())
                                  .arg(ils_msg->excel_file_name_)
@@ -584,7 +625,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
                                  .arg(read_col[error_field_no])
                                  .arg(QtAxExcelEngine::columnName(read_col[error_field_no]));
             fprintf(stderr, "%s", error_info.toStdString().c_str());
-            error_tips.append(error_info);
+            tips_ary.append(error_info);
             return ret;
         }
     }
@@ -592,104 +633,105 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     if (!table_msg->IsInitialized())
     {
         fprintf(stderr, "Read table message [%s] is not IsInitialized, please check your excel or proto file.",
-				ils_msg->table_messge_name_.toStdString().c_str());
+                ils_msg->table_messge_name_.toStdString().c_str());
         return -1;
     }
     std::cout << table_msg->DebugString() << std::endl;
     fprintf(stderr, "Read excel file:%s table :%s end.",
-			ils_msg->excel_file_name_.toStdString().c_str(),
-			ils_msg->excel_sheet_name_.toStdString().c_str());
+            ils_msg->excel_file_name_.toStdString().c_str(),
+            ils_msg->excel_sheet_name_.toStdString().c_str());
 
 
-	ret = save_to_protocfg(ils_msg, table_msg, error_tips);
-	if (0 != ret)
-	{
-		return ret;
-	}
+    ret = save_to_protocfg(ils_msg, table_msg, tips_ary);
+    if (0 != ret)
+    {
+        return ret;
+    }
     return 0;
 }
 
 //
-int Biko_Read_Config::save_excel_tablehead(const Illusion_Message * ils_msg,
-										   QStringList & error_tips)
+int Biko_Read_Config::save_excel_tablehead(const Illusion_Message *ils_msg,
+                                           QStringList &tips_ary)
 {
-	int ret = 0;
-	//检查EXCEL文件中是否有这个表格
-	if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
-	{
-		QString sheet_name = ils_msg->excel_sheet_name_;
-		sheet_name += QDateTime::currentDateTime().toString();
-		ils_excel_file_.renameSheet(sheet_name);
-	}
-	ils_excel_file_.insertSheet(ils_msg->excel_sheet_name_);
+    int ret = 0;
+    //检查EXCEL文件中是否有这个表格
+    if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
+    {
+        QString sheet_name = ils_msg->excel_sheet_name_;
+        sheet_name += QDateTime::currentDateTime().toString();
+        ils_excel_file_.renameSheet(sheet_name);
+    }
+	
+    ils_excel_file_.insertSheet(ils_msg->excel_sheet_name_);
 
-	for (int i = 0; i < ils_msg->column_field_count_; ++i)
-	{
-		ils_excel_file_.setCell(ils_msg->fieldsname_line_,
-								i+1,
-								ils_msg->column_fieldname_ary_[i]);
-		if (ils_msg->fullname_line_ > 0)
-		{
-			ils_excel_file_.setCell(ils_msg->fullname_line_,
-									i + 1,
-									ils_msg->column_fullname_ary_[i]);
-		}
-	}
+    for (int i = 0; i < ils_msg->column_field_count_; ++i)
+    {
+        ils_excel_file_.setCell(ils_msg->fieldsname_line_,
+                                i + 1,
+                                ils_msg->column_fieldname_ary_[i]);
+        if (ils_msg->fullname_line_ > 0)
+        {
+            ils_excel_file_.setCell(ils_msg->fullname_line_,
+                                    i + 1,
+                                    ils_msg->column_fullname_ary_[i]);
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int Biko_Read_Config::save_to_protocfg(const Illusion_Message *ils_msg,
-									   const google::protobuf::Message *table_msg,
-									   QStringList &error_tips) const
+                                       const google::protobuf::Message *table_msg,
+                                       QStringList &tips_ary) const
 {
-	QString pbc_file = out_pbc_path_.path() + "/";
-	pbc_file += ils_msg->outer_file_name_;
-	QString txt_file = pbc_file + ".txt";
-	QFile pbc_config(pbc_file);
-	pbc_config.open(QIODevice::ReadWrite);
-	if (!pbc_config.isWritable())
-	{
-		return -1;
-	}
-	QFile txt_config(txt_file);
-	txt_config.open(QIODevice::ReadWrite);
-	if (!txt_config.isWritable())
-	{
-		return -1;
-	}
-	if (!table_msg->IsInitialized())
-	{
-		fprintf(stderr, "class [%s] protobuf encode fail, IsInitialized return false.error string [%s].",
-				table_msg->GetTypeName().c_str(),
-				table_msg->InitializationErrorString().c_str());
-		return -1;
-	}
-	std::string bin_string, txt_string;
-	bool succ = table_msg->SerializeToString(&bin_string);
-	if (!succ)
-	{
-		return -2;
-	}
-	succ = google::protobuf::TextFormat::PrintToString(*table_msg, &txt_string);
-	if (!succ)
-	{
-		return -2;
-	}
-	qint64 wt_len = pbc_config.write(bin_string.c_str(), bin_string.length());
-	if (wt_len < 0)
-	{
-		return -3;
-	}
-	pbc_config.close();
+    QString pbc_file = out_pbc_path_.path() + "/";
+    pbc_file += ils_msg->outer_file_name_;
+    QString txt_file = pbc_file + ".txt";
+    QFile pbc_config(pbc_file);
+    pbc_config.open(QIODevice::ReadWrite);
+    if (!pbc_config.isWritable())
+    {
+        return -1;
+    }
+    QFile txt_config(txt_file);
+    txt_config.open(QIODevice::ReadWrite);
+    if (!txt_config.isWritable())
+    {
+        return -1;
+    }
+    if (!table_msg->IsInitialized())
+    {
+        fprintf(stderr, "class [%s] protobuf encode fail, IsInitialized return false.error string [%s].",
+                table_msg->GetTypeName().c_str(),
+                table_msg->InitializationErrorString().c_str());
+        return -1;
+    }
+    std::string bin_string, txt_string;
+    bool succ = table_msg->SerializeToString(&bin_string);
+    if (!succ)
+    {
+        return -2;
+    }
+    succ = google::protobuf::TextFormat::PrintToString(*table_msg, &txt_string);
+    if (!succ)
+    {
+        return -2;
+    }
+    qint64 wt_len = pbc_config.write(bin_string.c_str(), bin_string.length());
+    if (wt_len < 0)
+    {
+        return -3;
+    }
+    pbc_config.close();
 
-	wt_len = txt_config.write(txt_string.c_str(), txt_string.length());
-	if (wt_len < 0)
-	{
-		return -4;
-	}
-	txt_config.close();
-	return 0;
+    wt_len = txt_config.write(txt_string.c_str(), txt_string.length());
+    if (wt_len < 0)
+    {
+        return -4;
+    }
+    txt_config.close();
+    return 0;
 }
 
 

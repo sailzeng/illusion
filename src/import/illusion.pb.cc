@@ -58,22 +58,21 @@ void protobuf_AddDesc_illusion_2eproto() {
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\016illusion.proto\022\010illusion\032 google/proto"
-    "buf/descriptor.proto:B\n\020illusion_message"
-    "\022\037.google.protobuf.MessageOptions\030\321\206\003 \001("
-    "\010:\005false:5\n\nexcel_file\022\037.google.protobuf"
-    ".MessageOptions\030\322\206\003 \001(\t:6\n\013excel_sheet\022\037"
-    ".google.protobuf.MessageOptions\030\323\206\003 \001(\t:"
-    "=\n\017fieldsname_line\022\037.google.protobuf.Mes"
-    "sageOptions\030\324\206\003 \001(\005:\0011:;\n\rfullname_line\022"
-    "\037.google.protobuf.MessageOptions\030\325\206\003 \001(\005"
-    ":\0012:7\n\tread_line\022\037.google.protobuf.Messa"
-    "geOptions\030\326\206\003 \001(\005:\0013:5\n\nouter_file\022\037.goo"
-    "gle.protobuf.MessageOptions\030\327\206\003 \001(\t:=\n\016i"
-    "llusion_field\022\035.google.protobuf.FieldOpt"
-    "ions\030\271\216\003 \001(\010:\004true:4\n\013fields_name\022\035.goog"
-    "le.protobuf.FieldOptions\030\272\216\003 \001(\t:4\n\013repe"
-    "at_size\022\035.google.protobuf.FieldOptions\030\273"
-    "\216\003 \001(\005", 646);
+    "buf/descriptor.proto:=\n\013cfg_message\022\037.go"
+    "ogle.protobuf.MessageOptions\030\321\206\003 \001(\010:\005fa"
+    "lse:5\n\nexcel_file\022\037.google.protobuf.Mess"
+    "ageOptions\030\322\206\003 \001(\t:6\n\013excel_sheet\022\037.goog"
+    "le.protobuf.MessageOptions\030\323\206\003 \001(\t:5\n\nou"
+    "ter_file\022\037.google.protobuf.MessageOption"
+    "s\030\327\206\003 \001(\t:=\n\017fieldsname_line\022\037.google.pr"
+    "otobuf.MessageOptions\030\324\206\003 \001(\005:\0011:;\n\rfull"
+    "name_line\022\037.google.protobuf.MessageOptio"
+    "ns\030\325\206\003 \001(\005:\0012:7\n\tread_line\022\037.google.prot"
+    "obuf.MessageOptions\030\326\206\003 \001(\005:\0013:8\n\tcfg_fi"
+    "eld\022\035.google.protobuf.FieldOptions\030\271\216\003 \001"
+    "(\010:\004true:4\n\013fields_name\022\035.google.protobu"
+    "f.FieldOptions\030\272\216\003 \001(\t:4\n\013repeat_size\022\035."
+    "google.protobuf.FieldOptions\030\273\216\003 \001(\005", 636);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "illusion.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
@@ -87,6 +86,9 @@ void protobuf_AddDesc_illusion_2eproto() {
     50003, 9, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::MessageOptions::default_instance(),
+    50007, 9, false, false);
+  ::google::protobuf::internal::ExtensionSet::RegisterExtension(
+    &::google::protobuf::MessageOptions::default_instance(),
     50004, 5, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::MessageOptions::default_instance(),
@@ -94,9 +96,6 @@ void protobuf_AddDesc_illusion_2eproto() {
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::MessageOptions::default_instance(),
     50006, 5, false, false);
-  ::google::protobuf::internal::ExtensionSet::RegisterExtension(
-    &::google::protobuf::MessageOptions::default_instance(),
-    50007, 9, false, false);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::FieldOptions::default_instance(),
     51001, 8, false, false);
@@ -117,7 +116,7 @@ struct StaticDescriptorInitializer_illusion_2eproto {
 } static_descriptor_initializer_illusion_2eproto_;
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
-  illusion_message(kIllusionMessageFieldNumber, false);
+  cfg_message(kCfgMessageFieldNumber, false);
 const ::std::string excel_file_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
@@ -126,6 +125,10 @@ const ::std::string excel_sheet_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >
   excel_sheet(kExcelSheetFieldNumber, excel_sheet_default);
+const ::std::string outer_file_default("");
+::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
+    ::google::protobuf::internal::StringTypeTraits, 9, false >
+  outer_file(kOuterFileFieldNumber, outer_file_default);
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   fieldsname_line(kFieldsnameLineFieldNumber, 1);
@@ -135,13 +138,9 @@ const ::std::string excel_sheet_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   read_line(kReadLineFieldNumber, 3);
-const ::std::string outer_file_default("");
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
-    ::google::protobuf::internal::StringTypeTraits, 9, false >
-  outer_file(kOuterFileFieldNumber, outer_file_default);
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
-  illusion_field(kIllusionFieldFieldNumber, true);
+  cfg_field(kCfgFieldFieldNumber, true);
 const ::std::string fields_name_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::StringTypeTraits, 9, false >

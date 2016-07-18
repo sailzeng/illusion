@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	    return -1;
 	}
 
-	QString error_tips;
+	QStringList tips_ary;
 	QString allinone_path = "E:/Courage/illusion.git/example/001";
 
 	const struct option RAPER_LONG_OPTION[]=
@@ -56,14 +56,14 @@ int main(int argc, char *argv[])
 		};
 	}
 	ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
-													   error_tips);
+													   tips_ary);
 	if (ret != 0)
 	{
 		Biko_Read_Config::clean_instance();
 		return -1;
 	}
 
-	ret = Biko_Read_Config::instance()->read_excel(error_tips);
+	ret = Biko_Read_Config::instance()->read_all_message(tips_ary);
 	if (ret != 0)
 	{
 		Biko_Read_Config::clean_instance();

@@ -1,4 +1,5 @@
 //option optimize_for = LITE_RUNTIME;
+import "illusion.proto";
 
 enum ENUM_WEEK 
 {
@@ -13,21 +14,30 @@ enum ENUM_WEEK
 
 message GAME_CFG_STRUCT_1
 {
-	optional int32 s1_a = 1;
-	optional uint32 s1_b = 2 ;
-	optional int64 s1_c = 3;
-	optional uint64 s1_d = 4 ;
-	optional double s1_e = 5;
-	optional float s1_f = 6 ;
-	optional bool s1_g = 7;
-	optional string s1_h = 8 ;
-	optional bytes s1_i = 9;
-	repeated  int32 s1_j = 10 ;
-	repeated  string s1_k = 11;
-	optional ENUM_WEEK s1_l = 12;
+	optional int32 s1_a = 1      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_1"];
+	optional uint32 s1_b = 2     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_2"];
+	optional int64 s1_c = 3      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_3"];
+	optional uint64 s1_d = 4     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_4"];
+	optional double s1_e = 5     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_5"];
+	optional float s1_f = 6      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_6"];
+	optional bool s1_g = 7       [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_7"];
+	optional string s1_h = 8     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_8"];
+	optional bytes s1_i = 9      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_9",  (illusion.repeat_size) = 4];
+	repeated int32 s1_j = 10     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_10", (illusion.repeat_size) = 4];
+	repeated string s1_k = 11    [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_11"];
+	optional ENUM_WEEK s1_l = 12 [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_12"];;
 }
 
 message LIST_OF_GAME_CFG_STRUCT_1
 {
+    option (illusion.cfg_message) = true;
+    option (illusion.excel_file) = "game_config_01.xlsx";
+    option (illusion.excel_sheet) = "GAME_CFG_STRUCT_1";
+    option (illusion.outer_file) = "GAME_CFG_STRUCT_1.bin";
+    option (illusion.fieldsname_line) = 1;
+    option (illusion.fullname_line) = 2;
+    option (illusion.read_line) = 3;
+    
+    
     repeated GAME_CFG_STRUCT_1 list_data = 1;
 }
