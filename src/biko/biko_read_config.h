@@ -75,7 +75,7 @@ public:
     * @param[in]  excel_dir 读取excel_dir目录下所有的EXCEL文件
     * @param[in]  outer_dir 转换成位置文件输出到outer_dir目录，如果为NULL，则表示用当前目录输出
     */
-    int init_read_all(const QStringList *import_dir,
+    int init_read_all(const QStringList &import_list,
 		              const QString &proto_dir,
                       const QString &excel_dir,
                       const QString &outer_dir,
@@ -95,6 +95,10 @@ public:
     int read_one_message(const QString &messge_full_name,
                          QStringList &tips_ary);
 
+	//!保存EXCEL的表头
+	int save_excel_tablehead(const QString &messge_full_name,
+							 QStringList &tips_ary);
+
     //清理所有的读取数据
     void clear();
 
@@ -108,7 +112,7 @@ protected:
 	* @param      import_dir  import的目录列表
 	* @param      tips_ary
 	*/
-	void init_importdir(const QStringList *import_dir, 
+	void init_importdir(const QStringList &import_list,
 						QStringList &tips_ary);
 
     /*!
@@ -147,22 +151,21 @@ protected:
 
     //!打开EXCEL文件
     int open_excel_file(const QString &excel_file_name,
-                        bool read_enum_sheet,
+                        bool not_exist_new,
                         QStringList &tips_ary);
     
 	//关闭EXCEL 文件
 	void close_excel_file();
 
 	//读枚举值
-	int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map);
+	int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
+						QStringList &tips_info);
 
     //!
     int read_excel_table(const Illusion_Message *ils_msg,
                          QStringList &tips_ary);
 
-    //!保存EXCEL的表头
-    int save_excel_tablehead(const Illusion_Message *ils_msg,
-                             QStringList &tips_ary);
+
 
     /*!
     * @brief      将数据保存到Proto buf config 配置文件里面
@@ -210,18 +213,20 @@ protected:
     //
     ZCE_Error_Collector error_collector_;
 
-    //!每个分析的Message分析得到Illusion_Message，在这儿保存他们
+    //!每个分析的Message分析得到Illusion_Message，在这儿保存他们,
     std::vector <const Illusion_Message *> illusion_msg_ary_;
-    //!outer输出文件对用的proto配置的信息
+
+    //!每个message的 full name 对应的Illusion_Message ，便于通过名字找Illusion_Message
     std::map <QString, const Illusion_Message *> msgname_2_illusion_map_;
 
-    //!proto 名称对应
-    std::map <QString, ILLUSION_MESSAGE_ARRAY> proto_cfg_map_;
-    //!EXCEL 文件名称对应proto配置的信息
-    std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_cfg_map_;
+    //!proto 文件名称对应 Illusion_Message 列表，一个.proto可以有多个Illusion_Message
+    std::map <QString, ILLUSION_MESSAGE_ARRAY> protoname_2_illusion_map_;
 
-    //!outer输出文件对用的proto配置的信息
-    std::map <QString, const Illusion_Message *> outer_cfg_map_;
+    //!EXCEL 文件名称对应proto配置的信息
+    std::map <QString, ILLUSION_MESSAGE_ARRAY> excelname_2_illusion_map_;
+
+    //!outer输出文件对用的proto配置的信息，便于查询
+    std::map <QString, const Illusion_Message *> outername_2_illusion_map_;
 
     //!EXCEL文件列表
     QFileInfoList excel_fileary_;

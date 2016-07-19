@@ -39,11 +39,15 @@ int main(int argc, char *argv[])
 		{ "excel", required_argument, NULL,'x' },
 		{ "proto", required_argument,NULL, 'p' },
 		{ "outer", required_argument,NULL, 'o' },
+		{ "import", required_argument,NULL, 'i' },
+		{ "message", required_argument,NULL, 'm' },
+		{ "all", no_argument,NULL, 'a' },
+		{ "title", no_argument,NULL, 't' },
 		{ "help", no_argument,NULL, 'h' },
 		{ NULL, no_argument, NULL, 0 }
 	};
 	int long_index = 0;
-	const char RAPER_OPT_STRING[] = "c:x:p:o:h";
+	const char RAPER_OPT_STRING[] = "c:x:p:o:m:i:ath";
 	int opt = -1;
 	while (-1 != (opt = ZCE_LIB::getopt_long(argc, argv,
 											 RAPER_OPT_STRING,
@@ -62,7 +66,8 @@ int main(int argc, char *argv[])
 		Biko_Read_Config::clean_instance();
 		return -1;
 	}
-
+	ret = Biko_Read_Config::instance()->save_excel_tablehead("LIST_OF_GAME_CFG_STRUCT_1",
+		tips_ary);
 	ret = Biko_Read_Config::instance()->read_all_message(tips_ary);
 	if (ret != 0)
 	{

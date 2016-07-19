@@ -83,7 +83,8 @@ void QtAxExcelEngine::finalize()
 
 
 //打开EXCEL文件
-bool QtAxExcelEngine::open(const QString &xls_file)
+bool QtAxExcelEngine::open(const QString &xls_file,
+						   bool not_exist_new)
 {
     xls_file_ = xls_file;
     
@@ -119,6 +120,11 @@ bool QtAxExcelEngine::open(const QString &xls_file)
     }
     else
     {
+		if (!not_exist_new)
+		{
+			return false;
+		}
+
         //新建一个xls，添加一个新的工作薄
         work_books_->dynamicCall("Add()");
         active_book_ = excel_instance_->querySubObject("ActiveWorkBook");
@@ -242,36 +248,39 @@ void QtAxExcelEngine::loadSheet_internal(bool pre_load)
 {
     //获取该sheet的使用范围对象
     QAxObject *used_range = active_sheet_->querySubObject("UsedRange");
-    QAxObject *rows = used_range->querySubObject("Rows");
-    QAxObject *columns = used_range->querySubObject("Columns");
-
-    //因为excel可以从任意行列填数据而不一定是从1,1开始，因此要获取首行列下标
-    //第一行的起始位置
-    start_row_ = used_range->property("Row").toInt();
-    //第一列的起始位置
-    start_column_ = used_range->property("Column").toInt();
-    
-	//获取行数，便于理解，也算上了空行，否则各种地方坐标理解还不一致。
-    row_count_ = rows->property("Count").toInt() + start_row_ -1;
-    //获取列数
-    column_count_ = columns->property("Count").toInt() + start_column_ -1;
-
-	preload_sheet_data_.clear();
-	preload_sheet_data_.reserve(row_count_ * column_count_);
-	//预加载的数据，存放
-	if (pre_load)
+	if (used_range)
 	{
-		QVariantList row_list = used_range->property("Value2").toList();
-		//第一次转换得到的行数据，需要再取一次.实际测试，如果只有1,1一个数据，也不会进入预加载代码
-		for (int i = 0; i < row_list.size(); ++i)
+		QAxObject *rows = used_range->querySubObject("Rows");
+		QAxObject *columns = used_range->querySubObject("Columns");
+
+		//因为excel可以从任意行列填数据而不一定是从1,1开始，因此要获取首行列下标
+		//第一行的起始位置
+		start_row_ = used_range->property("Row").toInt();
+		//第一列的起始位置
+		start_column_ = used_range->property("Column").toInt();
+
+		//获取行数，便于理解，也算上了空行，否则各种地方坐标理解还不一致。
+		row_count_ = rows->property("Count").toInt() + start_row_ - 1;
+		//获取列数
+		column_count_ = columns->property("Count").toInt() + start_column_ - 1;
+
+		preload_sheet_data_.clear();
+		preload_sheet_data_.reserve(row_count_ * column_count_);
+		//预加载的数据，存放
+		if (pre_load)
 		{
-			preload_sheet_data_ += row_list.at(i).toList();
+			QVariantList row_list = used_range->property("Value2").toList();
+			//第一次转换得到的行数据，需要再取一次.实际测试，如果只有1,1一个数据，也不会进入预加载代码
+			for (int i = 0; i < row_list.size(); ++i)
+			{
+				preload_sheet_data_ += row_list.at(i).toList();
+			}
 		}
+
+		delete rows;
+		delete columns;
+		delete used_range;
 	}
-	
-	delete rows;
-	delete columns;
-	delete used_range;
     return;
 }
 
@@ -491,15 +500,17 @@ int QtAxExcelEngine::startColumn() const
 	return start_column_;
 }
 
-//
+//插入一个SHEET
 void QtAxExcelEngine::insertSheet(const QString &sheet_name)
 {
 	work_books_->querySubObject("Add()");
-    QAxObject *a = work_books_->querySubObject("Item(int)", 1);
-    a->setProperty("Name", sheet_name);
-    active_sheet_ = a;
+	active_sheet_ = work_books_->querySubObject("Item(int)", 1);
+	active_sheet_->setProperty("Name", sheet_name);
 
-    loadSheet_internal(false);
+	row_count_ = 0;
+	column_count_ = 0;
+	start_row_ = 1;
+	start_column_ = 1;
 }
 
 

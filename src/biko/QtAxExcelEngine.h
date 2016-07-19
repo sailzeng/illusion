@@ -60,8 +60,14 @@ public:
     //!释放退出，关闭EXCEL进程
     void finalize();
 
-    //打开一个XLS文件
-	bool open(const QString &xls_file);
+	/*!
+	* @brief      打开（新建）一个XLS文件
+	* @return     bool          true表示打开成功
+	* @param      xls_file      打开的文件名称
+	* @param      not_exist_new 不存在是否创建一个新的
+	*/
+	bool open(const QString &xls_file,
+			  bool not_exist_new);
 
 
 

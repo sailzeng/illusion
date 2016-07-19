@@ -41,6 +41,8 @@ Biko_Read_Config *Biko_Read_Config::instance_ = NULL;
 Biko_Read_Config::Biko_Read_Config()
 {
 	source_tree_ = new  google::protobuf::compiler::DiskSourceTree();
+	protobuf_importer_ = new google::protobuf::compiler::Importer(source_tree_, &error_collector_);
+	msg_factory_ = new google::protobuf::DynamicMessageFactory();
 }
 
 
@@ -87,7 +89,9 @@ void Biko_Read_Config::clean_instance()
 int Biko_Read_Config::init_read_all2(const QString &allinone_dir,
                                      QStringList &tips_ary)
 {
-    return init_read_all(NULL,
+	QStringList import_list;
+	import_list.append(allinone_dir + "/import");
+    return init_read_all(import_list,
 						 allinone_dir + "/proto",
 						 allinone_dir + "/excel",
                          allinone_dir + "/outer",
@@ -95,7 +99,7 @@ int Biko_Read_Config::init_read_all2(const QString &allinone_dir,
 }
 
 //读取excel_dir目录下所有的EXCEL文件，根据proto_dir目录下的meta文件，反射，转换成位置文件输出到outer_dir目录
-int Biko_Read_Config::init_read_all(const QStringList *import_dir,
+int Biko_Read_Config::init_read_all(const QStringList &import_list,
 	                                const QString &proto_dir,
                                     const QString &excel_dir,
                                     const QString &outer_dir,
@@ -103,10 +107,9 @@ int Biko_Read_Config::init_read_all(const QStringList *import_dir,
 {
 
     int ret = 0;
-	if (import_dir)
-	{
-		init_importdir(import_dir, tips_ary);
-	}
+
+	init_importdir(import_list, tips_ary);
+	
     //各个部分都进行初始化处理
     ret = init_protodir(proto_dir, tips_ary);
     if (ret != 0)
@@ -135,13 +138,12 @@ int Biko_Read_Config::init_read_all(const QStringList *import_dir,
     return 0;
 }
 
-void Biko_Read_Config::init_importdir(const QStringList *import_dir,
-					QStringList & /*tips_ary*/)
+void Biko_Read_Config::init_importdir(const QStringList &import_list,
+					                  QStringList & /*tips_ary*/)
 {
-	Q_ASSERT(import_dir);
-	for (int i = 0; i < import_dir->size(); ++i)
+	for (int i = 0; i < import_list.size(); ++i)
 	{
-		source_tree_->MapPath("", (*import_dir)[i].toStdString());
+		source_tree_->MapPath("", import_list[i].toStdString());
 	}
 	
 }
@@ -168,11 +170,8 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
                         arg(proto_dir));
         return -1;
     }
-
     
     source_tree_->MapPath("", proto_path_.path().toStdString());
-    protobuf_importer_ = new google::protobuf::compiler::Importer(source_tree_, &error_collector_);
-    msg_factory_ = new google::protobuf::DynamicMessageFactory();
 
     //加载所有的.proto 文件
     for (int i = 0; i < proto_fileary_.size(); ++i)
@@ -257,17 +256,24 @@ void Biko_Read_Config::finalize()
 //清理所有的读取数据
 void Biko_Read_Config::clear()
 {
-    excel_cfg_map_.clear();
-    proto_cfg_map_.clear();
-    outer_cfg_map_.clear();
-
+	msgname_2_illusion_map_.clear();
+    excelname_2_illusion_map_.clear();
+    protoname_2_illusion_map_.clear();
+    outername_2_illusion_map_.clear();
+	//
+	for (const Illusion_Message *&ils_msg: illusion_msg_ary_)
+	{
+		delete ils_msg;
+		ils_msg = NULL;
+	}
+	illusion_msg_ary_.clear();
 }
 
 //把扫描或者参数的EXCEL文件都进行一次读取
 int Biko_Read_Config::read_all_message(QStringList &tips_ary)
 {
     int ret = 0;
-    for (auto iter = excel_cfg_map_.begin(); iter != excel_cfg_map_.end(); ++iter)
+    for (auto iter = excelname_2_illusion_map_.begin(); iter != excelname_2_illusion_map_.end(); ++iter)
     {
         //打开EXCEL文件
         ret = open_excel_file(iter->first,
@@ -322,11 +328,9 @@ int Biko_Read_Config::read_one_message(const QString &messge_full_name,
 }
 
 
-
-
 //
 int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
-                                      QStringList &tips_info)
+                                      QStringList &tips_ary)
 {
     int ret = 0;
     const google::protobuf::FileDescriptor *file_desc = NULL;
@@ -372,12 +376,12 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             msgname_2_illusion_map_[msg_name] = ok_ptr;
 
 
-            auto iter1 = proto_cfg_map_.find(proto_fname);
-            if (iter1 == proto_cfg_map_.end())
+            auto iter1 = protoname_2_illusion_map_.find(proto_fname);
+            if (iter1 == protoname_2_illusion_map_.end())
             {
                 std::vector<const Illusion_Message *> ils_msg_ary;
                 ils_msg_ary.push_back(ok_ptr);
-                proto_cfg_map_[proto_fname] = ils_msg_ary;
+                protoname_2_illusion_map_[proto_fname] = ils_msg_ary;
             }
             else
             {
@@ -385,12 +389,12 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             }
 
             QString excel_fname = ok_ptr->excel_file_name_;
-            auto iter2 = excel_cfg_map_.find(excel_fname);
-            if (iter2 == excel_cfg_map_.end())
+            auto iter2 = excelname_2_illusion_map_.find(excel_fname);
+            if (iter2 == excelname_2_illusion_map_.end())
             {
                 std::vector<const Illusion_Message *> ils_msg_ary;
                 ils_msg_ary.push_back(ok_ptr);
-                excel_cfg_map_[excel_fname] = ils_msg_ary;
+                excelname_2_illusion_map_[excel_fname] = ils_msg_ary;
             }
             else
             {
@@ -398,10 +402,10 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             }
 
             QString outer_fname = ok_ptr->outer_file_name_;
-            auto iter3 = outer_cfg_map_.find(outer_fname);
-            if (iter3 == outer_cfg_map_.end())
+            auto iter3 = outername_2_illusion_map_.find(outer_fname);
+            if (iter3 == outername_2_illusion_map_.end())
             {
-                outer_cfg_map_[outer_fname] = ok_ptr;
+                outername_2_illusion_map_[outer_fname] = ok_ptr;
             }
 
         }
@@ -413,12 +417,16 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
 
 
 //读取所有的枚举值
-int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map)
+int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
+									  QStringList &tips_ary)
 {
-    //前面检查过了
+
+    //看是否能loead 这个sheet
     bool bret =  ils_excel_file_.loadSheet("ENUM_CONFIG");
     if (bret == false)
     {
+		tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[ENUM_CONFIG]."
+											   "没有枚举值需要读取。"));
         return -1;
     }
 
@@ -460,11 +468,11 @@ int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map)
 
 //!
 int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
-                                      bool read_enum_sheet,
+                                      bool not_exist_new,
                                       QStringList &tips_ary)
 {
-    QString excel_path = excel_path_.path() + excel_file_name;
-    bool bret = ils_excel_file_.open(excel_path);
+    QString excel_path = excel_path_.absolutePath() +"/" + excel_file_name;
+    bool bret = ils_excel_file_.open(excel_path, not_exist_new);
     //Excel文件打开失败
     if (bret != true)
     {
@@ -472,29 +480,6 @@ int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
     }
     fprintf(stderr, "Dream excecl file have sheet num[%d].\n",
             ils_excel_file_.sheetsCount());
-
-    //表格错误
-    MAP_QSTRING_TO_QSTRING enum_map;
-    if (read_enum_sheet)
-    {
-        if (ils_excel_file_.hasSheet("ENUM_CONFIG") == false)
-        {
-            tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[ENUM_CONFIG]."
-                                                   "没有枚举值需要读取。"));
-        }
-        else
-        {
-            //
-            int ret = read_table_enum(enum_map);
-            if (0 != ret)
-            {
-                tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL文件中的"
-                                                       "[ENUM_CONFIG]表不正确，请重现检查后打开。!"));
-                return ret;
-            }
-        }
-    }
-
     return 0;
 }
 
@@ -651,10 +636,27 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 }
 
 //
-int Biko_Read_Config::save_excel_tablehead(const Illusion_Message *ils_msg,
+int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
                                            QStringList &tips_ary)
 {
     int ret = 0;
+
+	auto iter = msgname_2_illusion_map_.find(messge_full_name);
+	if (iter == msgname_2_illusion_map_.end())
+	{
+		return -1;
+	}
+	const Illusion_Message *ils_msg = iter->second;
+
+	//打开EXCEL文件
+	ret = open_excel_file(ils_msg->excel_file_name_,
+						  true,
+						  tips_ary);
+	if (0 != ret)
+	{
+		return ret;
+	}
+
     //检查EXCEL文件中是否有这个表格
     if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
     {
@@ -677,6 +679,10 @@ int Biko_Read_Config::save_excel_tablehead(const Illusion_Message *ils_msg,
                                     ils_msg->column_fullname_ary_[i]);
         }
     }
+	
+	ils_excel_file_.save();
+
+	close_excel_file();
 
     return 0;
 }

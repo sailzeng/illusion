@@ -22,14 +22,15 @@ message GAME_CFG_STRUCT_1
 	optional float s1_f = 6      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_6"];
 	optional bool s1_g = 7       [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_7"];
 	optional string s1_h = 8     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_8"];
-	optional bytes s1_i = 9      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_9",  (illusion.repeat_size) = 4];
+	optional bytes s1_i = 9      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_9"];
 	repeated int32 s1_j = 10     [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_10", (illusion.repeat_size) = 4];
-	repeated string s1_k = 11    [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_11"];
+	repeated string s1_k = 11    [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_11", (illusion.repeat_size) = 4];
 	optional ENUM_WEEK s1_l = 12 [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_12"];;
 }
 
 message LIST_OF_GAME_CFG_STRUCT_1
 {
+    //message的选项信息
     option (illusion.cfg_message) = true;
     option (illusion.excel_file) = "game_config_01.xlsx";
     option (illusion.excel_sheet) = "GAME_CFG_STRUCT_1";
