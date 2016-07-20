@@ -218,7 +218,7 @@ int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg,
 
         //如果这个域标识了不读取，跳过
         bool is_read_filed = fo.GetExtension(illusion::cfg_field);
-        if (is_read_filed)
+        if (!is_read_filed)
         {
             continue;
         }

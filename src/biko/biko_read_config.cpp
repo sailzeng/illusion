@@ -244,7 +244,7 @@ void Biko_Read_Config::finalize()
 {
     clear();
 
-    if (ils_excel_file_.is_open())
+    if (ils_excel_file_.isOpen())
     {
         ils_excel_file_.close();
         ils_excel_file_.finalize();
@@ -573,9 +573,9 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     google::protobuf::Message *table_msg = NULL;
     ret = ils_msg->new_table_mesage(msg_factory_,
                                     table_msg);
-    if (0 == ret)
+    if (0 != ret || NULL == table_msg )
     {
-        return ret;
+        return -2;
     }
     std::unique_ptr<google::protobuf::Message> ptr_msg(table_msg);
 
@@ -587,12 +587,12 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
         for (int col_no = 1; col_no <= col_count; ++col_no)
         {
             std::string cell_data = ils_excel_file_.getCell(line_no,
-                                                            read_col[col_no]).toString().toStdString();
+                                                            read_col[col_no-1]).toString().toStdString();
             line_data_ary.push_back(cell_data);
 
         }
         int error_field_no = -1;
-        const google::protobuf::FieldDescriptor *error_field_desc;
+        const google::protobuf::FieldDescriptor *error_field_desc = NULL;
         ret = ils_msg->add_line(table_msg,
                                 line_data_ary,
                                 error_field_no,
@@ -661,8 +661,8 @@ int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
     if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
     {
         QString sheet_name = ils_msg->excel_sheet_name_;
-        sheet_name += QDateTime::currentDateTime().toString();
-        ils_excel_file_.renameSheet(sheet_name);
+        sheet_name += QDateTime::currentDateTime().toString("-yyyyMMddHHmmss");
+        ils_excel_file_.renameSheet("BAKBAK");
     }
 	
     ils_excel_file_.insertSheet(ils_msg->excel_sheet_name_);

@@ -66,8 +66,15 @@ int main(int argc, char *argv[])
 		Biko_Read_Config::clean_instance();
 		return -1;
 	}
-	ret = Biko_Read_Config::instance()->save_excel_tablehead("LIST_OF_GAME_CFG_STRUCT_1",
-		tips_ary);
+
+	//ret = Biko_Read_Config::instance()->save_excel_tablehead("LIST_OF_GAME_CFG_STRUCT_1",
+	//	tips_ary);
+	//if (ret != 0)
+	//{
+	//	Biko_Read_Config::clean_instance();
+	//	return -1;
+	//}
+
 	ret = Biko_Read_Config::instance()->read_all_message(tips_ary);
 	if (ret != 0)
 	{

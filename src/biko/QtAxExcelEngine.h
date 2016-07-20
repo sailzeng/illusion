@@ -61,18 +61,21 @@ public:
     void finalize();
 
 	/*!
-	* @brief      打开（新建）一个XLS文件
+	* @brief      打开一个XLS文件,文件不存在或者打开失败返回false,不会新建
 	* @return     bool          true表示打开成功
-	* @param      xls_file      打开的文件名称
-	* @param      not_exist_new 不存在是否创建一个新的
+	* @param      xls_file      打开的文件名称,
+	* @param      not_exist_new 如果要打开的文件不存在，是否新建
 	*/
 	bool open(const QString &xls_file,
 			  bool not_exist_new);
+	
+	//!新建一个XLS文件
+	bool newOne();
 
-
-
-    //保存xls报表
-    void save();
+	//保存xls报表
+	void save();
+	//!
+	void saveAs(const QString &xls_file);
 
     //关闭xls报表
     void close();
@@ -166,14 +169,18 @@ public:
 	//!当前的Sheet的起始列数，如果第1,2,3列是空，没有数据，那么返回4
 	int startColumn() const;
 
-
-    bool is_open();
-    bool is_valid();
-
+	//!是否打开了一个EXCEL
+    bool isOpen();
+	
+	//!当前book 是否保存了。
+	bool isSaved();
 protected:
 
     //!加载，内部函数，以后可以考虑增加一个预加载，加快读取速度。
     void loadSheet_internal(bool pre_load);
+
+	//!打开（新建）文件的内部具体实现
+	bool opennew_internal(bool new_file);
 
 public:
 
@@ -192,8 +199,12 @@ private:
     //!指向工作簿集,excel有很多工作簿，你可以简单理解EXCEL会打开很多个文件
     QAxObject *work_books_ = NULL;
 
+
     //!指向sXlsFile对应的工作簿
     QAxObject *active_book_ = NULL;
+
+	//!
+	QAxObject *work_sheets_ = NULL;
 
     //指向工作簿中的某个sheet表单
     QAxObject *active_sheet_ = NULL;
@@ -219,14 +230,9 @@ private:
 
     //!是否已打开
     bool is_open_ = false;
-    //!是否有效
-    bool is_valid_ = false;
-    //!是否是一个新建xls文件，用来区分打开的excel是已存在文件还是有本类新建的
-    bool is_a_newfile_ = false;
-    //!防止重复保存
-    bool is_save_already_ = false;
 
-	
+	//是否是一个新建的文件
+	bool is_newfile_ = false;
 
 };
 
