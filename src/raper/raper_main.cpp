@@ -84,6 +84,6 @@ int main(int argc, char *argv[])
 	Biko_Read_Config::clean_instance();
 
 
-	return a.exec();
+	return a.quit();
 }
 

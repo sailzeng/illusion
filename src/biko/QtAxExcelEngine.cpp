@@ -117,10 +117,15 @@ bool QtAxExcelEngine::opennew_internal(bool new_file)
 	work_books_ = excel_instance_->querySubObject("WorkBooks");
 	if (!new_file)
 	{
+		//这儿原来的代码是下面这样的，但是在我的两台机器都出现了返回为NULL的问题，而且会出现提示错误
+		//QAxBase: error calling idispatch member open: unknown error
+		//出错代码如下，但其实，应该问题不大
+		//active_book_ = excel_instance_->querySubObject("Open(const QString&)",xls_file_);
+
 		//打开xls对应的，获取工作簿,注意，要用绝对路径
-		active_book_ = work_books_->querySubObject("Open(const QString&,QVariant)",
-												   xls_file_,
-												   0);
+		work_books_->dynamicCall("Open(const QString&)",
+								 xls_file_);
+		active_book_ = excel_instance_->querySubObject("ActiveWorkBook");
 	}
 	else
 	{
