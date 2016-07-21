@@ -1,5 +1,7 @@
 //option optimize_for = LITE_RUNTIME;
 
+import "illusion.proto";
+
 enum ENUM_COUNTRY
 {
 	AUSTRALIA =          61;         // Australia
@@ -29,18 +31,20 @@ enum ENUM_COUNTRY
 
 message SUB_STRUCT_A
 {
-	required double sub_a_1 = 1;
-	required double sub_a_2 = 2;
-	required string sub_a_3 = 3;
-	required bytes sub_a_4 = 4;
+	optional double sub_a_1 = 1 [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置A1"];
+	optional double sub_a_2 = 2 [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置A2"];
+	optional string sub_a_3 = 3 [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置A3"];
+	optional bytes sub_a_4 = 4  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置A4"];
 }
 
 message SUB_STRUCT_B
 {
-	optional int32 sub_b_1 = 1;
-	optional int64 sub_b_2 = 2;
-	optional uint32 sub_b_3 = 3;
-	optional int64 sub_b_4 = 4;
+	optional int32 sub_b_1 = 1  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B1"];
+	optional int64 sub_b_2 = 2  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B2"];
+	optional uint32 sub_b_3 = 3 [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B3"];
+	optional int64 sub_b_4 = 4  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B4"];
+    //注意这是一个false
+    optional int64 sub_b_5 = 5  [(illusion.cfg_field)=false];
 }
 
 
@@ -59,34 +63,43 @@ message GAME_CFG_STRUCT_2
 	
 	message NESTED_STRUCT_C
 	{
-		optional sint32  nested_c_1 = 1;
-		optional sint64  nested_c_2 = 2;
-		optional fixed32  nested_c_3 = 3;
-		optional fixed64  nested_c_4 = 4;
-		optional NESTED_ENUM nested_c_5 =5;
+		optional sint32  nested_c_1 = 1      [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置C1"];
+		optional sint64  nested_c_2 = 2      [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置C2"];
+		optional fixed32  nested_c_3 = 3     [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置C3"];
+		optional fixed64  nested_c_4 = 4     [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置C4"];
+		optional NESTED_ENUM nested_c_5 =5   [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置C5"];
+	}                                        
+	                                         
+    message NESTED_STRUCT_D                  
+	{                                        
+		optional sfixed32  nested_d_1 = 1     [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置D1"];
+		optional sfixed64  nested_d_2 = 2     [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置D2"];
+		optional string  nested_d_3 = 3       [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置D3"];
+		optional bytes  nested_d_4 = 4        [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置D4"];
 	}
 	
-    message NESTED_STRUCT_D
-	{
-		optional sfixed32  nested_d_1 = 1;
-		optional sfixed64  nested_d_2 = 2;
-		optional string  nested_d_3 = 3;
-		optional bytes  nested_d_4 = 4;
-	}
-	
-	optional int32 s2_a = 1;
-	optional int32 s2_b = 2;
-	optional uint32 s2_c = 3 ;
-	repeated uint64 s2_d = 4 ;
-	optional SUB_STRUCT_A  s2_e = 5 ;
-	repeated SUB_STRUCT_B  s2_f = 6 ;
-	optional NESTED_STRUCT_C s2_g = 7 ;
-	repeated NESTED_STRUCT_D s2_h = 8 ;
-	optional NESTED_ENUM s2_i = 9;
-	required ENUM_COUNTRY s2_j = 10;
+	optional int32 s2_a = 1                   [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-1"];
+	optional int32 s2_b = 2                   [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-2"];
+	optional uint32 s2_c = 3                  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-3"];
+	repeated uint64 s2_d = 4                  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-4",  (illusion.repeat_size) =2];
+	optional SUB_STRUCT_A  s2_e = 5           [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-5"];
+	repeated SUB_STRUCT_B  s2_f = 6           [(illusion.cfg_field)=true,  (illusion.repeat_size) =2];
+	optional NESTED_STRUCT_C s2_g = 7         [(illusion.cfg_field)=true];
+	repeated NESTED_STRUCT_D s2_h = 8         [(illusion.cfg_field)=true,  (illusion.repeat_size) =4];; 
+	optional NESTED_ENUM s2_i = 9             [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-9"];
+	required ENUM_COUNTRY s2_j = 10           [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-10",  (illusion.repeat_size) =1];
 }
 
 message LIST_OF_GAME_CFG_STRUCT_2
 {
+    //message的选项信息
+    option (illusion.cfg_message) = true;
+    option (illusion.excel_file) = "game_config_02.xlsx";
+    option (illusion.excel_sheet) = "GAME_CFG_STRUCT_2";
+    option (illusion.outer_file) = "GAME_CFG_STRUCT_2.bin";
+    option (illusion.fieldsname_line) = 1;
+    option (illusion.fullname_line) = 2;
+    option (illusion.read_line) = 3;
+    
     repeated GAME_CFG_STRUCT_2 list_data = 1;
 }

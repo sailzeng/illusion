@@ -524,7 +524,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
         return -4;
     }
 
-    fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.",
+    fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.\n",
             ils_msg->excel_file_name_.toStdString().c_str(),
             ils_msg->excel_sheet_name_.toStdString().c_str(),
             line_count,
@@ -609,7 +609,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
                                  .arg(line_no)
                                  .arg(read_col[error_field_no])
                                  .arg(QtAxExcelEngine::columnName(read_col[error_field_no]));
-            fprintf(stderr, "%s", error_info.toStdString().c_str());
+            fprintf(stderr, "%s\n", error_info.toStdString().c_str());
             tips_ary.append(error_info);
             return ret;
         }

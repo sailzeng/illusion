@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 
 	const struct option RAPER_LONG_OPTION[]=
 	{
-		{ "config", required_argument,NULL, 'c' },
 		{ "excel", required_argument, NULL,'x' },
 		{ "proto", required_argument,NULL, 'p' },
 		{ "outer", required_argument,NULL, 'o' },
@@ -46,6 +45,10 @@ int main(int argc, char *argv[])
 		{ "help", no_argument,NULL, 'h' },
 		{ NULL, no_argument, NULL, 0 }
 	};
+
+	bool all_in_one = false, read_one_message = false,save_title = false;
+	QString allinone_dir , messge_full_name, proto_dir, outer_dir, excel_dir;
+	QStringList import_list;
 	int long_index = 0;
 	const char RAPER_OPT_STRING[] = "c:x:p:o:m:i:ath";
 	int opt = -1;
@@ -56,7 +59,29 @@ int main(int argc, char *argv[])
 	{
 		switch (opt) 
 		{
-
+		case 'x':
+			excel_dir = optarg;
+			break;
+		case 'p':
+			proto_dir = optarg;
+			break;
+		case 'o':
+			outer_dir = optarg;
+			break;
+		case 'i':
+			import_list.push_back(optarg);
+			break;
+		case 'm':
+			read_one_message = true;
+			messge_full_name = optarg;
+			break;
+		case 'a':
+			all_in_one = true;
+			allinone_dir = optarg;
+			break;
+		case 't':
+			save_title = true;
+			break;
 		};
 	}
 	ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
@@ -67,8 +92,8 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//ret = Biko_Read_Config::instance()->save_excel_tablehead("LIST_OF_GAME_CFG_STRUCT_1",
-	//	tips_ary);
+	//ret = Biko_Read_Config::instance()->save_excel_tablehead("LIST_OF_GAME_CFG_STRUCT_2",
+	//														 tips_ary);
 	//if (ret != 0)
 	//{
 	//	Biko_Read_Config::clean_instance();
