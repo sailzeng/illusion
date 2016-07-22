@@ -74,11 +74,12 @@ public:
     * @param[in]  proto_dir 根据proto_dir目录下的meta文件反射，
     * @param[in]  excel_dir 读取excel_dir目录下所有的EXCEL文件
     * @param[in]  outer_dir 转换成位置文件输出到outer_dir目录，如果为NULL，则表示用当前目录输出
+	* @param[in]  import_list import proto 目录的列表，可以有多个
     */
-    int init_read_all(const QStringList &import_list,
-		              const QString &proto_dir,
+    int init_read_all(const QString &proto_dir,
                       const QString &excel_dir,
                       const QString &outer_dir,
+					  const QStringList &import_list,
                       QStringList &tips_ary);
 
     //!所有的目录都在一个目录下的快捷处理方式

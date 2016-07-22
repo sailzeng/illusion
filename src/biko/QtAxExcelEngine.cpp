@@ -21,7 +21,7 @@ bool QtAxExcelEngine::initialize(bool visible)
     HRESULT r = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (r != S_OK && r != S_FALSE)
     {
-        qDebug("Qt: Could not initialize OLE (error %x)", (unsigned int)r);
+        fprintf(stderr,"Qt: Could not initialize OLE (error %x).\n", (unsigned int)r);
         return false;
     }
     is_visible_ = visible;

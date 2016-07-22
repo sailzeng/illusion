@@ -9,45 +9,6 @@
 
 
 
-
-//!
-//void Illusion_Protobuf_Reflect::error_info(PROTO_ERROR_ARRAY &error_ary)
-//{
-//    error_ary = error_collector_.error_array_;
-//}
-
-//
-//int Illusion_Protobuf_Reflect::new_mesage(const std::string &type_name,
-//                                          google::protobuf::Message *&new_msg)
-//{
-//
-//    //根据名称得到结构描述
-//    const google::protobuf::Descriptor *proc_msg_desc =
-//        protobuf_importer_->pool()->FindMessageTypeByName(type_name);
-//    if (!proc_msg_desc)
-//    {
-//      fprintf(stderr, "Importer DescriptorPool FindMessageTypeByName by name [%s] fail.",
-//                type_name.c_str());
-//        return -1;
-//    }
-//
-//    // build a dynamic message by "proc_msg_desc" proto
-//    const google::protobuf::Message *message = msg_factory_->GetPrototype(proc_msg_desc);
-//    if (!message)
-//    {
-//      fprintf(stderr, "DynamicMessageFactory GetPrototype by name [%s] fail.",
-//                type_name.c_str());
-//        return -1;
-//    }
-//
-//    new_msg = message->New();
-//
-//    return 0;
-//}
-
-
-
-
 int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
                                         const google::protobuf::FieldDescriptor *field,
                                         const std::string &set_data)
@@ -61,7 +22,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
     {
         if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED)
         {
-            fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.",
+            fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.\n",
                     field->full_name().c_str());
             return -1;
         }
@@ -127,7 +88,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
         // uint32, varint on the wire
         else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
         {
-            reflection->SetUInt32(msg, field, 0);
+            reflection->SetUInt32(msg, field, std::stoul(set_data));
         }
         // Enum, varint on the wire
         else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
@@ -141,7 +102,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
             }
             else
             {
-                fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].",
+                fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
                         set_data.c_str(),
                         enum_desc->full_name().c_str());
                 return -1;
@@ -171,7 +132,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
         else
         {
             //不支持的类型，这个地方如果出现TYPE_MESSAGE。也是不正常的。
-            fprintf(stderr, "I don't field [%s] support this type.%d %s",
+            fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
                     field->full_name().c_str(),
                     field->type(),
                     field->type_name());
@@ -235,7 +196,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
         // uint32, varint on the wire
         else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
         {
-            reflection->AddUInt32(msg, field, 0);
+            reflection->AddUInt32(msg, field, std::stoul(set_data));
         }
         // Enum, varint on the wire
         else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
@@ -249,7 +210,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
             }
             else
             {
-                fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].",
+                fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
                         set_data.c_str(),
                         enum_desc->full_name().c_str());
                 return -1;
@@ -278,7 +239,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
         }
         else
         {
-            fprintf(stderr, "I don't field [%s] support this type.%d %s",
+            fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
                     field->full_name().c_str(),
                     field->type(),
                     field->type_name());
@@ -288,7 +249,7 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
     }
     else
     {
-        fprintf(stderr, "I don't field [%s] support this type.%d %s",
+        fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
                 field->full_name().c_str(),
                 field->type(),
                 field->type_name());
@@ -297,6 +258,258 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
     }
 
     return 0;
+}
+
+int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
+										const google::protobuf::FieldDescriptor *field,
+										const QString &set_data)
+{
+	assert(field);
+	assert(msg);
+	const google::protobuf::Reflection *reflection = msg->GetReflection();
+
+	//如果没有设置数据，看看是否是必要字段，而且是否有默认值
+	if (set_data.length() == 0)
+	{
+		if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED)
+		{
+			fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.\n",
+					field->full_name().c_str());
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED ||
+		field->label() == google::protobuf::FieldDescriptor::Label::LABEL_OPTIONAL)
+	{
+		// double, exactly eight bytes on the wire.
+		if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
+		{
+			reflection->SetDouble(msg, field, set_data.toDouble());
+		}
+		// float, exactly four bytes on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
+		{
+			reflection->SetFloat(msg, field, set_data.toFloat());
+		}
+		// int64, varint on the wire.  Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT64)
+		{
+			reflection->SetInt64(msg, field, set_data.toLongLong());
+		}
+		// uint64, exactly eight bytes on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
+		{
+			reflection->SetUInt64(msg, field, set_data.toULongLong());
+		}
+		//int32, varint on the wire.Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+		{
+			reflection->SetInt32(msg, field, set_data.toInt());
+		}
+		//
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED64)
+		{
+			reflection->SetUInt64(msg, field, set_data.toULongLong());
+		}
+		// uint32, exactly four bytes on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED32)
+		{
+			reflection->SetUInt32(msg, field, set_data.toUInt());
+		}
+		// bool, varint on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
+		{
+			reflection->SetBool(msg, field, qstring_to_bool(set_data));
+		}
+		// UTF-8 text.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
+		{
+			reflection->SetString(msg, field, set_data.toUtf8().toStdString());
+		}
+		// Arbitrary byte array.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
+		{
+			reflection->SetString(msg, field, set_data.toLocal8Bit().toStdString());
+		}
+		// uint32, varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
+		{
+			reflection->SetUInt32(msg, field, set_data.toUInt());
+		}
+		// Enum, varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
+		{
+			const google::protobuf::EnumDescriptor *enum_desc =
+				field->enum_type();
+			const google::protobuf::EnumValueDescriptor *evalue_desc = 
+				enum_desc->FindValueByName(set_data.toStdString());
+			if (evalue_desc)
+			{
+				reflection->SetEnum(msg, field, evalue_desc);
+			}
+			else
+			{
+				fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
+						set_data.toStdString().c_str(),
+						enum_desc->full_name().c_str());
+				return -1;
+			}
+
+		}
+		// int32, exactly four bytes on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32)
+		{
+			reflection->SetInt32(msg, field, set_data.toInt());
+		}
+		// int64, exactly eight bytes on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64)
+		{
+			reflection->SetInt64(msg, field, set_data.toLongLong());
+		}
+		// int32, ZigZag-encoded varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT32)
+		{
+			reflection->SetInt32(msg, field, set_data.toInt());
+		}
+		// int64, ZigZag-encoded varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT64)
+		{
+			reflection->SetInt64(msg, field, set_data.toLongLong());
+		}
+		else
+		{
+			//不支持的类型，这个地方如果出现TYPE_MESSAGE。也是不正常的。
+			fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
+					field->full_name().c_str(),
+					field->type(),
+					field->type_name());
+			assert(false);
+			return -1;
+		}
+	}
+	//数组
+	else if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REPEATED)
+	{
+		// double, exactly eight bytes on the wire.
+		if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
+		{
+			reflection->AddDouble(msg, field, set_data.toDouble());
+		}
+		// float, exactly four bytes on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
+		{
+			reflection->AddFloat(msg, field, set_data.toFloat());
+		}
+		// int64, varint on the wire.  Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT64)
+		{
+			reflection->AddInt64(msg, field, set_data.toLongLong());
+		}
+		// uint64, exactly eight bytes on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
+		{
+			reflection->AddUInt64(msg, field, set_data.toULongLong());
+		}
+		//int32, varint on the wire.Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+		{
+			reflection->AddInt32(msg, field, set_data.toInt());
+		}
+		//
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED64)
+		{
+			reflection->AddUInt64(msg, field, set_data.toULongLong());
+		}
+		// uint32, exactly four bytes on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED32)
+		{
+			reflection->AddUInt32(msg, field, set_data.toUInt());
+		}
+		// bool, varint on the wire.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
+		{
+			reflection->AddBool(msg, field, qstring_to_bool(set_data));
+		}
+		// UTF-8 text.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
+		{
+			reflection->AddString(msg, field, set_data.toUtf8().toStdString());
+		}
+		// Arbitrary byte array.
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
+		{
+			reflection->AddString(msg, field, set_data.toLocal8Bit().toStdString());
+		}
+		// uint32, varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
+		{
+			reflection->AddUInt32(msg, field, set_data.toUInt());
+		}
+		// Enum, varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
+		{
+			const google::protobuf::EnumDescriptor *enum_desc =
+				field->enum_type();
+			const google::protobuf::EnumValueDescriptor *evalue_desc = enum_desc->FindValueByName(set_data.toStdString());
+			if (evalue_desc)
+			{
+				reflection->AddEnum(msg, field, evalue_desc);
+			}
+			else
+			{
+				fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
+						set_data.toStdString().c_str(),
+						enum_desc->full_name().c_str());
+				return -1;
+			}
+
+		}
+		// int32, exactly four bytes on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32)
+		{
+			reflection->AddInt32(msg, field, set_data.toInt());
+		}
+		// int64, exactly eight bytes on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64)
+		{
+			reflection->AddInt64(msg, field, set_data.toLongLong());
+		}
+		// int32, ZigZag-encoded varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT32)
+		{
+			reflection->AddInt32(msg, field, set_data.toInt());
+		}
+		// int64, ZigZag-encoded varint on the wire
+		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT64)
+		{
+			reflection->AddInt64(msg, field, set_data.toLongLong());
+		}
+		else
+		{
+			fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
+					field->full_name().c_str(),
+					field->type(),
+					field->type_name());
+			assert(false);
+			return -1;
+		}
+	}
+	else
+	{
+		fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
+				field->full_name().c_str(),
+				field->type(),
+				field->type_name());
+		assert(false);
+		return -1;
+	}
+
+	return 0;
 }
 
 //定位一个子结构
@@ -605,7 +818,7 @@ void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
             }
             else
             {
-                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s \n",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -757,7 +970,7 @@ void Protobuf_Reflect_AUX::protobuf_output(const google::protobuf::Message *msg,
             }
             else
             {
-                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s \n",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -858,7 +1071,7 @@ void Protobuf_Reflect_AUX::message_set_default(google::protobuf::Message *msg)
             }
             else
             {
-                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stdout, "I don't field_desc [%s] support this type.%d %s \n",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -991,7 +1204,7 @@ void Protobuf_Reflect_AUX::message_set_default(google::protobuf::Message *msg)
             }
             else
             {
-                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s",
+                fprintf(stderr, "I don't field_desc [%s] support this type.%d %s \n",
                         field_desc->full_name().c_str(),
                         field_desc->type(),
                         field_desc->type_name());
@@ -1021,6 +1234,22 @@ bool Protobuf_Reflect_AUX::string_to_bool(const std::string &str)
     }
     return false;
 }
+
+bool Protobuf_Reflect_AUX::qstring_to_bool(const QString &str)
+{
+
+	if (0 == str.compare("TRUE",Qt::CaseInsensitive))
+	{
+		return true;
+	}
+	else if (1 == str.toInt())
+	{
+		return true;
+	}
+	return false;
+}
+
+
 
 void Protobuf_Reflect_AUX::string_split(const std::string &source_str,
                                         const std::string &separator,

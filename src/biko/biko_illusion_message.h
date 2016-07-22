@@ -20,7 +20,7 @@ public:
 
     //!
     int add_line(google::protobuf::Message *table_msg,
-                 std::vector<std::string> &line_str_ary,
+                 std::vector<QString> &line_str_ary,
 				 int &error_field_no,
 				 const google::protobuf::FieldDescriptor *&error_field_desc) const;
 

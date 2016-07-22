@@ -71,6 +71,9 @@ public:
                              const google::protobuf::FieldDescriptor *field,
                              const std::string &set_data);
 
+	static int set_fielddata(google::protobuf::Message *msg,
+							 const google::protobuf::FieldDescriptor *field,
+							 const QString &set_data);
 
     //!定位一个子结构
     static int locate_sub_msg(google::protobuf::Message *msg,
@@ -98,6 +101,8 @@ public:
     //!
     static bool string_to_bool(const std::string &str);
 
+	//!
+	static bool qstring_to_bool(const QString &str);
 
     static void string_split(const std::string &source_str,
                              const std::string &separator,

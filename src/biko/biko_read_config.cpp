@@ -91,18 +91,18 @@ int Biko_Read_Config::init_read_all2(const QString &allinone_dir,
 {
 	QStringList import_list;
 	import_list.append(allinone_dir + "/import");
-    return init_read_all(import_list,
-						 allinone_dir + "/proto",
+    return init_read_all(allinone_dir + "/proto",
 						 allinone_dir + "/excel",
                          allinone_dir + "/outer",
+						 import_list,
                          tips_ary);
 }
 
 //读取excel_dir目录下所有的EXCEL文件，根据proto_dir目录下的meta文件，反射，转换成位置文件输出到outer_dir目录
-int Biko_Read_Config::init_read_all(const QStringList &import_list,
-	                                const QString &proto_dir,
+int Biko_Read_Config::init_read_all(const QString &proto_dir,
                                     const QString &excel_dir,
                                     const QString &outer_dir,
+								    const QStringList &import_list,
                                     QStringList &tips_ary)
 {
 
@@ -290,6 +290,7 @@ int Biko_Read_Config::read_all_message(QStringList &tips_ary)
             ret = read_excel_table(iter->second[i], tips_ary);
 			if (0 != ret)
 			{
+				close_excel_file();
 				return ret;
 			}
         }
@@ -320,6 +321,12 @@ int Biko_Read_Config::read_one_message(const QString &messge_full_name,
     {
         return ret;
     }
+	ret = read_excel_table(iter->second, tips_ary);
+	if (0 != ret)
+	{
+		close_excel_file();
+		return ret;
+	}
 
 	//关闭EXCEL 文件
 	close_excel_file();
@@ -342,7 +349,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
     file_desc = protobuf_importer_->Import(proto_fname.toStdString());
     if (!file_desc)
     {
-        fprintf(stderr, "Importer Import filename [%s] fail.",
+        fprintf(stdout, "Importer Import filename [%s] fail.\n",
 				proto_fname.toStdString().c_str());
         return -1;
     }
@@ -433,11 +440,9 @@ int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
     //答应行列
     int row_count = ils_excel_file_.rowCount();
     int col_count = ils_excel_file_.columnCount();
-    qDebug() << "ENUM_CONFIG table have col_count = "
-             << col_count
-             << " row_count ="
-             << row_count
-             << "\n";
+	fprintf(stdout, "ENUM_CONFIG table have col_count = %d and row_count =%d. \n",
+			col_count,
+			row_count);
 
     //注意行列的下标都是从1开始。
     const long COL_ENUM_KEY = 1;
@@ -496,7 +501,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     //检查EXCEL文件中是否有这个表格
     if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == false)
     {
-        tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL文件[%1]中的"
+        tips_ary.append(QString::fromLocal8Bit("!你选择的配置EXCEL文件[%1]中的"
                                                "[%2]表不存在或者不正确，请重现检查后打开。!")
                         .arg(ils_msg->excel_file_name_)
                         .arg(ils_msg->excel_sheet_name_));
@@ -581,13 +586,13 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 
     for (int line_no = ils_msg->read_data_line_; line_no <= line_count; ++line_no)
     {
-        std::vector<std::string > line_data_ary;
+        std::vector<QString > line_data_ary;
         line_data_ary.reserve(col_count);
-        fprintf(stderr, "Read line [%d] ", line_no);
+        fprintf(stderr, "Read line [%d] \n", line_no);
         for (int col_no = 1; col_no <= col_count; ++col_no)
         {
-            std::string cell_data = ils_excel_file_.getCell(line_no,
-                                                            read_col[col_no-1]).toString().toStdString();
+            QString cell_data = ils_excel_file_.getCell(line_no,
+                                                            read_col[col_no-1]).toString();
             line_data_ary.push_back(cell_data);
 
         }
@@ -617,12 +622,12 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     //如果没有初始化
     if (!table_msg->IsInitialized())
     {
-        fprintf(stderr, "Read table message [%s] is not IsInitialized, please check your excel or proto file.",
+        fprintf(stderr, "Read table message [%s] is not IsInitialized, please check your excel or proto file.\n",
                 ils_msg->table_messge_name_.toStdString().c_str());
         return -1;
     }
     std::cout << table_msg->DebugString() << std::endl;
-    fprintf(stderr, "Read excel file:%s table :%s end.",
+    fprintf(stderr, "Read excel file:%s table :%s end.\n",
             ils_msg->excel_file_name_.toStdString().c_str(),
             ils_msg->excel_sheet_name_.toStdString().c_str());
 
@@ -660,9 +665,9 @@ int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
     //检查EXCEL文件中是否有这个表格
     if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
     {
-        QString sheet_name = ils_msg->excel_sheet_name_;
-        sheet_name += QDateTime::currentDateTime().toString("-yyyyMMddHHmmss");
-        ils_excel_file_.renameSheet("BAKBAK");
+        QString bak_name = ils_msg->excel_sheet_name_;
+		bak_name += ".BAK";
+        ils_excel_file_.renameSheet(bak_name);
     }
 	
     ils_excel_file_.insertSheet(ils_msg->excel_sheet_name_);
