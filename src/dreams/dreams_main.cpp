@@ -1,4 +1,8 @@
-#include "raper_predefine.h"
+#include <biko_predefine.h>
+#include <biko_read_config.h>
+#include <biko_getopt.h>
+
+#include <QtCore/QCoreApplication>
 
 
 int print_cmd_parameter()
@@ -35,13 +39,6 @@ int print_tips_info(QStringList &tips_ary)
 int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
-
-	//QString mystring = QString::fromLocal8Bit("我爱北京天安门.");
-	//qDebug()<< mystring;
-	//fprintf(stdout,"%s.\n", mystring.toStdString().c_str());
-	//fprintf(stdout, "%s.\n", mystring.toUtf8().toStdString().c_str());
-	//fprintf(stdout, "%s.\n", mystring.toLocal8Bit().toStdString().c_str());
-	//return 0;
 
 	int ret = 0;
 
@@ -238,9 +235,7 @@ int main(int argc, char *argv[])
 		return ret;
 	}
 
-
 	Biko_Read_Config::clean_instance();
-
 
 	return a.quit();
 }

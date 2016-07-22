@@ -17,16 +17,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="raper_main.cpp">
+    <ClCompile Include="dreams_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="raper_predefine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="raper_predefine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
