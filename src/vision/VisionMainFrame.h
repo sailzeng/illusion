@@ -3,7 +3,9 @@
 
 #include <QtWidgets/QMainWindow>
 
-
+class ProtoDirTab;
+class ExcelDirTab;
+class OuterDirTab;
 //
 enum PZ_TIP_LEVEL
 {
@@ -38,6 +40,9 @@ protected:
 	//!程序退出
 	void exit_appliaction();
 
+	//!
+	void select_tab(int tab_id);
+
 public:
 
 	//设置实例指针
@@ -59,23 +64,15 @@ public:
 	//实例指针
 	static VisionMainFrame *instace_;
 
+
+protected:
+
+	//最大消息数量
+	static const size_t MAX_TIPS_INFO_NUMBER = 32;
+
 private:
 
 	//!Action
-	QAction *act_new_ = NULL;
-	QAction *act_open_ = NULL;
-	QAction *act_save_ = NULL;
-	QAction *act_saveas_ = NULL;
-	QAction *act_undo_ = NULL;
-	QAction *act_redo_ = NULL;
-	QAction *act_statist_ = NULL;
-	QAction *act_statresult_ = NULL;
-	QAction *act_checkdir = NULL;
-	QAction *act_surprise_ = NULL;
-	QAction *act_compare_ = NULL;
-	QAction *act_compresult_ = NULL;
-	QAction *act_special_ = NULL;
-	QAction *act_fill_ = NULL;
 	QAction *act_exit_ = NULL;
 
 
@@ -88,16 +85,24 @@ private:
 	QSound *m_alarm = NULL;
 
 	//!菜单的menu bar
-	QMenuBar *m_menubar;
+	QMenuBar *menubar_ = NULL;
 	//!主菜单
-	QMenu *m_mainmenu;
+	QMenu *mainmenu_=NULL;
 
 	//!
-	QToolBar *m_toolbar = NULL;
+	QToolBar *toolbar_ = NULL;
 
+	//!PROTO 文件目录的TAB
+	ProtoDirTab *proto_dir_tab_ = NULL;
+
+	//!EXCEL 目录的TAB
+	ExcelDirTab *excel_dir_tab_ = NULL;
+
+	//!Outer 目录的TAB
+	OuterDirTab *outer_dir_tab_ = NULL;
 
 	//!List（TABLE）窗口，用于输出信息提示用户。
-	QTableWidget *m_info_widget;
+	QTableWidget *info_widget_;
 
 	//!当前的信息行
 	int cur_info_row_ = 0;
