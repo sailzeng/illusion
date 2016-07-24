@@ -37,6 +37,11 @@ protected:
 	//!菜单处理
 	void setup_action();
 
+	void eachdir_process();
+	
+
+	void allinone_process();
+
 	//!程序退出
 	void exit_appliaction();
 
@@ -73,6 +78,8 @@ protected:
 private:
 
 	//!Action
+	QAction *act_allinone_ = NULL;
+	QAction *act_each_ = NULL;
 	QAction *act_exit_ = NULL;
 
 
