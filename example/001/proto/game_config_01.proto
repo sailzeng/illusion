@@ -9,7 +9,7 @@ enum ENUM_WEEK
     THU = 4    [(illusion.enum_name)="星期四"];
     FRI = 5    [(illusion.enum_name)="星期五"];
     SAT = 6    [(illusion.enum_name)="星期六"];
-    SUN = 7    [(illusion.enum_name)="星期天"];
+    SUN = 7    [(illusion.enum_name)="星期日"];
 }
 
 message GAME_CFG_STRUCT_1

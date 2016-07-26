@@ -134,6 +134,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+#define DIRECT_DEBUG 1
+#if defined DIRECT_DEBUG && DIRECT_DEBUG == 1 
+	all_in_one = true;
+	read_config = true;
+	allinone_dir = "E:\\Courage\\illusion.git\\example\\001";
+#endif
+
 	if (all_in_one)
 	{
 		if (allinone_dir.isEmpty())
