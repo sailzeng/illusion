@@ -72,7 +72,9 @@ void protobuf_AddDesc_illusion_2eproto() {
     "eld\022\035.google.protobuf.FieldOptions\030\271\216\003 \001"
     "(\010:\004true:4\n\013fields_name\022\035.google.protobu"
     "f.FieldOptions\030\272\216\003 \001(\t:4\n\013repeat_size\022\035."
-    "google.protobuf.FieldOptions\030\273\216\003 \001(\005", 636);
+    "google.protobuf.FieldOptions\030\273\216\003 \001(\005:6\n\t"
+    "enum_name\022!.google.protobuf.EnumValueOpt"
+    "ions\030\324\206\003 \001(\t", 692);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "illusion.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
@@ -105,6 +107,9 @@ void protobuf_AddDesc_illusion_2eproto() {
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
     &::google::protobuf::FieldOptions::default_instance(),
     51003, 5, false, false);
+  ::google::protobuf::internal::ExtensionSet::RegisterExtension(
+    &::google::protobuf::EnumValueOptions::default_instance(),
+    50004, 9, false, false);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_illusion_2eproto);
 }
 
@@ -148,6 +153,10 @@ const ::std::string fields_name_default("");
 ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   repeat_size(kRepeatSizeFieldNumber, 0);
+const ::std::string enum_name_default("");
+::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::EnumValueOptions,
+    ::google::protobuf::internal::StringTypeTraits, 9, false >
+  enum_name(kEnumNameFieldNumber, enum_name_default);
 
 // @@protoc_insertion_point(namespace_scope)
 

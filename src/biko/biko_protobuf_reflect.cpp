@@ -354,10 +354,25 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
 			}
 			else
 			{
-				fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
-						set_data.toStdString().c_str(),
-						enum_desc->full_name().c_str());
-				return -1;
+				int ev_count = enum_desc->value_count();
+				int x = 0;
+				for (; x < ev_count; ++x)
+				{
+					evalue_desc = enum_desc->value(x);
+					const google::protobuf::EnumValueOptions &evo = evalue_desc->options();
+					if (evo.GetExtension(illusion::enum_name) == set_data.toStdString())
+					{
+						reflection->SetEnum(msg, field, evalue_desc);
+						break;
+					}
+				}
+				if (ev_count == x)
+				{
+					fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
+							set_data.toStdString().c_str(),
+							enum_desc->full_name().c_str());
+					return -1;
+				}
 			}
 
 		}
