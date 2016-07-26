@@ -2,6 +2,8 @@
 #include "ProtoDirTab.h"
 #include "OuterDirTab.h"
 #include "ExcelDirTab.h"
+#include "SelectEachDirDialog.h"
+#include "SelectOneDirDialog.h"
 #include "VisionMainFrame.h"
 
 //实例指针
@@ -100,7 +102,23 @@ void VisionMainFrame::setup_ui()
 void VisionMainFrame::setup_action()
 {
 	//图标来自
-	// https://www.iconfinder.com/icons/196690/edit_pencil_icon#size=32
+	//https://www.iconfinder.com/icons/474135/construction_home_spanner_tool_wrench_icon#size=32
+	act_allinone_ = new QAction(QIcon(".\\res\\icon\\allinone.png"),
+							QString::fromLocal8Bit("选择ALLINONE目录，适合所有目录放在一个目录下的处理."),
+							this);
+	connect(act_allinone_,
+			&QAction::triggered,
+			this,
+			&VisionMainFrame::allinone_process);
+
+	act_each_ = new QAction(QIcon(".\\res\\icon\\each.png"),
+								QString::fromLocal8Bit("分别选择每个目录，适合目录放在不同地方."),
+								this);
+	connect(act_each_,
+			&QAction::triggered,
+			this,
+			&VisionMainFrame::eachdir_process);
+
 	act_exit_ = new QAction(QIcon(".\\res\\icon\\exit.png"),
 							QString::fromLocal8Bit("退出"),
 							this);
@@ -108,8 +126,6 @@ void VisionMainFrame::setup_action()
 			&QAction::triggered,
 			this,
 			&VisionMainFrame::exit_appliaction);
-
-
 
 	/* 菜单，暂时不想用这个，
 	m_menubar = new QMenuBar(this);
@@ -125,40 +141,34 @@ void VisionMainFrame::setup_action()
 	m_mainmenu->addAction(m_act_exit);
 	*/
 
-	//toolbar_ = new QToolBar(this);
-	//toolbar_->addAction(act_new_);
-	//toolbar_->addAction(act_open_);
-	//toolbar_->addAction(act_save_);
-	//toolbar_->addAction(act_saveas_);
-	//toolbar_->addSeparator();
-	//toolbar_->addAction(act_undo_);
-	//toolbar_->addAction(act_redo_);
-	//toolbar_->addSeparator();
-	//toolbar_->addAction(act_statist_);
-	//toolbar_->addAction(act_statresult_);
-	//toolbar_->addSeparator();
-	//toolbar_->addAction(act_checkdir);
-
-	//toolbar_->addSeparator();
-	//toolbar_->addAction(act_surprise_);
-	//toolbar_->addSeparator();
-	//toolbar_->addAction(act_compare_);
-	//toolbar_->addAction(act_compresult_);
+	toolbar_ = new QToolBar(this);
+	toolbar_->addAction(act_allinone_);
+	toolbar_->addAction(act_each_);
 
 
-	//toolbar_->addSeparator();
-	//toolbar_->addAction(act_special_);
-	//toolbar_->addAction(act_fill_);
-
-	//toolbar_->addSeparator();
+	toolbar_->addSeparator();
 	toolbar_->addAction(act_exit_);
 	this->addToolBar(Qt::TopToolBarArea, toolbar_);
 }
 
+//
+void VisionMainFrame::eachdir_process()
+{
+	SelectEachDirDialog dialog(instace_);
+	dialog.exec();
+}
+
+//
+void VisionMainFrame::allinone_process()
+{
+	SelectOneDirDialog dialog(instace_);
+	dialog.exec();
+}
+
+
 //退出APP
 void VisionMainFrame::exit_appliaction()
 {
-	//QAction *evt_act = qobject_cast<QAction *>(sender());
 	QApplication::instance()->quit();
 }
 

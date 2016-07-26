@@ -57,7 +57,7 @@ log
 ~$*.*
 
 #这些目录都忽视
-bin
+#bin
 lib
 log
 db3
