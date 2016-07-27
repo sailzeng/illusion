@@ -17,6 +17,9 @@ SelectOneDirDialog::~SelectOneDirDialog()
 //!
 void SelectOneDirDialog::setup_ui()
 {
+	QVariant var;
+	VisionMainFrame::instance()->read_config("recently", "allinone", var);
+	allinone_path_ = var.toString();
     //去掉帮助按钮
     setWindowFlags(windowFlags()&~Qt::WindowContextHelpButtonHint);
 
@@ -37,6 +40,8 @@ void SelectOneDirDialog::setup_ui()
 	lbl_tmp = new QLabel(QString::fromLocal8Bit("ALL IN ONE文件目录："));
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
 	le_allinone_dir_ = new QLineEdit();
+	le_allinone_dir_->setText(allinone_path_);
+	
 	grid_layout->addWidget(le_allinone_dir_, line_use, 1, 1, 30);
 	bt_allinone_dir_ = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_allinone_dir_, line_use, 31, 1, 1);
@@ -102,6 +107,7 @@ void SelectOneDirDialog::on_ok_clicked()
     this->setResult(QDialog::Accepted);
     accept();
     this->close();
+	VisionMainFrame::instance()->write_config("recently", "allinone", allinone_path_);
     return;
 }
 

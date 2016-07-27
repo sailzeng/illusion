@@ -58,13 +58,12 @@ public:
 	//!∂¡»°≈‰÷√
 	static bool read_config(const QString &section,
 							const QString &key,
-							const QString &defult_data,
-							QString &data);
+							QVariant &data);
 
 	//!–¥»Î≈‰÷√
 	static bool write_config(const QString &section,
 							 const QString &key,
-							 const QString &data);
+							 const QVariant &data);
 
 	// µ¿˝÷∏’Î
 	static VisionMainFrame *instace_;
