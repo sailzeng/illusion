@@ -3,13 +3,13 @@ import "illusion.proto";
 
 enum ENUM_WEEK 
 {
-    MON = 1;
-    TUE = 2;
-    WED = 3;
-    THU = 4;
-    FRI = 5;
-    SAT = 6;
-    SUN = 7;
+    MON = 1    [(illusion.enum_name)="星期一"];
+    TUE = 2    [(illusion.enum_name)="星期二"];  
+    WED = 3    [(illusion.enum_name)="星期三"];
+    THU = 4    [(illusion.enum_name)="星期四"];
+    FRI = 5    [(illusion.enum_name)="星期五"];
+    SAT = 6    [(illusion.enum_name)="星期六"];
+    SUN = 7    [(illusion.enum_name)="星期天"];
 }
 
 message GAME_CFG_STRUCT_1

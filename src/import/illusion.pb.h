@@ -78,6 +78,10 @@ static const int kRepeatSizeFieldNumber = 51003;
 extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
     ::google::protobuf::internal::PrimitiveTypeTraits< ::google::protobuf::int32 >, 5, false >
   repeat_size;
+static const int kEnumNameFieldNumber = 50004;
+extern ::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::EnumValueOptions,
+    ::google::protobuf::internal::StringTypeTraits, 9, false >
+  enum_name;
 
 // ===================================================================
 

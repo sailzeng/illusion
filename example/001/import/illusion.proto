@@ -2,6 +2,8 @@ import "google/protobuf/descriptor.proto";
 
 package illusion;
 
+
+
 extend google.protobuf.MessageOptions 
 {
     //这个message对应的list message名称
@@ -33,4 +35,11 @@ extend google.protobuf.FieldOptions
     
     //域选项，如果是一个repeat的字段，其长度
     optional int32 repeat_size = 51003;
+}
+
+
+extend google.protobuf.EnumValueOptions 
+{
+    //枚举值的选项
+    optional string enum_name = 50004;
 }
