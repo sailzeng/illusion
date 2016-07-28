@@ -183,6 +183,28 @@ protected:
                          const google::protobuf::Message *table_msg,
                          QStringList &tips_ary) const;
 
+	
+	//!
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> *get_proto_illusion_map()
+	{
+		return &proto_2_illusion_map_;
+	}
+
+	//!
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> *get_excel_illusion_map()
+	{
+		return &excel_2_illusion_map_;
+	}
+
+	//!
+	std::map <QString, const Illusion_Message *> *get_outer_illusion_map()
+	{
+		return &outer_2_illusion_map_;
+	}
+
+	//!
+
+
 protected:
 
     //单子实例
@@ -225,13 +247,13 @@ protected:
     std::map <QString, const Illusion_Message *> msgname_2_illusion_map_;
 
     //!proto 文件名称对应 Illusion_Message 列表，一个.proto可以有多个Illusion_Message
-    std::map <QString, ILLUSION_MESSAGE_ARRAY> protoname_2_illusion_map_;
+    std::map <QString, ILLUSION_MESSAGE_ARRAY> proto_2_illusion_map_;
 
     //!EXCEL 文件名称对应proto配置的信息
-    std::map <QString, ILLUSION_MESSAGE_ARRAY> excelname_2_illusion_map_;
+    std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_2_illusion_map_;
 
     //!outer输出文件对用的proto配置的信息，便于查询
-    std::map <QString, const Illusion_Message *> outername_2_illusion_map_;
+    std::map <QString, const Illusion_Message *> outer_2_illusion_map_;
 
     //!EXCEL文件列表
     QFileInfoList excel_fileary_;

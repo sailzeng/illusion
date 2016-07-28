@@ -269,9 +269,9 @@ void Biko_Read_Config::finalize()
 void Biko_Read_Config::clear()
 {
 	msgname_2_illusion_map_.clear();
-    excelname_2_illusion_map_.clear();
-    protoname_2_illusion_map_.clear();
-    outername_2_illusion_map_.clear();
+    excel_2_illusion_map_.clear();
+    proto_2_illusion_map_.clear();
+    outer_2_illusion_map_.clear();
 	//
 	for (const Illusion_Message *&ils_msg: illusion_msg_ary_)
 	{
@@ -285,7 +285,7 @@ void Biko_Read_Config::clear()
 int Biko_Read_Config::read_all_message(QStringList &tips_ary)
 {
     int ret = 0;
-    for (auto iter = excelname_2_illusion_map_.begin(); iter != excelname_2_illusion_map_.end(); ++iter)
+    for (auto iter = excel_2_illusion_map_.begin(); iter != excel_2_illusion_map_.end(); ++iter)
     {
         //打开EXCEL文件
         ret = open_excel_file(iter->first,
@@ -396,12 +396,12 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             msgname_2_illusion_map_[msg_name] = ok_ptr;
 
 
-            auto iter1 = protoname_2_illusion_map_.find(proto_fname);
-            if (iter1 == protoname_2_illusion_map_.end())
+            auto iter1 = proto_2_illusion_map_.find(proto_fname);
+            if (iter1 == proto_2_illusion_map_.end())
             {
                 std::vector<const Illusion_Message *> ils_msg_ary;
                 ils_msg_ary.push_back(ok_ptr);
-                protoname_2_illusion_map_[proto_fname] = ils_msg_ary;
+                proto_2_illusion_map_[proto_fname] = ils_msg_ary;
             }
             else
             {
@@ -409,12 +409,12 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             }
 
             QString excel_fname = ok_ptr->excel_file_name_;
-            auto iter2 = excelname_2_illusion_map_.find(excel_fname);
-            if (iter2 == excelname_2_illusion_map_.end())
+            auto iter2 = excel_2_illusion_map_.find(excel_fname);
+            if (iter2 == excel_2_illusion_map_.end())
             {
                 std::vector<const Illusion_Message *> ils_msg_ary;
                 ils_msg_ary.push_back(ok_ptr);
-                excelname_2_illusion_map_[excel_fname] = ils_msg_ary;
+                excel_2_illusion_map_[excel_fname] = ils_msg_ary;
             }
             else
             {
@@ -422,10 +422,10 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             }
 
             QString outer_fname = ok_ptr->outer_file_name_;
-            auto iter3 = outername_2_illusion_map_.find(outer_fname);
-            if (iter3 == outername_2_illusion_map_.end())
+            auto iter3 = outer_2_illusion_map_.find(outer_fname);
+            if (iter3 == outer_2_illusion_map_.end())
             {
-                outername_2_illusion_map_[outer_fname] = ok_ptr;
+                outer_2_illusion_map_[outer_fname] = ok_ptr;
             }
 
         }

@@ -28,7 +28,7 @@ protected:
 	QWidget *test_opearter_ = NULL;
 
 
-
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> *proto_2_illusion_map_ = NULL;
 
 };
 
