@@ -154,15 +154,54 @@ void VisionMainFrame::setup_action()
 //
 void VisionMainFrame::eachdir_process()
 {
+	int ret = 0;
 	SelectEachDirDialog dialog(instace_);
-	dialog.exec();
+	if (QDialog::Accepted == dialog.exec())
+	{
+		QString proto_path;
+		QString excel_path;
+		QString outer_path;
+		QStringList import_list;
+		QStringList tips_ary;
+		dialog.get_path_str(proto_path, excel_path, outer_path, import_list);
+		ret = Biko_Read_Config::instance()->init_read_all(proto_path,
+														  excel_path,
+														  outer_path,
+														  import_list,
+														  tips_ary);
+		if (0 != ret)
+		{
+
+		}
+		else
+		{
+
+		}
+	}
 }
 
 //
 void VisionMainFrame::allinone_process()
 {
+	int ret = 0;
 	SelectOneDirDialog dialog(instace_);
-	dialog.exec();
+	if (QDialog::Accepted == dialog.exec())
+	{
+		
+		QString allinone_path;
+		QStringList tips_ary;
+		dialog.get_path_str(allinone_path);
+		ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
+ 														   tips_ary);
+		if (0 != ret)
+		{
+
+		}
+		else
+		{
+
+		}
+	}
 }
 
 
