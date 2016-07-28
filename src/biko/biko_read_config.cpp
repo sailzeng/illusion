@@ -32,6 +32,18 @@ void ZCE_Error_Collector::clear_error()
     error_array_.clear();
 }
 
+void ZCE_Error_Collector::toQStringList(QStringList & tips_ary)
+{
+	for (size_t i = 0; i < error_array_.size(); ++i)
+	{
+		tips_ary.append(QString::fromLocal8Bit("file[%1]line[%2]column[%3]error [%4]").
+						arg(error_array_[i].file_name_.c_str()).
+						arg(error_array_[i].line_).
+						arg(error_array_[i].column_).
+						arg(error_array_[i].message_.c_str()));
+	}
+}
+
 
 //======================================================================================
 //处理的单子实例
@@ -351,6 +363,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
     {
         fprintf(stdout, "Importer Import filename [%s] fail.\n",
 				proto_fname.toStdString().c_str());
+		error_collector_.toQStringList(tips_ary);
         return -1;
     }
 

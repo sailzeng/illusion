@@ -22,7 +22,7 @@ protected:
 
 
 	///²âÊÔÆåÅÌµÄÄÚÈİ
-	QWidget *testboard_contents_ = NULL;
+	QTreeWidget *proto_dir_tree_ = NULL;
 
 	///²âÊÔÆåÅÌµÄ²Ù×÷
 	QWidget *test_opearter_ = NULL;

@@ -23,7 +23,7 @@ void ExcelDirTab::setup_ui()
     QScrollArea *boardshow_scrollarea = new QScrollArea(this);
     boardshow_scrollarea->setWidgetResizable(true);
     boardshow_scrollarea->resize(650, 650);
-    testboard_contents_ = new QWidget();
+    testboard_contents_ = new QTreeWidget();
     testboard_contents_->setGeometry(QRect(0, 0, 1000, 1000));
     boardshow_scrollarea->setWidget(testboard_contents_);
     boardshow_scrollarea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);

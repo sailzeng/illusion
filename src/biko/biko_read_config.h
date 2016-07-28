@@ -28,12 +28,16 @@ public:
 
 public:
 
+	//!
     virtual void AddError(const std::string &filename,
                           int line,
                           int column,
                           const std::string &message);
-
+	//!
     void clear_error();
+
+	//!
+	void toQStringList(QStringList &tips_ary);
 
 public:
     //
