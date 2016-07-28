@@ -246,11 +246,8 @@ VisionMainFrame *VisionMainFrame::instance()
 
 bool VisionMainFrame::read_config(const QString &section,
 								  const QString &key,
-								  const QString &defult_data,
-								  QString &data
-)
+								  QVariant &data)
 {
-	data = defult_data;
 	QFile json_file(".\\cfg\\local_config.json");
 	bool rd_ok = json_file.open(QIODevice::ReadOnly);
 	if (!rd_ok)
@@ -293,7 +290,7 @@ bool VisionMainFrame::read_config(const QString &section,
 //!–¥»Î≈‰÷√
 bool VisionMainFrame::write_config(const QString &section,
 								   const QString &key,
-								   const QString &data)
+								   const QVariant &data)
 {
 	QFile json_file(".\\cfg\\local_config.json");
 	bool rd_ok = json_file.open(QIODevice::ReadWrite);

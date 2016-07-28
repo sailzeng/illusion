@@ -21,6 +21,16 @@ SelectEachDirDialog::~SelectEachDirDialog()
 //!
 void SelectEachDirDialog::setup_ui()
 {
+	QVariant var;
+	VisionMainFrame::instance()->read_config("recently", "proto_path", var);
+	proto_path_ = var.toString();
+	VisionMainFrame::instance()->read_config("recently", "excel_path", var);
+	excel_path_ = var.toString();
+	VisionMainFrame::instance()->read_config("recently", "outer_path", var);
+	outer_path_ = var.toString();
+	VisionMainFrame::instance()->read_config("recently", "import_list", var);
+	import_list_ = var.toStringList();
+
     //È¥µô°ïÖú°´Å¥
     setWindowFlags(windowFlags()&~Qt::WindowContextHelpButtonHint);
 
@@ -243,6 +253,12 @@ void SelectEachDirDialog::on_ok_clicked()
     this->setResult(QDialog::Accepted);
     accept();
     this->close();
+
+	VisionMainFrame::instance()->write_config("recently", "proto_path", proto_path_);
+	VisionMainFrame::instance()->write_config("recently", "excel_path", excel_path_);
+	VisionMainFrame::instance()->write_config("recently", "outer_path", outer_path_);
+	VisionMainFrame::instance()->write_config("recently", "import_list", import_list_);
+
     return;
 }
 
