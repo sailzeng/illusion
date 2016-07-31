@@ -392,7 +392,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
 
             illusion_msg_ary_.push_back(ok_ptr);
 
-            QString msg_name = ok_ptr->table_messge_name_;
+            QString msg_name = ok_ptr->table_message_name_;
             msgname_2_illusion_map_[msg_name] = ok_ptr;
 
 
@@ -619,7 +619,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
         {
             QString error_info = QString::fromLocal8Bit("!动态写入Message失败，Table Message [%1] Line Message [%2] 字段名称[%3]."
                                                         "对应字段是的EXCEL 文件[%4]Sheet 名称[%5].行号列号[%6|%7]%8")
-                                 .arg(ils_msg->table_messge_name_)
+                                 .arg(ils_msg->table_message_name_)
                                  .arg(ils_msg->line_message_name_)
                                  .arg(error_field_desc->full_name().c_str())
                                  .arg(ils_msg->excel_file_name_)
@@ -636,7 +636,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     if (!table_msg->IsInitialized())
     {
         fprintf(stderr, "Read table message [%s] is not IsInitialized, please check your excel or proto file.\n",
-                ils_msg->table_messge_name_.toStdString().c_str());
+                ils_msg->table_message_name_.toStdString().c_str());
         return -1;
     }
     std::cout << table_msg->DebugString() << std::endl;

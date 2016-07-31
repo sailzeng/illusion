@@ -19,10 +19,19 @@ bool QtAxExcelEngine::initialize(bool visible)
 {
 
     HRESULT r = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (r != S_OK && r != S_FALSE)
+    if (r != S_OK )
     {
-        fprintf(stderr,"Qt: Could not initialize OLE (error %x).\n", (unsigned int)r);
-        return false;
+        fprintf(stderr,"Qt: Could not initialize OLE (ret %x error %x) .\n", 
+			(unsigned int)r,
+			::GetLastError());
+		if (r == S_FALSE)
+		{
+			return false;
+		}
+		else
+		{
+			//r==RPC_E_CHANGED_MODE
+		}
     }
     is_visible_ = visible;
     //

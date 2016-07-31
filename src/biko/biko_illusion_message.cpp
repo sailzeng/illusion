@@ -59,7 +59,7 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
         outer_file_name = table_msg_desc_->full_name();
     }
 
-    table_messge_name_ = table_messge_name.c_str();
+    table_message_name_ = table_messge_name.c_str();
     line_message_name_ = line_messge_name.c_str();
     excel_file_name_ = excel_filename.c_str();
     excel_sheet_name_ = excel_sheetname.c_str();

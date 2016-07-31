@@ -45,7 +45,7 @@ public:
     QString line_message_name_;
 
     //!对应的repeat line message 结构的名称，
-    QString table_messge_name_;
+    QString table_message_name_;
 
     //!表格名称
     QString excel_file_name_;
@@ -54,6 +54,9 @@ public:
 
 	//存放protobuf配置数据的的文件名称
 	QString outer_file_name_;
+
+	//!EXCEL文件配置是更新的
+	bool excelcfg_is_newer_ = false;
 
     //!
     int fieldsname_line_ = 1;
@@ -80,4 +83,8 @@ public:
 
 //!
 typedef std::vector<const Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
+
+
+typedef std::map <QString, ILLUSION_MESSAGE_ARRAY> QSTRING_2_ILLUSIONARY_MAP;
+
 

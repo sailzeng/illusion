@@ -107,6 +107,25 @@ public:
     //清理所有的读取数据
     void clear();
 
+	//!
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> *get_proto_illusion_map()
+	{
+		return &proto_2_illusion_map_;
+	}
+
+	//!
+	std::map <QString, ILLUSION_MESSAGE_ARRAY> *get_excel_illusion_map()
+	{
+		return &excel_2_illusion_map_;
+	}
+
+	//!
+	std::map <QString, const Illusion_Message *> *get_outer_illusion_map()
+	{
+		return &outer_2_illusion_map_;
+	}
+
+	//!
 
 protected:
 
@@ -184,25 +203,7 @@ protected:
                          QStringList &tips_ary) const;
 
 	
-	//!
-	std::map <QString, ILLUSION_MESSAGE_ARRAY> *get_proto_illusion_map()
-	{
-		return &proto_2_illusion_map_;
-	}
 
-	//!
-	std::map <QString, ILLUSION_MESSAGE_ARRAY> *get_excel_illusion_map()
-	{
-		return &excel_2_illusion_map_;
-	}
-
-	//!
-	std::map <QString, const Illusion_Message *> *get_outer_illusion_map()
-	{
-		return &outer_2_illusion_map_;
-	}
-
-	//!
 
 
 protected:

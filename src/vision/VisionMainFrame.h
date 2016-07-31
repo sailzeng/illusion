@@ -25,9 +25,10 @@ public:
 	~VisionMainFrame();
 
 
-	//输出信息
+	//!输出信息
 	void out_info(PZ_TIP_LEVEL level, const QString &out_info);
-
+	//!
+	void out_tips_ary(const QStringList &tips_ary);
 
 protected:
 
@@ -65,14 +66,13 @@ public:
 							 const QString &key,
 							 const QVariant &data);
 
+protected:
+
 	//实例指针
 	static VisionMainFrame *instace_;
 
-
-protected:
-
 	//最大消息数量
-	static const size_t MAX_TIPS_INFO_NUMBER = 32;
+	static const size_t MAX_TIPS_INFO_NUMBER = 128;
 
 private:
 

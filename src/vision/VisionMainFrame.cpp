@@ -185,23 +185,21 @@ void VisionMainFrame::allinone_process()
 {
 	int ret = 0;
 	SelectOneDirDialog dialog(instace_);
-	if (QDialog::Accepted == dialog.exec())
+	if (QDialog::Accepted != dialog.exec())
 	{
-		
-		QString allinone_path;
-		QStringList tips_ary;
-		dialog.get_path_str(allinone_path);
-		ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
- 														   tips_ary);
-		if (0 != ret)
-		{
-
-		}
-		else
-		{
-
-		}
+		return;
 	}
+	QString allinone_path;
+	QStringList tips_ary;
+	dialog.get_path_str(allinone_path);
+	ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
+													   tips_ary);
+	if (0 != ret)
+	{
+		out_tips_ary(tips_ary);
+		return;
+	}
+	proto_dir_tab_->loead_illusion();
 }
 
 
@@ -211,7 +209,32 @@ void VisionMainFrame::exit_appliaction()
 	QApplication::instance()->quit();
 }
 
-
+void VisionMainFrame::out_tips_ary(const QStringList &tips_ary)
+{
+	for (const QString &tips : tips_ary)
+	{
+		if (tips[0] == '?')
+		{
+			out_info(PZ_DEBUG, tips);
+		}
+		else if (tips[0] == '.')
+		{
+			out_info(PZ_INFO, tips);
+		}
+		else if (tips[0] == ':')
+		{
+			out_info(PZ_WARNNING, tips);
+		}
+		else if (tips[0] == '!')
+		{
+			out_info(PZ_INFO, tips);
+		}
+		else
+		{
+			out_info(PZ_INFO, tips);
+		}
+	}
+}
 
 // ‰≥ˆ–≈œ¢
 void VisionMainFrame::out_info(PZ_TIP_LEVEL level, const QString &out_info)

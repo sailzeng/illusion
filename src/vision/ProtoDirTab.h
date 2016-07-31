@@ -11,6 +11,9 @@ public:
 	ProtoDirTab(QWidget *parent);
 	~ProtoDirTab();
 
+	//!
+	void loead_illusion();
+
 protected:
 
 	///°²×°UI
@@ -28,7 +31,8 @@ protected:
 	QWidget *test_opearter_ = NULL;
 
 
-	std::map <QString, ILLUSION_MESSAGE_ARRAY> *proto_2_illusion_map_ = NULL;
+	QSTRING_2_ILLUSIONARY_MAP *proto_2_ils_map_ = NULL;
+
 
 };
 
