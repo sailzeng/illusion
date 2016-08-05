@@ -41,6 +41,9 @@ public:
     //!
     const google::protobuf::Descriptor *line_msg_desc_;
 
+	//!
+	QString proto_file_name_;
+
     //!表格对应的protobuf的message名称
     QString line_message_name_;
 
@@ -88,3 +91,4 @@ typedef std::vector<const Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
 typedef std::map <QString, ILLUSION_MESSAGE_ARRAY> QSTRING_2_ILLUSIONARY_MAP;
 
 
+typedef std::map <QString, Illusion_Message *> QSTRING_2_ILSMSG_MAP;

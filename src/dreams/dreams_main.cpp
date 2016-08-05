@@ -38,8 +38,6 @@ int print_tips_info(QStringList &tips_ary)
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication a(argc, argv);
-
 	int ret = 0;
 
 	HANDLE handle_out = ::GetStdHandle(STD_OUTPUT_HANDLE);

@@ -120,6 +120,13 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
 
     int ret = 0;
 
+	bool bret = ils_excel_file_.initialize(false);
+	if (false == bret)
+	{
+		tips_ary.append(QString::fromLocal8Bit("OLE不能启动EXCEL，实用OLE读取EXCEL必须安装了EXCEL。"));
+		return -1;
+	}
+
 	init_importdir(import_list, tips_ary);
 	
     //各个部分都进行初始化处理
@@ -137,13 +144,6 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
     ret = init_outdir(outer_dir, tips_ary);
     if (ret != 0)
     {
-        return -1;
-    }
-
-    bool bret = ils_excel_file_.initialize(false);
-    if (false == bret)
-    {
-        tips_ary.append(QString::fromLocal8Bit("OLE不能启动EXCEL，实用OLE读取EXCEL必须安装了EXCEL。"));
         return -1;
     }
 
@@ -248,6 +248,12 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
             return -1;
         }
     }
+
+	//
+	for (Illusion_Message *&ils_msg : illusion_msg_ary_)
+	{
+			
+	}
     return 0;
 }
 
@@ -273,7 +279,7 @@ void Biko_Read_Config::clear()
     proto_2_illusion_map_.clear();
     outer_2_illusion_map_.clear();
 	//
-	for (const Illusion_Message *&ils_msg: illusion_msg_ary_)
+	for (Illusion_Message *&ils_msg: illusion_msg_ary_)
 	{
 		delete ils_msg;
 		ils_msg = NULL;
