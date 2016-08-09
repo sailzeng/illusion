@@ -38,6 +38,7 @@ int print_tips_info(QStringList &tips_ary)
 
 int main(int argc, char *argv[])
 {
+	QCoreApplication a(argc, argv);
 	int ret = 0;
 
 	HANDLE handle_out = ::GetStdHandle(STD_OUTPUT_HANDLE);
@@ -62,7 +63,6 @@ int main(int argc, char *argv[])
 	}
 
 	QStringList tips_ary;
-	QString allinone_path = "E:/Courage/illusion.git/example/001";
 
 	const struct option RAPER_LONG_OPTION[]=
 	{
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 #if defined DIRECT_DEBUG && DIRECT_DEBUG == 1 
 	all_in_one = true;
 	read_config = true;
-	allinone_dir = "E:\\Courage\\illusion.git\\example\\001";
+	allinone_dir = "E:\\Courage\\illusion.git\\example\\004";
 #endif
 
 	if (all_in_one)
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 			print_cmd_parameter();
 			return -1;
 		}
-		ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
+		ret = Biko_Read_Config::instance()->init_read_all2(allinone_dir,
 														   tips_ary);
 	}
 	else

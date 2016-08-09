@@ -504,7 +504,7 @@ int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
     }
     fprintf(stderr, "Dream excecl file have sheet num[%d].\n",
             ils_excel_file_.sheetsCount());
-    return 0;
+return 0;
 }
 
 void Biko_Read_Config::close_excel_file()
@@ -514,104 +514,110 @@ void Biko_Read_Config::close_excel_file()
 
 //
 int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
-                                       QStringList &tips_ary)
+									   QStringList &tips_ary)
 {
-    int ret = 0;
-    //检查EXCEL文件中是否有这个表格
-    if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == false)
-    {
-        tips_ary.append(QString::fromLocal8Bit("!你选择的配置EXCEL文件[%1]中的"
-                                               "[%2]表不存在或者不正确，请重现检查后打开。!")
-                        .arg(ils_msg->excel_file_name_)
-                        .arg(ils_msg->excel_sheet_name_));
-        return -3;
-    }
+	int ret = 0;
+	//检查EXCEL文件中是否有这个表格
+	if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == false)
+	{
+		tips_ary.append(QString::fromLocal8Bit("!你选择的配置EXCEL文件[%1]中的"
+											   "[%2]表不存在或者不正确，请重现检查后打开。!")
+						.arg(ils_msg->excel_file_name_)
+						.arg(ils_msg->excel_sheet_name_));
+		return -3;
+	}
 
 
-    int line_count = ils_excel_file_.rowCount();
-    int col_count = ils_excel_file_.columnCount();
-    fprintf(stderr, "Read excel table %s table have col_count %d row_count %d.\n",
-            ils_msg->excel_sheet_name_.toStdString().c_str(),
-            col_count,
-            line_count);
+	int line_count = ils_excel_file_.rowCount();
+	int col_count = ils_excel_file_.columnCount();
+	fprintf(stderr, "Read excel table %s table have col_count %d row_count %d.\n",
+			ils_msg->excel_sheet_name_.toStdString().c_str(),
+			col_count,
+			line_count);
 
 
-    //如果标识了pb字段行等，但其实没有那么多行
-    if (ils_msg->read_data_line_ > line_count ||
-        ils_msg->fieldsname_line_ > line_count ||
-        ils_msg->column_field_count_ > col_count)
-    {
-        tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL[%1]文件中的"
-                                               "[%2]表没有足够的数据以供读取。!").
-                        arg(ils_msg->excel_file_name_).
-                        arg(ils_msg->excel_sheet_name_));
-        return -4;
-    }
+	//如果标识了pb字段行等，但其实没有那么多行
+	if (ils_msg->read_data_line_ > line_count ||
+		ils_msg->fieldsname_line_ > line_count ||
+		ils_msg->column_field_count_ > col_count)
+	{
+		tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL[%1]文件中的"
+											   "[%2]表没有足够的数据以供读取。!").
+						arg(ils_msg->excel_file_name_).
+						arg(ils_msg->excel_sheet_name_));
+		return -4;
+	}
 
-    fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.\n",
-            ils_msg->excel_file_name_.toStdString().c_str(),
-            ils_msg->excel_sheet_name_.toStdString().c_str(),
-            line_count,
-            col_count);
+	fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.\n",
+			ils_msg->excel_file_name_.toStdString().c_str(),
+			ils_msg->excel_sheet_name_.toStdString().c_str(),
+			line_count,
+			col_count);
 
 
 
-    //检查如果域名字字段的起始是#,%,!，这些字段不读取，跳过
-    std::vector<int> read_col;
-    if (col_count == ils_msg->column_field_count_)
-    {
-        for (int col_no = 1; col_no <= col_count; ++col_no)
-        {
-            read_col.push_back(col_no);
-        }
-    }
-    else if (col_count > ils_msg->column_field_count_)
-    {
-        for (int col_no = 1;
-             col_no <= col_count && static_cast<int>(read_col.size()) < ils_msg->column_field_count_; ++col_no)
-        {
-            QVariant data = ils_excel_file_.getCell(ils_msg->fieldsname_line_,
-                                                    col_no);
-            QString field_name = data.toString();
-            QChar first_char = field_name.at(0);
-            if (first_char == '#' || first_char == '%' ||  first_char == '!')
-            {
-                continue;
-            }
-            else
-            {
-                read_col.push_back(col_no);
-            }
-        }
-        if (read_col.size() != ils_msg->column_field_count_)
-        {
-            return -1;
-        }
-    }
-    else
-    {
-        //不可能到此
-        Q_ASSERT(false);
-    }
+	//检查如果域名字字段的起始是#,%,!，这些字段不读取，跳过
+	std::vector<int> read_col;
+	if (col_count == ils_msg->column_field_count_)
+	{
+		for (int col_no = 1; col_no <= col_count; ++col_no)
+		{
+			read_col.push_back(col_no);
+		}
+	}
+	else if (col_count > ils_msg->column_field_count_)
+	{
+		for (int col_no = 1;
+			 col_no <= col_count && static_cast<int>(read_col.size()) < ils_msg->column_field_count_; ++col_no)
+		{
+			QVariant data = ils_excel_file_.getCell(ils_msg->fieldsname_line_,
+													col_no);
+			QString field_name = data.toString();
+			QChar first_char = field_name.at(0);
+			if (first_char == '#' || first_char == '%' || first_char == '!')
+			{
+				continue;
+			}
+			else
+			{
+				read_col.push_back(col_no);
+			}
+		}
+		if (read_col.size() != ils_msg->column_field_count_)
+		{
+			return -1;
+		}
+	}
+	else
+	{
+		//不可能到此
+		Q_ASSERT(false);
+	}
 
-    google::protobuf::Message *table_msg = NULL;
-    ret = ils_msg->new_table_mesage(msg_factory_,
-                                    table_msg);
-    if (0 != ret || NULL == table_msg )
-    {
-        return -2;
-    }
-    std::unique_ptr<google::protobuf::Message> ptr_msg(table_msg);
+	google::protobuf::Message *table_msg = NULL;
+	ret = ils_msg->new_table_mesage(msg_factory_,
+									table_msg);
+	if (0 != ret || NULL == table_msg)
+	{
+		return -2;
+	}
+	std::unique_ptr<google::protobuf::Message> ptr_msg(table_msg);
+
+	for (size_t s = 0; s < read_col.size(); ++s)
+	{
+		fprintf(stderr, "Read column [%d] \n", read_col[s]);
+		fprintf(stderr, "Read column field full name [%s] \n", ils_msg->line_field_desc_ary_[s]->full_name().c_str());
+	}
 
     for (int line_no = ils_msg->read_data_line_; line_no <= line_count; ++line_no)
     {
         std::vector<QString > line_data_ary;
         line_data_ary.reserve(col_count);
         fprintf(stderr, "Read line [%d] \n", line_no);
-        for (int col_no = 1; col_no <= col_count; ++col_no)
+        for (size_t p=0; p < read_col.size(); ++p )
         {
             QString cell_data = ils_excel_file_.getCell(line_no,
-                                                            read_col[col_no-1]).toString();
+                                                        read_col[p]).toString();
             line_data_ary.push_back(cell_data);
 
         }

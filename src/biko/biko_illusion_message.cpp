@@ -44,12 +44,9 @@ int Illusion_Message::init(const google::protobuf::Descriptor *table_msg_desc)
 
     if (excel_filename.empty() ||
         excel_sheetname.empty() ||
-        0 >= fieldsname_line ||
-        0 >= fullname_line ||
-        0 >= read_data_line ||
-        fieldsname_line == fullname_line ||
-        fieldsname_line == read_data_line ||
-        fullname_line == read_data_line)
+        0 > fieldsname_line ||
+        0 > fullname_line ||
+        0 >= read_data_line )
     {
         //ÓĞ´íÎó
         return -2;
