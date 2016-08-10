@@ -21,7 +21,7 @@ bool QtAxExcelEngine::initialize(bool visible)
     HRESULT r = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (r != S_OK )
     {
-        fprintf(stderr,"Qt: Could not initialize OLE (ret %x error %x) .\n", 
+        fprintf(stderr,"QtActiveX: Could not initialize OLE CoInitializeEx (ret %x error %x) .\n", 
 			(unsigned int)r,
 			::GetLastError());
 		if (r == S_FALSE)
@@ -31,15 +31,19 @@ bool QtAxExcelEngine::initialize(bool visible)
 		else
 		{
 			//r==RPC_E_CHANGED_MODE
+			//如果是这个错误，放弃，没啥忍了
 		}
     }
     is_visible_ = visible;
     //
     if (NULL == excel_instance_)
     {
+		//OLE启动EXCEL 很容易被其他东西破坏，实在没有法子。比如你安装了WPS,
         excel_instance_ = new QAxObject("Excel.Application");
         if (excel_instance_->isNull())
         {
+			fprintf(stderr, "QtActiveX: new OLE Excel.Application fail, ensure your computer install EXCEL.\n"
+				);
             is_open_ = false;
             return is_open_;
         }
@@ -127,9 +131,11 @@ bool QtAxExcelEngine::opennew_internal(bool new_file)
 	if (!new_file)
 	{
 		//这儿原来的代码是下面这样的，但是在我的两台机器都出现了返回为NULL的问题，而且会出现提示错误
+		//其中一台，我反复折腾后正常，但另外一台死活不对，
 		//QAxBase: error calling idispatch member open: unknown error
-		//出错代码如下，但其实，应该问题不大
+		//出错代码如下，
 		//active_book_ = excel_instance_->querySubObject("Open(const QString&)",xls_file_);
+		//但其实，应该问题不大,或者说带病可以运行下去，我们把代码改成如下，规避了这个问题，但仍然有提示
 
 		//打开xls对应的，获取工作簿,注意，要用绝对路径
 		work_books_->dynamicCall("Open(const QString&)",
@@ -529,8 +535,6 @@ int QtAxExcelEngine::startColumn() const
 {
 	return start_column_;
 }
-
-
 
 
 //取得列的名称，比如27->AA

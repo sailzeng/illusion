@@ -39,6 +39,8 @@ public:
 	//!
 	void toQStringList(QStringList &tips_ary);
 
+	//!打印各种信息
+	void print_tostdout();
 public:
     //
     PROTO_ERROR_ARRAY error_array_;

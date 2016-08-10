@@ -65,6 +65,9 @@
 #include <sys/stat.h>
 #include <math.h>
 
+
+#define ZCE_OS_WINDOWS 1
+
 //==================================================================================================
 #if defined ZCE_OS_WINDOWS
 #pragma warning ( push )

@@ -22,16 +22,19 @@ int print_cmd_parameter()
 	fprintf(stdout, "-o[dir],--outer=[dir]           Sign outer file directory.\n");
 	fprintf(stdout, "-i[dir],--import=[dir]          Sign Import file directory.\n");
 	fprintf(stdout, "                                May be specified multiple times.");
-	fprintf(stdout, "-m[message],--message[message]  Sign only process message name.\n");
+	fprintf(stdout, "-m[message],--message[message]  Sign only process message full name.\n");
 	fprintf(stdout, "-h,--help                       Print out help.\n");
 	return 0;
 }
 
+//打印所有Tips信息
 int print_tips_info(QStringList &tips_ary)
 {
+	fprintf(stdout, "%s\n", "========================================================");
+	fprintf(stdout, "%s\n", "Last Tips info include:");
 	for (int i = 0; i < tips_ary.size(); ++i)
 	{
-		fprintf(stdout,"%s\n",tips_ary[i].toStdString().c_str());
+		fprintf(stdout,"%s\n",tips_ary[i].toLocal8Bit().toStdString().c_str());
 	}
 	return 0;
 }
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
 		DWORD ret_error= ::GetLastError();
 		//
 	}
-	SMALL_RECT rect = { 0, 0, 120, 60 };
+	SMALL_RECT rect = { 0, 0, 120, 150 };
 	bret = ::SetConsoleWindowInfo(handle_out, TRUE, &rect);
 	if (bret == FALSE)
 	{
@@ -132,11 +135,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+#if defined _DEBUG || defined DEBUG
 #define DIRECT_DEBUG 1
 #if defined DIRECT_DEBUG && DIRECT_DEBUG == 1 
 	all_in_one = true;
 	read_config = true;
 	allinone_dir = "E:\\Courage\\illusion.git\\example\\004";
+#endif
 #endif
 
 	if (all_in_one)
@@ -163,7 +168,6 @@ int main(int argc, char *argv[])
 		{
 			fprintf(stdout, "Process need required parameter proto file directory. -p[dir] or --proto[dir]. \n");
 			fprintf(stdout, "Or use all in one parameter to sign all directory. -a[dir] or --allinone[dir]. \n");
-			fprintf(stdout, "\n");
 			fprintf(stdout, "\n");
 			print_cmd_parameter();
 			return -1;
@@ -205,12 +209,15 @@ int main(int argc, char *argv[])
 		Biko_Read_Config::clean_instance();
 		return -1;
 	}
-	else if (save_title)
+
+	
+	if (save_title)
 	{
 		if (!read_one_message || messge_full_name.isEmpty())
 		{
-			Biko_Read_Config::clean_instance();
-			return -1;
+			fprintf(stdout, "To save proto message titile to excel file, need sign message full name.  \n");
+			fprintf(stdout, "Use -m[message],--message[message] to sign . \n");
+			ret = -1;
 		}
 		ret = Biko_Read_Config::instance()->save_excel_tablehead(messge_full_name,
 																 tips_ary);
@@ -229,18 +236,16 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		Biko_Read_Config::clean_instance();
-		return -1;
+		print_cmd_parameter();
+		ret = -1;
 	}
-
+	
+	Biko_Read_Config::clean_instance();
 	if (ret != 0)
 	{
 		print_tips_info(tips_ary);
-		Biko_Read_Config::clean_instance();
 		return ret;
 	}
-
-	Biko_Read_Config::clean_instance();
 
 	return a.quit();
 }

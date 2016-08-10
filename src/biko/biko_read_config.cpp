@@ -36,11 +36,24 @@ void ZCE_Error_Collector::toQStringList(QStringList & tips_ary)
 {
 	for (size_t i = 0; i < error_array_.size(); ++i)
 	{
-		tips_ary.append(QString::fromLocal8Bit("file[%1]line[%2]column[%3]error [%4]").
+		tips_ary.append(QString::fromLocal8Bit("File[%1]line[%2]column[%3]error [%4]").
 						arg(error_array_[i].file_name_.c_str()).
 						arg(error_array_[i].line_).
 						arg(error_array_[i].column_).
 						arg(error_array_[i].message_.c_str()));
+	}
+}
+
+void ZCE_Error_Collector::print_tostdout()
+{
+	for (size_t i = 0; i < error_array_.size(); ++i)
+	{
+		fprintf(stdout,
+				"File[%s]line[%d]column[%d] have error [%s] \n",
+				error_array_[i].file_name_.c_str(),
+				error_array_[i].line_,
+				error_array_[i].column_,
+				error_array_[i].message_.c_str());
 	}
 }
 
@@ -123,7 +136,18 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
 	bool bret = ils_excel_file_.initialize(false);
 	if (false == bret)
 	{
+		fprintf(stdout,"QtActivex can't initialize EXCEL to read data by OLE,ensure your computer install Office and EXCEL.\n");
 		tips_ary.append(QString::fromLocal8Bit("OLE不能启动EXCEL，实用OLE读取EXCEL必须安装了EXCEL。"));
+		tips_ary.append(QString::fromLocal8Bit("OLE 是一个神作，绝逼的依靠运气编程的典范，所以有什么问题都有可能。"));
+		tips_ary.append(QString::fromLocal8Bit("1.你的EXCEL不是安装版本，不要指望什么绿色版本。"));
+		tips_ary.append(QString::fromLocal8Bit("2.你安装了（过）WPS，牛逼大发的WPS很多时候在注册表经常注册和EXCEL一样的键值。"));
+		tips_ary.append(QString::fromLocal8Bit("所以请，"));
+		tips_ary.append(QString::fromLocal8Bit("1.卸载现有的EXCEL，WPS，删除所有相关的目录"));
+		tips_ary.append(QString::fromLocal8Bit("2.清理注册表，用工具清理，Wise Registry Cleaner and ，"));
+		tips_ary.append(QString::fromLocal8Bit("3.重装Office and EXCEL"));
+		tips_ary.append(QString::fromLocal8Bit("4.祈祷。我就能帮你到这儿了。我曾经有个问题把上面的4件事情都做过，但1台OK了，1台还有问题。"));
+		tips_ary.append(QString::fromLocal8Bit("5.如果你想改变，可以用libxl 库改写这里面部分代码。。"));
+		
 		return -1;
 	}
 
@@ -138,18 +162,19 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
     ret = init_exceldir(excel_dir, tips_ary);
     if (ret != 0)
     {
-        return -1;
+        return -2;
     }
 
     ret = init_outdir(outer_dir, tips_ary);
     if (ret != 0)
     {
-        return -1;
+        return -3;
     }
 
     return 0;
 }
 
+//import 目录
 void Biko_Read_Config::init_importdir(const QStringList &import_list,
 					                  QStringList & /*tips_ary*/)
 {
@@ -157,7 +182,6 @@ void Biko_Read_Config::init_importdir(const QStringList &import_list,
 	{
 		source_tree_->MapPath("", import_list[i].toStdString());
 	}
-	
 }
 
 //初始化.proto文件目录，读取里面所有的proto文件
@@ -168,6 +192,8 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
     proto_path_.setPath(proto_dir);
     if (false == proto_path_.exists())
     {
+		fprintf(stdout, "Proto dir [%s] don't exist.\n",
+				proto_dir.toLocal8Bit().toStdString().c_str());
         tips_ary.append(QString::fromLocal8Bit("目录[%1]并不存在，请检查参数。").
                         arg(proto_dir));
         return -1;
@@ -178,6 +204,8 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
     proto_fileary_ = proto_path_.entryInfoList(filters, QDir::Files | QDir::Readable);
     if (proto_fileary_.size() <= 0)
     {
+		fprintf(stdout, "Proto dir [%s] have not any proto buf meta(.proto) file.\n",
+				proto_dir.toLocal8Bit().toStdString().c_str());
         tips_ary.append(QString::fromLocal8Bit("目录[%1]下没有任何protobuf meta(.proto)文件，请检查参数。").
                         arg(proto_dir));
         return -1;
@@ -201,10 +229,11 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
 int Biko_Read_Config::init_exceldir(const QString &excel_dir,
                                     QStringList &tips_ary)
 {
-    int ret = 0;
     excel_path_.setPath(excel_dir);
     if (false == excel_path_.exists())
     {
+		fprintf(stdout, "Excel dir [%s] don't exist.\n",
+				excel_dir.toLocal8Bit().toStdString().c_str());
         tips_ary.append(QString::fromLocal8Bit("目录[%1]并不存在，请检查参数。").
                         arg(excel_dir));
         return -1;
@@ -215,7 +244,9 @@ int Biko_Read_Config::init_exceldir(const QString &excel_dir,
     excel_fileary_ = excel_path_.entryInfoList(filters, QDir::Files | QDir::Readable);
     if (excel_fileary_.size() <= 0)
     {
-        tips_ary.append(QString::fromLocal8Bit("目录[%1]下没有任何Excel文件，请检查参数。").
+		fprintf(stdout, "Excel dir [%s] have not any excel (.xls or .xlsx) file.\n",
+				excel_dir.toLocal8Bit().toStdString().c_str());
+        tips_ary.append(QString::fromLocal8Bit("目录[%1]下没有任何Excel文件(.xls or .xlsx)，请检查参数。").
                         arg(excel_dir));
         return -1;
     }
@@ -226,17 +257,6 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
                                   QStringList &tips_ary)
 {
     QString path_str;
-
-    path_str = outer_dir;
-    path_str += "/log";
-    out_log_path_.setPath(path_str);
-    if (false == out_log_path_.exists())
-    {
-        if (false == out_log_path_.mkpath(path_str))
-        {
-            return -1;
-        }
-    }
 
     //pbc的路径没有可以创建
     path_str = outer_dir;
@@ -249,7 +269,7 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
         }
     }
 
-	//
+	//比较文件谁更新鲜
 	for (Illusion_Message *&ils_msg : illusion_msg_ary_)
 	{
 			
@@ -368,7 +388,8 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
     if (!file_desc)
     {
         fprintf(stdout, "Importer Import filename [%s] fail.\n",
-				proto_fname.toStdString().c_str());
+				proto_fname.toLocal8Bit().toStdString().c_str());
+		error_collector_.print_tostdout();
 		error_collector_.toQStringList(tips_ary);
         return -1;
     }
@@ -390,6 +411,9 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             ret = ils_ptr->init(table_msg_desc);
             if (0 != ret)
             {
+				fprintf(stdout, "Message [%s] config can't translate to a illusion message.\n"
+						"May be lack some extend.",
+						table_msg_desc->full_name().c_str());
                 return ret;
             }
 
@@ -401,7 +425,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             QString msg_name = ok_ptr->table_message_name_;
             msgname_2_illusion_map_[msg_name] = ok_ptr;
 
-
+			//放入各种MAP 数组，保存
             auto iter1 = proto_2_illusion_map_.find(proto_fname);
             if (iter1 == proto_2_illusion_map_.end())
             {
@@ -438,9 +462,6 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
     }
     return 0;
 }
-
-
-
 
 //读取所有的枚举值
 int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
@@ -489,7 +510,6 @@ int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
     return 0;
 }
 
-
 //!
 int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
                                       bool not_exist_new,
@@ -500,9 +520,17 @@ int Biko_Read_Config::open_excel_file(const QString &excel_file_name,
     //Excel文件打开失败
     if (bret != true)
     {
+		fprintf(stdout, 
+				"QtActivex can't open EXCEL file [%s] by OLE, may be excel file has some question,please save as by "
+				"another computer or reinstall EXCEL.\n",
+				excel_file_name.toLocal8Bit().toStdString().c_str());
+		tips_ary.append(QString::fromLocal8Bit("OLE 打开EXCEL 文件，实用OLE读取EXCEL必须安装了EXCEL。"));
+		tips_ary.append(QString::fromLocal8Bit("OLE 是一个神作，绝逼的依靠运气编程的典范，所以有什么问题都有可能。"));
+		tips_ary.append(QString::fromLocal8Bit("重装你的EXCEL 或许有用。或许把，我问谁去？"));
         return -1;
     }
-    fprintf(stderr, "Dream excecl file have sheet num[%d].\n",
+	fprintf(stdout, "Dream excecl file [%s] have sheet num[%d].\n",
+			excel_file_name.toLocal8Bit().toStdString().c_str(),
             ils_excel_file_.sheetsCount());
 return 0;
 }
@@ -548,12 +576,11 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 		return -4;
 	}
 
-	fprintf(stderr, "Read excel file:%s table :%s start. line count %u column %u.\n",
-			ils_msg->excel_file_name_.toStdString().c_str(),
-			ils_msg->excel_sheet_name_.toStdString().c_str(),
+	fprintf(stdout, "Read excel file:%s table :%s start. line count %u column %u.\n",
+			ils_msg->excel_file_name_.toLocal8Bit().toStdString().c_str(),
+			ils_msg->excel_sheet_name_.toLocal8Bit().toStdString().c_str(),
 			line_count,
 			col_count);
-
 
 
 	//检查如果域名字字段的起始是#,%,!，这些字段不读取，跳过
@@ -603,11 +630,13 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 	}
 	std::unique_ptr<google::protobuf::Message> ptr_msg(table_msg);
 
+#if defined _DEBUG || defined DEBUG
 	for (size_t s = 0; s < read_col.size(); ++s)
 	{
 		fprintf(stderr, "Read column [%d] \n", read_col[s]);
 		fprintf(stderr, "Read column field full name [%s] \n", ils_msg->line_field_desc_ary_[s]->full_name().c_str());
 	}
+#endif
 
     for (int line_no = ils_msg->read_data_line_; line_no <= line_count; ++line_no)
     {
