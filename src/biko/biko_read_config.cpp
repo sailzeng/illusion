@@ -32,7 +32,7 @@ void ZCE_Error_Collector::clear_error()
     error_array_.clear();
 }
 
-void ZCE_Error_Collector::toQStringList(QStringList & tips_ary)
+void ZCE_Error_Collector::to_qstringlist(QStringList & tips_ary)
 {
 	for (size_t i = 0; i < error_array_.size(); ++i)
 	{
@@ -141,7 +141,7 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
 		tips_ary.append(QString::fromLocal8Bit("OLE 是一个神作，绝逼的依靠运气编程的典范，所以有什么问题都有可能。"));
 		tips_ary.append(QString::fromLocal8Bit("1.你的EXCEL不是安装版本，不要指望什么绿色版本。"));
 		tips_ary.append(QString::fromLocal8Bit("2.你安装了（过）WPS，牛逼大发的WPS很多时候在注册表经常注册和EXCEL一样的键值。"));
-		tips_ary.append(QString::fromLocal8Bit("所以请，"));
+		tips_ary.append(QString::fromLocal8Bit("所以请:"));
 		tips_ary.append(QString::fromLocal8Bit("1.卸载现有的EXCEL，WPS，删除所有相关的目录"));
 		tips_ary.append(QString::fromLocal8Bit("2.清理注册表，用工具清理，Wise Registry Cleaner and ，"));
 		tips_ary.append(QString::fromLocal8Bit("3.重装Office and EXCEL"));
@@ -272,7 +272,7 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
 	//比较文件谁更新鲜
 	for (Illusion_Message *&ils_msg : illusion_msg_ary_)
 	{
-			
+
 	}
     return 0;
 }
@@ -390,7 +390,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
         fprintf(stdout, "Importer Import filename [%s] fail.\n",
 				proto_fname.toLocal8Bit().toStdString().c_str());
 		error_collector_.print_tostdout();
-		error_collector_.toQStringList(tips_ary);
+		error_collector_.to_qstringlist(tips_ary);
         return -1;
     }
 
@@ -407,8 +407,11 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             {
                 continue;
             }
+
             std::unique_ptr<Illusion_Message> ils_ptr(new Illusion_Message());
-            ret = ils_ptr->init(table_msg_desc);
+            ret = ils_ptr->initialize(proto_file.absoluteFilePath(),
+									  table_msg_desc,
+									  tips_ary);
             if (0 != ret)
             {
 				fprintf(stdout, "Message [%s] config can't translate to a illusion message.\n"
@@ -668,7 +671,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
                                  .arg(line_no)
                                  .arg(read_col[error_field_no])
                                  .arg(QtAxExcelEngine::columnName(read_col[error_field_no]));
-            fprintf(stderr, "%s\n", error_info.toStdString().c_str());
+            fprintf(stderr, "%s\n", error_info.toLocal8Bit().toStdString().c_str());
             tips_ary.append(error_info);
             return ret;
         }

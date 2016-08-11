@@ -10,11 +10,25 @@ public:
     Illusion_Message();
     ~Illusion_Message();
 
+	
+    /*!
+    * @brief      初始化 Illusion Message
+    * @return     int 返回值 == 0 标识成功
+    * @param      proto_file 存放Message的文件名称
+    * @param      table_msg_desc 表结构的PB 描述信息
+    * @param      tips_ary  返回的提示信息
+    */
+    int initialize(const QString &proto_file,
+		           const google::protobuf::Descriptor *table_msg_desc,
+			       QStringList &tips_ary);
 
-    int init(const google::protobuf::Descriptor *table_msg_desc);
 
-
-    //!New 一个 table message 就是那个有repeated line message 的message
+    /*!
+    * @brief      New 一个 table message 就是那个有repeated line message 的message
+    * @return     int 返回值 == 0 标识成功
+    * @param      msg_factory
+    * @param      table_msg
+    */
     int new_table_mesage(google::protobuf::DynamicMessageFactory *msg_factory,
                          google::protobuf::Message *&table_msg) const;
 
@@ -36,19 +50,19 @@ protected:
 
 public:
 
-    //!
+    //!存放所有表数据的结构描述，就是含有repeated  line message 的结构，
     const google::protobuf::Descriptor *table_msg_desc_;
-    //!
+    //!存放一行数据的结构描述
     const google::protobuf::Descriptor *line_msg_desc_;
-
-	//!
-	QString proto_file_name_;
 
     //!表格对应的protobuf的message名称
     QString line_message_name_;
 
     //!对应的repeat line message 结构的名称，
     QString table_message_name_;
+
+	//!对应的PROTO 文件的名称
+	QString proto_file_name_;
 
     //!表格名称
     QString excel_file_name_;
@@ -87,8 +101,8 @@ public:
 //!
 typedef std::vector<const Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
 
-
+//!
 typedef std::map <QString, ILLUSION_MESSAGE_ARRAY> QSTRING_2_ILLUSIONARY_MAP;
 
-
+//!
 typedef std::map <QString, Illusion_Message *> QSTRING_2_ILSMSG_MAP;

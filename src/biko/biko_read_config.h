@@ -37,7 +37,7 @@ public:
     void clear_error();
 
 	//!
-	void toQStringList(QStringList &tips_ary);
+	void to_qstringlist(QStringList &tips_ary);
 
 	//!打印各种信息
 	void print_tostdout();
