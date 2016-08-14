@@ -15,11 +15,9 @@ VisionMainFrame::VisionMainFrame(QWidget *parent)
 	setup_ui();
 	setup_action();
 
-	out_info(PZ_INFO, QString::fromLocal8Bit("好吧，你如果看懂了这个工具的图标，你的年纪应该也和差不多把，老头你好。"));
-	out_info(PZ_INFO, QString::fromLocal8Bit("这游戏的片尾曲叫《Eyes on me》，王菲当年嗓音正是余音绕梁的时间，当然动画也很好看。"));
-	out_info(PZ_INFO, QString::fromLocal8Bit("他说六扇门里太龌龊 不如六根弦上取磊落 他说六扇门里太龌龊 不如六根弦上取磊落 他说六扇门里太龌龊 不如键盘上取磊落"));
-	out_info(PZ_INFO, QString::fromLocal8Bit("欢迎您使用这个工具，如果有建议或者反馈bug请联系hunterhli，和seiferan, yvanfyin,sailzeng。"));
-	out_info(PZ_INFO, QString::fromLocal8Bit("欢迎您使用这个工具，如果玩法建议请联系mooncake,renahrhuang。"));
+	out_info(PZ_INFO, QString::fromLocal8Bit("好吧，欢迎实用illusion配置转换工具，用于读取转换配置。"));
+	out_info(PZ_INFO, QString::fromLocal8Bit("这个图标来自illusion 公司的一个著名软件。"));
+
 }
 
 VisionMainFrame::~VisionMainFrame()
@@ -54,11 +52,11 @@ void VisionMainFrame::setup_ui()
 
 	
 	proto_dir_tab_ = new ProtoDirTab(main_tab_widget_);
-	main_tab_widget_->addTab(proto_dir_tab_, QString::fromLocal8Bit("统计关卡"));
+	main_tab_widget_->addTab(proto_dir_tab_, QString::fromLocal8Bit("PROTO文件描述"));
 	excel_dir_tab_ = new ExcelDirTab(main_tab_widget_);
-	main_tab_widget_->addTab(excel_dir_tab_, QString::fromLocal8Bit("关卡比较"));
+	main_tab_widget_->addTab(excel_dir_tab_, QString::fromLocal8Bit("EXCEL文件描述"));
 	outer_dir_tab_ = new OuterDirTab(main_tab_widget_);
-	main_tab_widget_->addTab(outer_dir_tab_, QString::fromLocal8Bit("元素设置"));
+	main_tab_widget_->addTab(outer_dir_tab_, QString::fromLocal8Bit("OUTER文件描述"));
 
 	main_splitter_->addWidget(main_tab_widget_);
 
@@ -169,14 +167,15 @@ void VisionMainFrame::eachdir_process()
 														  outer_path,
 														  import_list,
 														  tips_ary);
+		out_tips_ary(tips_ary);
 		if (0 != ret)
 		{
-
+			QMessageBox::critical(VisionMainFrame::instance(),
+								  QString::fromLocal8Bit("错误"),
+								  QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
+			return;
 		}
-		else
-		{
-
-		}
+		proto_dir_tab_->loead_illusion();
 	}
 }
 
@@ -194,9 +193,12 @@ void VisionMainFrame::allinone_process()
 	dialog.get_path_str(allinone_path);
 	ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
 													   tips_ary);
+	out_tips_ary(tips_ary);
 	if (0 != ret)
 	{
-		out_tips_ary(tips_ary);
+		QMessageBox::critical(VisionMainFrame::instance(),
+							  QString::fromLocal8Bit("错误"),
+							  QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
 		return;
 	}
 	proto_dir_tab_->loead_illusion();
@@ -345,7 +347,7 @@ bool VisionMainFrame::read_config(const QString &section,
 	}
 
 	//终于找到了
-	data = iter_find->toString();
+	data = *iter_find;
 	return true;
 }
 

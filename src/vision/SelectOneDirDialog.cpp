@@ -120,7 +120,7 @@ void SelectOneDirDialog::on_cancel_clicked()
 }
 
 //得到用户选择的目录
-void SelectOneDirDialog::get_path_str(QString &allinone_path)
+void SelectOneDirDialog::get_path_str(QString &allinone_path) const
 {
 	allinone_path = allinone_path_;
 }

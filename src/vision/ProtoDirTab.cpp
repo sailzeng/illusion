@@ -43,7 +43,8 @@ void ProtoDirTab::loead_illusion()
 	}
 	proto_dir_tree_->setColumnCount(2);
 	QStringList headers;
-	headers << "Proto文件" << "配置需要更新";
+	headers << QString::fromLocal8Bit("Proto文件") 
+		<< QString::fromLocal8Bit("配置需要更新");
 	proto_dir_tree_->setHeaderLabels(headers);
 
 	QStringList root_list,child_list;

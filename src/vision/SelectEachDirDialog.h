@@ -39,7 +39,7 @@ public:
     void get_path_str(QString &proto_path,
                       QString &excel_path,
 					  QString &outer_path,
-					  QStringList &import_list);
+					  QStringList &import_list) const;
 private:
 
 	//

@@ -36,7 +36,7 @@ private:
 public:
 
     //!得到用户选择的目录
-    void get_path_str(QString &allinone_path);
+    void get_path_str(QString &allinone_path) const;
 
 private:
 

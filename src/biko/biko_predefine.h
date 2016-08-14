@@ -183,6 +183,21 @@ using std::unordered_set;
 #pragma GCC diagnostic pop
 #endif
 
+//ÖÐÓ¢ÎÄ
+#define ILLUSION_USE_CHINESE 1
+#define ILLUSION_USE_ENGLISH 0
+
+
+namespace illusion
+{
+
+void process_tips(QString &tip_info, QStringList &tips_ary);
+
+}
+
+
+
+
 #endif //
 
 

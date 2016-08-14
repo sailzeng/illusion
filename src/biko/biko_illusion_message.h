@@ -30,7 +30,8 @@ public:
     * @param      table_msg
     */
     int new_table_mesage(google::protobuf::DynamicMessageFactory *msg_factory,
-                         google::protobuf::Message *&table_msg) const;
+                         google::protobuf::Message *&table_msg,
+						 QStringList &tips_ary) const;
 
     //!
     int add_line(google::protobuf::Message *table_msg,
@@ -43,7 +44,8 @@ public:
 protected:
 
     //!因为一个message可能有子message，必须递归处理
-    int recursive_proto(const google::protobuf::Descriptor *msg_desc);
+	int recursive_proto(const google::protobuf::Descriptor *msg_desc,
+						QStringList &tips_ary);
     //!
     int recursive_msgfield(google::protobuf::Message *msg,
                            std::vector<google::protobuf::Message *> *tb_message_ary) const;
@@ -72,8 +74,11 @@ public:
 	//存放protobuf配置数据的的文件名称
 	QString outer_file_name_;
 
+	//!是否存在EXCEL 文件
+	bool exist_excel_file_ = false;
 	//!EXCEL文件配置是更新的
 	bool excelcfg_is_newer_ = false;
+	
 
     //!
     int fieldsname_line_ = 1;

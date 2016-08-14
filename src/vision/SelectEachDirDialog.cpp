@@ -50,7 +50,7 @@ void SelectEachDirDialog::setup_ui()
 	++line_use;
 	lbl_tmp = new QLabel(QString::fromLocal8Bit("PROTO文件目录："));
     grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
-	le_proto_dir_ = new QLineEdit();
+	le_proto_dir_ = new QLineEdit(proto_path_);
     grid_layout->addWidget(le_proto_dir_, line_use, 1, 1, 30);
 	bt_proto_dir_ = new QPushButton(QString::fromLocal8Bit("选择目录"));
     grid_layout->addWidget(bt_proto_dir_, line_use, 31, 1, 1);
@@ -60,7 +60,7 @@ void SelectEachDirDialog::setup_ui()
     ++line_use;
 	lbl_tmp = new QLabel(QString::fromLocal8Bit("EXCEL文件目录："));
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
-	le_excel_dir_ = new QLineEdit();
+	le_excel_dir_ = new QLineEdit(excel_path_);
 	grid_layout->addWidget(le_excel_dir_, line_use, 1, 1, 30);
 	bt_excel_dir_ = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_excel_dir_, line_use, 31, 1, 1);
@@ -69,7 +69,7 @@ void SelectEachDirDialog::setup_ui()
 	++line_use;
 	lbl_tmp = new QLabel(QString::fromLocal8Bit("OUTER文件目录："));
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
-	le_outer_dir_ = new QLineEdit();
+	le_outer_dir_ = new QLineEdit(outer_path_);
 	grid_layout->addWidget(le_outer_dir_, line_use, 1, 1, 30);
 	bt_outer_dir_ = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_outer_dir_, line_use, 31, 1, 1);
@@ -81,6 +81,10 @@ void SelectEachDirDialog::setup_ui()
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
 	le_import_list_[0] = new QLineEdit();
 	grid_layout->addWidget(le_import_list_[0], line_use, 1, 1, 30);
+	if (import_list_.size() > 0)
+	{
+		le_import_list_[0]->setText(import_list_[0]);
+	}
 	bt_import_list_[0] = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_import_list_[0], line_use, 31, 1, 1);
 	connect(bt_import_list_[0], &QPushButton::clicked, this, &SelectEachDirDialog::on_select_dir);
@@ -90,6 +94,10 @@ void SelectEachDirDialog::setup_ui()
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
 	le_import_list_[1] = new QLineEdit();
 	grid_layout->addWidget(le_import_list_[1], line_use, 1, 1, 30);
+	if (import_list_.size() > 1)
+	{
+		le_import_list_[1]->setText(import_list_[1]);
+	}
 	bt_import_list_[1] = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_import_list_[1], line_use, 31, 1, 1);
 	connect(bt_import_list_[1], &QPushButton::clicked, this, &SelectEachDirDialog::on_select_dir);
@@ -99,6 +107,10 @@ void SelectEachDirDialog::setup_ui()
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
 	le_import_list_[2] = new QLineEdit();
 	grid_layout->addWidget(le_import_list_[2], line_use, 1, 1, 30);
+	if (import_list_.size() > 2)
+	{
+		le_import_list_[2]->setText(import_list_[2]);
+	}
 	bt_import_list_[2] = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_import_list_[2], line_use, 31, 1, 1);
 	connect(bt_import_list_[2], &QPushButton::clicked, this, &SelectEachDirDialog::on_select_dir);
@@ -108,6 +120,10 @@ void SelectEachDirDialog::setup_ui()
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
 	le_import_list_[3] = new QLineEdit();
 	grid_layout->addWidget(le_import_list_[3], line_use, 1, 1, 30);
+	if (import_list_.size() > 3)
+	{
+		le_import_list_[3]->setText(import_list_[3]);
+	}
 	bt_import_list_[3] = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_import_list_[3], line_use, 31, 1, 1);
 	connect(bt_import_list_[3], &QPushButton::clicked, this, &SelectEachDirDialog::on_select_dir);
@@ -117,6 +133,10 @@ void SelectEachDirDialog::setup_ui()
 	grid_layout->addWidget(lbl_tmp, line_use, 0, 1, 1);
 	le_import_list_[4] = new QLineEdit();
 	grid_layout->addWidget(le_import_list_[4], line_use, 1, 1, 30);
+	if (import_list_.size() > 4)
+	{
+		le_import_list_[4]->setText(import_list_[4]);
+	}
 	bt_import_list_[4] = new QPushButton(QString::fromLocal8Bit("选择目录"));
 	grid_layout->addWidget(bt_import_list_[4], line_use, 31, 1, 1);
 	connect(bt_import_list_[4], &QPushButton::clicked, this, &SelectEachDirDialog::on_select_dir);
@@ -229,6 +249,7 @@ void SelectEachDirDialog::on_ok_clicked()
 		return;
 	}
 
+	import_list_.clear();
 	for (size_t i = 0; i < MAX_IMPORT_DIR_SIZE; ++i)
 	{
 		QString import_dir = le_import_list_[i]->text();
@@ -274,11 +295,11 @@ void SelectEachDirDialog::on_cancel_clicked()
 void SelectEachDirDialog::get_path_str(QString &proto_path,
 										 QString &excel_path,
 										 QString &outer_path,
-										 QStringList &import_list)
+										 QStringList &import_list) const
 {
 	proto_path = proto_path_;
 	excel_path = excel_path_;
 	outer_path = outer_path_;
-	import_list_ = import_list;
+	import_list = import_list_;
 }
 

@@ -51,22 +51,22 @@ int main(int argc, char *argv[])
 	}
 	//设置屏幕缓冲区和输出屏幕大小
 	
-	COORD coord = { 121,  301};
+	COORD coord = { 120,  300};
 	BOOL bret = ::SetConsoleScreenBufferSize(handle_out, coord);
 	if (bret == FALSE)
 	{
 		DWORD ret_error= ::GetLastError();
-		//
+		//return -1;
 	}
-	SMALL_RECT rect = { 0, 0, 120, 150 };
+	SMALL_RECT rect = { 0, 0, 119, 59 };
 	bret = ::SetConsoleWindowInfo(handle_out, TRUE, &rect);
 	if (bret == FALSE)
 	{
-	    return -1;
+		DWORD ret_error = ::GetLastError();
+	    //return -1;
 	}
 
 	QStringList tips_ary;
-
 	const struct option RAPER_LONG_OPTION[]=
 	{
 		{ "proto", required_argument,NULL, 'p' },
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 #if defined DIRECT_DEBUG && DIRECT_DEBUG == 1 
 	all_in_one = true;
 	read_config = true;
-	allinone_dir = "E:\\Courage\\illusion.git\\example\\004";
+	allinone_dir = "E:\\Courage\\illusion.git\\example\\001";
 #endif
 #endif
 
