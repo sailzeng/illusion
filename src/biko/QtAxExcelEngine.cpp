@@ -247,7 +247,7 @@ bool QtAxExcelEngine::loadSheet(int sheet_index,
 
 
 
-//按照序号加载Sheet表格,
+//按照sheet名字加载Sheet表格,
 bool QtAxExcelEngine::loadSheet(const QString &sheet_name,
 								bool pre_load)
 {
@@ -289,6 +289,7 @@ void QtAxExcelEngine::loadSheet_internal(bool pre_load)
 		start_column_ = used_range->property("Column").toInt();
 
 		//获取行数，便于理解，也算上了空行，否则各种地方坐标理解还不一致。
+		//rows->property("Count").toInt()返回的是真实使用了的行数
 		row_count_ = rows->property("Count").toInt() + start_row_ - 1;
 		//获取列数
 		column_count_ = columns->property("Count").toInt() + start_column_ - 1;

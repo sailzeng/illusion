@@ -123,7 +123,7 @@ int Biko_Read_Config::init_read_all2(const QString &allinone_dir,
                          tips_ary);
 }
 
-//读取excel_dir目录下所有的EXCEL文件，根据proto_dir目录下的meta文件，反射，转换成位置文件输出到outer_dir目录
+//初始化读取，各个目录作为单独参数传入
 int Biko_Read_Config::init_read_all(const QString &proto_dir,
                                     const QString &excel_dir,
                                     const QString &outer_dir,
@@ -133,6 +133,7 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
 
     int ret = 0;
 	QString tip_info;
+	 //以不可见方式启动excel进程
 	bool bret = ils_excel_file_.initialize(false);
 	if (false == bret)
 	{
@@ -223,6 +224,7 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
     //加载所有的.proto 文件
     for (int i = 0; i < proto_fileary_.size(); ++i)
     {
+        //对于目录下面的每一个.proto file
         ret = read_proto_file(proto_fileary_[i], tips_ary);
         if (0 != ret)
         {
@@ -378,6 +380,7 @@ int Biko_Read_Config::read_one_message(const QString &messge_full_name,
         return -1;
     }
 
+    //因为是要根据message名字转表，没有这个xls文件则直接报错 
     ret = open_excel_file(iter->second->excel_file_name_,
                           false,
                           tips_ary);
@@ -451,6 +454,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             Illusion_Message *ok_ptr = ils_ptr.get();
             ils_ptr.release();
 
+            //下面是记录各种解析出来的映射关系
             illusion_msg_ary_.push_back(ok_ptr);
 
             QString msg_name = ok_ptr->table_message_name_;
@@ -743,6 +747,7 @@ int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
 {
     int ret = 0;
 
+    //通过全路径message名字，找到需要转换的，已经解析过得的message
 	auto iter = msgname_2_illusion_map_.find(messge_full_name);
 	if (iter == msgname_2_illusion_map_.end())
 	{
@@ -750,7 +755,7 @@ int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
 	}
 	const Illusion_Message *ils_msg = iter->second;
 
-	//打开EXCEL文件
+	//打开EXCEL文件,没有就创建
 	ret = open_excel_file(ils_msg->excel_file_name_,
 						  true,
 						  tips_ary);
@@ -759,7 +764,7 @@ int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
 		return ret;
 	}
 
-    //检查EXCEL文件中是否有这个表格
+    //检查EXCEL文件中是否有这个表格,如果有重命名
     if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
     {
         QString bak_name = ils_msg->excel_sheet_name_;

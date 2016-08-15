@@ -240,7 +240,12 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
     int ret = 0;
     //其实相当于添加一个line_message
     google::protobuf::Message *line_message = NULL;
+
+	//这里获取的就是待转换message里面的第一个repeated字段，他是待转换的 messge 的filed
+	//也是一个repeated的message
     const google::protobuf::FieldDescriptor *list_field_desc = table_msg_desc_->field(0);
+
+	//往待转换的message中添加一个repeated描述的message
     ret = Protobuf_Reflect_AUX::locate_msgfield(table_msg,
                                                 list_field_desc,
                                                 line_message,
@@ -252,6 +257,9 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
 
     //!每个字段对应的Message，用于方便插入操作处理的临时数据而已(每次都必须更新)，其他地方不用关心
     std::vector<google::protobuf::Message *> line_fieldmsg_ary;
+
+	//展开一个repeated描述的message，就是一个真正的行
+	//收集从开始到结束的字段所属message名字 
     ret = recursive_msgfield(line_message, &line_fieldmsg_ary);
     if (0 != ret)
     {
@@ -260,6 +268,10 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
 
     Q_ASSERT(line_str_ary.size() == static_cast<size_t>(column_field_count_));
 
+    //这里的想法是在解析.proto文件的时候，已经动态构造了整个message(包括将子message add到父message)，并把构造过程中的filed描述
+    //信息都保存了，所以这里就可以直接set基本字段了，
+    //而且都是filed的直接所属message和其描述符的设置
+    //column_field_count_是展开.proto中描述的待转换的message得到的字段数,一直到基本数据类型
     for (int i = 0; i < column_field_count_; i++)
     {
         ret = Protobuf_Reflect_AUX::set_fielddata(line_fieldmsg_ary[i],
@@ -290,6 +302,7 @@ int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg,
         const google::protobuf::FieldOptions &fo = field_desc->options();
 
         //如果这个域标识了不读取，跳过
+        //就是(illusion.cfg_field)=false，则不处理
         bool is_read_filed = fo.GetExtension(illusion::cfg_field);
         if (!is_read_filed)
         {
@@ -307,8 +320,8 @@ int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg,
                 //理论上不会到这儿，因为前面有过检查
                 return -1;
             }
-
         }
+		
         for (int k = 0; k < repeated_num; ++k)
         {
             if (field_desc->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
