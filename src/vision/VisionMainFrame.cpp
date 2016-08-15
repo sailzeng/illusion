@@ -88,7 +88,7 @@ void VisionMainFrame::setup_ui()
 
 	main_tab_widget_->setCurrentIndex(0);
 
-	this->setWindowTitle(QString::fromLocal8Bit("We6PuzzleDesigner 棋局设计"));
+	this->setWindowTitle(QString::fromLocal8Bit("ILLUSION 配置转换工具"));
 
 	m_alarm = new QSound(".\\res\\alarm\\alarm.wav", this);
 
