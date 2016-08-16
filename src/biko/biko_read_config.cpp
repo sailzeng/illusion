@@ -283,22 +283,31 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
 	//比较文件谁更新鲜
 	for (Illusion_Message *&ils_msg : illusion_msg_ary_)
 	{
-		QString excel_fname = excel_path_.absolutePath() + "/" + ils_msg->exist_excel_file_;
+		QString excel_fname = excel_path_.absolutePath() + "/" + ils_msg->excel_file_name_;
 		QString outer_fname = out_pbc_path_.absolutePath() + "/" + ils_msg->outer_file_name_;
 		QFileInfo excel_finfo(excel_fname);
 		if (excel_finfo.exists())
 		{
 			ils_msg->exist_excel_file_ = true;
+			QFileInfo outer_finfo(outer_fname);
+			if (!outer_finfo.exists())
+			{
+				ils_msg->excelcfg_is_newer_ = true;
+			}
+			else
+			{
+				qDebug() << excel_finfo.lastModified().toString() << " "
+					<< outer_finfo.lastModified().toString();
+				if (excel_finfo.lastModified() > outer_finfo.lastModified())
+				{
+					ils_msg->excelcfg_is_newer_ = true;
+				}
+			}
+
 		}
-		QFileInfo outer_finfo(outer_fname);
-		if (!outer_finfo.exists())
-		{
-			ils_msg->excelcfg_is_newer_ = true;
-		}
-		if (excel_finfo.lastModified() > outer_finfo.lastModified())
-		{
-			ils_msg->excelcfg_is_newer_ = true;
-		}
+		
+		
+
 	}
     return 0;
 }

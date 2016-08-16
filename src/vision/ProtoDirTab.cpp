@@ -43,10 +43,11 @@ void ProtoDirTab::loead_illusion()
 	}
 	proto_dir_tree_->setColumnCount(2);
 	QStringList headers;
-	headers << QString::fromLocal8Bit("Proto文件") 
-		<< QString::fromLocal8Bit("配置需要更新");
+	headers << QString::fromLocal8Bit("项目字段") 
+		<< QString::fromLocal8Bit("数值");
 	proto_dir_tree_->setHeaderLabels(headers);
-
+	proto_dir_tree_->setColumnWidth(0, 259);
+	proto_dir_tree_->setColumnWidth(1, 200);
 	QStringList root_list,child_list;
 	//!
 	for (auto iter = proto_2_ils_map_->begin(); 
@@ -54,45 +55,79 @@ void ProtoDirTab::loead_illusion()
 		 ++iter)
 	{
 		root_list.clear();
+		root_list.append(QString::fromLocal8Bit("Proto 文件："));
 		root_list.append(iter->first);
 		QTreeWidgetItem *root = new QTreeWidgetItem(root_list);
 		proto_dir_tree_->addTopLevelItem(root);
+		root->setExpanded(true);
 
 		for (size_t i = 0; i < iter->second.size(); ++i)
 		{
+			QTreeWidgetItem *father = NULL;
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("Table Message 名称:"));
+			child_list.append(iter->second[i]->table_message_name_);
+			father = new QTreeWidgetItem(child_list);
+			root->addChild(father);
+			father->setExpanded(true);
+			father->setFlags(father->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+			if (iter->second[i]->excelcfg_is_newer_)
+			{
+				
+			}
+			father->setCheckState(0, Qt::Checked);
 			QTreeWidgetItem *child = NULL;
 			child_list.clear();
-			child_list.append(QString::fromLocal8Bit("Table Message 名称:") + iter->second[i]->table_message_name_);
+			child_list.append(QString::fromLocal8Bit("Line Message 名称:"));
+			child_list.append(iter->second[i]->line_message_name_);
+			child = new QTreeWidgetItem(child_list);
+			father->addChild(child);
+
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("EXCEL文件名称:"));
+			child_list.append(iter->second[i]->excel_file_name_);
+			child = new QTreeWidgetItem(child_list);
+			father->addChild(child);
+
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("EXCEL SHEET:"));
+			child_list.append(iter->second[i]->excel_sheet_name_);
+			child = new QTreeWidgetItem(child_list);
+			father->addChild(child);
+
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("输出文件名称:"));
+			child_list.append(iter->second[i]->outer_file_name_);
+			child = new QTreeWidgetItem(child_list);
+			father->addChild(child);
+
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否存在:"));
+			if (iter->second[i]->exist_excel_file_)
+			{
+				child_list.append(QString::fromLocal8Bit("是"));
+			}
+			else
+			{
+				child_list.append(QString::fromLocal8Bit("否"));
+			}
+			child = new QTreeWidgetItem(child_list);
+			father->addChild(child);
+
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否更新:"));
 			if (iter->second[i]->excelcfg_is_newer_)
 			{
 				child_list.append(QString::fromLocal8Bit("是"));
 			}
 			else
 			{
-				child_list.append(QString::fromLocal8Bit("是"));
+				child_list.append(QString::fromLocal8Bit("否"));
 			}
 			child = new QTreeWidgetItem(child_list);
-			root->addChild(child);
-
-			child_list.clear();
-			child_list.append(QString::fromLocal8Bit("Line Message 名称:") + iter->second[i]->line_message_name_);
-			child = new QTreeWidgetItem(child_list);
-			root->addChild(child);
-
-			child_list.clear();
-			child_list.append(QString::fromLocal8Bit("EXCEL文件名称:") + iter->second[i]->excel_file_name_);
-			child = new QTreeWidgetItem(child_list);
-			root->addChild(child);
-
-			child_list.clear();
-			child_list.append(QString::fromLocal8Bit("EXCEL SHEET:") + iter->second[i]->excel_sheet_name_);
-			child = new QTreeWidgetItem(child_list);
-			root->addChild(child);
-
-			child_list.clear();
-			child_list.append(QString::fromLocal8Bit("输出文件名称:") + iter->second[i]->outer_file_name_);
-			child = new QTreeWidgetItem(child_list);
-			root->addChild(child);
+			father->addChild(child);
 		}
+
+		
 	}
 }
