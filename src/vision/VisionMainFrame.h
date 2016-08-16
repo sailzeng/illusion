@@ -38,17 +38,33 @@ protected:
 	//!菜单处理
 	void setup_action();
 
-	void eachdir_process();
-	
 
+
+	//!
+	void select_tab(int tab_id);
+
+	//SLOT
+protected:
+
+
+	
+	//!每个目录都处理
+	void eachdir_process();
+
+	//!ALL IN ONE目录的处理
 	void allinone_process();
 
 	//!程序退出
 	void exit_appliaction();
 
-	//!
-	void select_tab(int tab_id);
+	//!PROTO TAB页面选择所有的Message
+	void proto_select_all();
 
+	//!PROTO TAB页面所有的Message都不选
+	void proto_select_none();
+
+	//!PROTO TAB页面
+	void proto_read_all();
 public:
 
 	//设置实例指针
@@ -77,12 +93,18 @@ protected:
 private:
 
 	//!Action
+	
 	QAction *act_allinone_ = NULL;
-	QAction *act_each_ = NULL;
+	QAction *act_eachdir_ = NULL;
+	
+	//!
+	QAction *act_proto_selectall_ = NULL;
+	QAction *act_proto_selectnone_ = NULL;
+	QAction *act_proto_readall_ = NULL;
+	
 	QAction *act_exit_ = NULL;
 
-
-	//!分割线
+//!分割线
 	QSplitter *main_splitter_ = NULL;
 	//!主窗口的TAB
 	QTabWidget *main_tab_widget_ = NULL;

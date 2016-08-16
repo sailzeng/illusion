@@ -32,7 +32,52 @@ void ProtoDirTab::setup_ui()
 
 	this->setStretchFactor(0, 4);
 	this->setStretchFactor(1, 6);
+
+	proto_dir_tree_->setColumnCount(2);
+	QStringList headers;
+	headers << QString::fromLocal8Bit("项目字段")
+		<< QString::fromLocal8Bit("数值");
+	proto_dir_tree_->setHeaderLabels(headers);
+	proto_dir_tree_->setColumnWidth(0, 259);
+	proto_dir_tree_->setColumnWidth(1, 200);
 }
+
+void ProtoDirTab::select_all()
+{
+	int root_count = proto_dir_tree_->topLevelItemCount();
+	for (int i=0;i<root_count;++i)
+	{
+		QTreeWidgetItem *root = proto_dir_tree_->topLevelItem(i);
+		QTreeWidgetItem *father = root->child(0);
+		father->setCheckState(0, Qt::Checked);
+	}
+}
+
+void ProtoDirTab::select_none()
+{
+	int root_count = proto_dir_tree_->topLevelItemCount();
+	for (int i = 0; i < root_count; ++i)
+	{
+		QTreeWidgetItem *root = proto_dir_tree_->topLevelItem(i);
+		QTreeWidgetItem *father = root->child(0);
+		father->setCheckState(0, Qt::Unchecked);
+	}
+}
+
+void ProtoDirTab::selected_item(QStringList & selected_message)
+{
+	int root_count = proto_dir_tree_->topLevelItemCount();
+	for (int i = 0; i < root_count; ++i)
+	{
+		QTreeWidgetItem *root = proto_dir_tree_->topLevelItem(i);
+		QTreeWidgetItem *father = root->child(0);
+		if (father->checkState(0) == Qt::Checked)
+		{
+			selected_message.append(father->text(1));
+		}
+	}
+}
+
 
 //!
 void ProtoDirTab::loead_illusion()
@@ -41,13 +86,7 @@ void ProtoDirTab::loead_illusion()
 	{
 		return;
 	}
-	proto_dir_tree_->setColumnCount(2);
-	QStringList headers;
-	headers << QString::fromLocal8Bit("项目字段") 
-		<< QString::fromLocal8Bit("数值");
-	proto_dir_tree_->setHeaderLabels(headers);
-	proto_dir_tree_->setColumnWidth(0, 259);
-	proto_dir_tree_->setColumnWidth(1, 200);
+	proto_dir_tree_->clear();
 	QStringList root_list,child_list;
 	//!
 	for (auto iter = proto_2_ils_map_->begin(); 
@@ -73,9 +112,12 @@ void ProtoDirTab::loead_illusion()
 			father->setFlags(father->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
 			if (iter->second[i]->excelcfg_is_newer_)
 			{
-				
+				father->setCheckState(0, Qt::Checked);
 			}
-			father->setCheckState(0, Qt::Checked);
+			else
+			{
+				father->setCheckState(0, Qt::Unchecked);
+			}
 			QTreeWidgetItem *child = NULL;
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("Line Message 名称:"));
@@ -127,7 +169,10 @@ void ProtoDirTab::loead_illusion()
 			child = new QTreeWidgetItem(child_list);
 			father->addChild(child);
 		}
-
-		
 	}
 }
+
+
+
+
+

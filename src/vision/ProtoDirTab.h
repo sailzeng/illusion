@@ -19,10 +19,21 @@ protected:
 	///安装UI
 	void setup_ui();
 
+	// SLOT
+public:
+
+public:
+
+	//!选择所有的Mesage
+	void select_all();
+
+	//!不选所有的Message
+	void select_none();
+
+	//!取得所有的取得的ITEM
+	void selected_item(QStringList &selected_message);
 
 protected:
-
-
 
 	///测试棋盘的内容
 	QTreeWidget *proto_dir_tree_ = NULL;

@@ -95,10 +95,10 @@ public:
     //!12312
     void finalize();
 
-
+	//!读取所有的Message
     int read_all_message(QStringList &tips_info);
 
-
+	//!读取一个Message
     int read_one_message(const QString &messge_full_name,
                          QStringList &tips_ary);
 

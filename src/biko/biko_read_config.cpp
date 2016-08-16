@@ -130,10 +130,11 @@ int Biko_Read_Config::init_read_all(const QString &proto_dir,
 								    const QStringList &import_list,
                                     QStringList &tips_ary)
 {
-
+	
     int ret = 0;
 	QString tip_info;
 	 //以不可见方式启动excel进程
+	clear();
 	bool bret = ils_excel_file_.initialize(false);
 	if (false == bret)
 	{
@@ -513,7 +514,7 @@ int Biko_Read_Config::read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
 {
 	QString tip_info;
     //看是否能loead 这个sheet
-    bool bret =  ils_excel_file_.loadSheet("ENUM_CONFIG");
+    bool bret =  ils_excel_file_.loadSheet("ENUM_CONFIG", true);
     if (bret == false)
     {
 		tips_ary.append(QString::fromLocal8Bit("你选择的配置EXCEL不是能读取的配置表[ENUM_CONFIG]."
@@ -593,7 +594,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 	int ret = 0;
 	QString tip_info;
 	//检查EXCEL文件中是否有这个表格
-	if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == false)
+	if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_, true) == false)
 	{
 		tip_info = QString::fromLocal8Bit("!你选择的配置EXCEL文件[%1]中的"
 										  "[%2]表不存在或者不正确，请重现检查后打开。!")
@@ -689,18 +690,34 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 	}
 #endif
 
+	int read_line = 0;
     for (int line_no = ils_msg->read_data_line_; line_no <= line_count; ++line_no)
     {
         std::vector<QString > line_data_ary;
         line_data_ary.reserve(col_count);
         //fprintf(stderr, "Read line [%d] \n", line_no);
+		bool null_line = true;
         for (size_t p=0; p < read_col.size(); ++p )
         {
             QString cell_data = ils_excel_file_.getCell(line_no,
                                                         read_col[p]).toString();
+			if (cell_data.isEmpty() == false)
+			{
+				null_line = false;
+			}
             line_data_ary.push_back(cell_data);
-
         }
+		//跳过空行
+		if (true == null_line)
+		{
+			tip_info = QString::fromLocal8Bit(".EXCEL文件[%1]TABLE (Sheet)[%2]中的第[%3]行是空行数据(全部列为NULL)，"
+											  "跳过，可以清理掉。")
+				.arg(ils_msg->excel_file_name_)
+				.arg(ils_msg->excel_sheet_name_)
+				.arg(line_no);
+			illusion::process_tips(tip_info, tips_ary);
+			continue;
+		}
         int error_field_no = -1;
         const google::protobuf::FieldDescriptor *error_field_desc = NULL;
         ret = ils_msg->add_line(table_msg,
@@ -722,6 +739,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
 			illusion::process_tips(tip_info, tips_ary);
             return ret;
         }
+		++read_line;
     }
     //如果没有初始化
     if (!table_msg->IsInitialized())
@@ -774,7 +792,7 @@ int Biko_Read_Config::save_excel_tablehead(const QString &messge_full_name,
 	}
 
     //检查EXCEL文件中是否有这个表格,如果有重命名
-    if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_) == true)
+    if (ils_excel_file_.loadSheet(ils_msg->excel_sheet_name_,true) == true)
     {
         QString bak_name = ils_msg->excel_sheet_name_;
 		bak_name += ".BAK";
