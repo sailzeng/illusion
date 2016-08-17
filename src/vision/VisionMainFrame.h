@@ -1,11 +1,9 @@
 #ifndef VISIONMAINWND_H
 #define VISIONMAINWND_H
 
-#include <QtWidgets/QMainWindow>
 
-class ProtoDirTab;
-class ExcelDirTab;
-class OuterDirTab;
+class IllusionWidget;
+
 //
 enum PZ_TIP_LEVEL
 {
@@ -37,11 +35,6 @@ protected:
 
 	//!菜单处理
 	void setup_action();
-
-
-
-	//!
-	void select_tab(int tab_id);
 
 	//SLOT
 protected:
@@ -106,8 +99,6 @@ private:
 
 //!分割线
 	QSplitter *main_splitter_ = NULL;
-	//!主窗口的TAB
-	QTabWidget *main_tab_widget_ = NULL;
 
 	//!告警声音
 	QSound *m_alarm = NULL;
@@ -121,13 +112,7 @@ private:
 	QToolBar *toolbar_ = NULL;
 
 	//!PROTO 文件目录的TAB
-	ProtoDirTab *proto_dir_tab_ = NULL;
-
-	//!EXCEL 目录的TAB
-	ExcelDirTab *excel_dir_tab_ = NULL;
-
-	//!Outer 目录的TAB
-	OuterDirTab *outer_dir_tab_ = NULL;
+	IllusionWidget *illlusion_widget_ = NULL;
 
 	//!List（TABLE）窗口，用于输出信息提示用户。
 	QTableWidget *info_widget_;

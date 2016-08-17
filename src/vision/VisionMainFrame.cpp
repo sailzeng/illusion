@@ -1,7 +1,5 @@
 #include "stdafx.h"
-#include "ProtoDirTab.h"
-#include "OuterDirTab.h"
-#include "ExcelDirTab.h"
+#include "IllusionWidget.h"
 #include "SelectEachDirDialog.h"
 #include "SelectOneDirDialog.h"
 #include "VisionMainFrame.h"
@@ -46,19 +44,8 @@ void VisionMainFrame::setup_ui()
     main_splitter_->setOrientation(Qt::Vertical);
 
 
-    main_tab_widget_ = new QTabWidget(main_splitter_);
-    main_tab_widget_->setTabPosition(QTabWidget::South);
-
-
-
-    proto_dir_tab_ = new ProtoDirTab(main_tab_widget_);
-    main_tab_widget_->addTab(proto_dir_tab_, QString::fromLocal8Bit("PROTO文件描述"));
-    excel_dir_tab_ = new ExcelDirTab(main_tab_widget_);
-    main_tab_widget_->addTab(excel_dir_tab_, QString::fromLocal8Bit("EXCEL文件描述"));
-    outer_dir_tab_ = new OuterDirTab(main_tab_widget_);
-    main_tab_widget_->addTab(outer_dir_tab_, QString::fromLocal8Bit("OUTER文件描述"));
-
-    main_splitter_->addWidget(main_tab_widget_);
+	illlusion_widget_ = new IllusionWidget(this);
+    main_splitter_->addWidget(illlusion_widget_);
 
     //信息窗口
     info_widget_ = new QTableWidget(main_splitter_);
@@ -86,7 +73,6 @@ void VisionMainFrame::setup_ui()
 
     this->setCentralWidget(central_widget);
 
-    main_tab_widget_->setCurrentIndex(0);
 
     this->setWindowTitle(QString::fromLocal8Bit("ILLUSION 配置转换工具"));
 
@@ -206,7 +192,7 @@ void VisionMainFrame::eachdir_process()
                                   QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
             return;
         }
-        proto_dir_tab_->loead_illusion();
+		illlusion_widget_->loead_illusion();
     }
 }
 
@@ -232,7 +218,7 @@ void VisionMainFrame::allinone_process()
                               QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
         return;
     }
-    proto_dir_tab_->loead_illusion();
+	illlusion_widget_->loead_illusion();
 }
 
 
@@ -319,13 +305,6 @@ void VisionMainFrame::out_info(PZ_TIP_LEVEL level, const QString &out_info)
 
     cur_info_row_++;
 }
-
-//
-void VisionMainFrame::select_tab(int tab_id)
-{
-    main_tab_widget_->setCurrentIndex(tab_id);
-}
-
 
 
 //设置实例指针
@@ -438,23 +417,20 @@ bool VisionMainFrame::write_config(const QString &section,
 //!PROTO TAB页面选择所有的Message
 void VisionMainFrame::proto_select_all()
 {
-	main_tab_widget_->setCurrentIndex(0);
-	proto_dir_tab_->select_all();
+	illlusion_widget_->select_all();
 }
 
 //!PROTO TAB页面所有的Message都不选
 void VisionMainFrame::proto_select_none()
 {
-	main_tab_widget_->setCurrentIndex(0);
-	proto_dir_tab_->select_none();
+	illlusion_widget_->select_none();
 }
 
 //!PROTO TAB页面
 void VisionMainFrame::proto_read_all()
 {
-	main_tab_widget_->setCurrentIndex(0);
 	QStringList selected_msgary;
-	proto_dir_tab_->selected_item(selected_msgary);
+	illlusion_widget_->selected_item(selected_msgary);
 	if (selected_msgary.size() <= 0)
 	{
 		QMessageBox::critical(VisionMainFrame::instance(),

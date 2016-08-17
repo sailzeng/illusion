@@ -49,33 +49,6 @@
     <ClCompile Include="VisionMainFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExcelDirTab.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_ExcelDirTab.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_ExcelDirTab.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="OuterDirTab.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_OuterDirTab.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_OuterDirTab.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="ProtoDirTab.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_ProtoDirTab.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_ProtoDirTab.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_SelectEachDirDialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -94,6 +67,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_SelectOneDirDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="IllusionWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_IllusionWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_IllusionWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="vision.qrc">
@@ -102,19 +84,13 @@
     <CustomBuild Include="VisionMainFrame.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="ExcelDirTab.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="OuterDirTab.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="ProtoDirTab.h">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="SelectEachDirDialog.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
     <CustomBuild Include="SelectOneDirDialog.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="IllusionWidget.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
