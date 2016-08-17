@@ -620,7 +620,7 @@ int Protobuf_Reflect_AUX::locate_msgfield(google::protobuf::Message *msg,
 {
     //得到结构的描述和反射
     const google::protobuf::Reflection *reflection = msg->GetReflection();
-    const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
+    //const google::protobuf::Descriptor *msg_desc = msg->GetDescriptor();
 
     //没有找到对应的字段描述
     if (!msg_field)

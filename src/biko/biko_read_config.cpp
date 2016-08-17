@@ -190,7 +190,7 @@ void Biko_Read_Config::init_importdir(const QStringList &import_list,
 {
 	for (int i = 0; i < import_list.size(); ++i)
 	{
-		source_tree_->MapPath("", import_list[i].toStdString());
+		source_tree_->MapPath("", import_list[i].toLocal8Bit().toStdString());
 	}
 }
 
@@ -203,8 +203,8 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
     proto_path_.setPath(proto_dir);
     if (false == proto_path_.exists())
     {
-		tip_info = QString::fromLocal8Bit("Proto目录[%1]并不存在，请检查参数。").
-                        arg(proto_dir);
+		tip_info = QString::fromLocal8Bit("Proto目录[%1]并不存在，请检查参数。")
+			.arg(proto_dir);
 		illusion::process_tips(tip_info, tips_ary);
         return -1;
     }
@@ -304,11 +304,7 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
 					ils_msg->excelcfg_is_newer_ = true;
 				}
 			}
-
 		}
-		
-		
-
 	}
     return 0;
 }
@@ -422,7 +418,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
 
     error_collector_.clear_error();
     QString proto_fname;
-    proto_fname = proto_file.fileName();
+    proto_fname = proto_file.absoluteFilePath();
 
     file_desc = protobuf_importer_->Import(proto_fname.toStdString());
     if (!file_desc)
