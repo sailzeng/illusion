@@ -144,6 +144,12 @@ void ProtoDirTab::loead_illusion()
 			father->addChild(child);
 
 			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("字段数量（包括展开RPEATED）:"));
+			child_list.append(QString::number(iter->second[i]->column_field_count_));
+			child = new QTreeWidgetItem(child_list);
+			father->addChild(child);
+
+			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否存在:"));
 			if (iter->second[i]->exist_excel_file_)
 			{
@@ -166,6 +172,9 @@ void ProtoDirTab::loead_illusion()
 			{
 				child_list.append(QString::fromLocal8Bit("否"));
 			}
+
+			
+
 			child = new QTreeWidgetItem(child_list);
 			father->addChild(child);
 		}
