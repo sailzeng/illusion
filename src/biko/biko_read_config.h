@@ -102,6 +102,9 @@ public:
     int read_one_message(const QString &messge_full_name,
                          QStringList &tips_ary);
 
+	//!读取有更新的EXCEL文件的Message
+	int read_newer_message(QStringList &tips_ary);
+
 	//!保存EXCEL的表头
 	int save_excel_tablehead(const QString &messge_full_name,
 							 QStringList &tips_ary);
@@ -110,22 +113,13 @@ public:
     void clear();
 
 	//!
-	QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map()
-	{
-		return &proto_2_illusion_map_;
-	}
+	QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map();
 
 	//!
-	QSTRING_2_ILLUSIONARY_MAP *get_excel_illusion_map()
-	{
-		return &excel_2_illusion_map_;
-	}
+	QSTRING_2_ILLUSIONARY_MAP *get_excel_illusion_map();
 
 	//!
-	QSTRING_2_ILSMSG_MAP *get_outer_illusion_map()
-	{
-		return &outer_2_illusion_map_;
-	}
+	QSTRING_2_ILSMSG_MAP *get_outer_illusion_map();
 
 	//!
 
@@ -171,7 +165,7 @@ protected:
                       QStringList &tips_ary);
 
 
-    //!
+    //!读取proto文件，生成illusion的描述
     int read_proto_file(const QFileInfo &proto_file,
                         QStringList &tips_ary);
 
@@ -180,15 +174,15 @@ protected:
                         bool not_exist_new,
                         QStringList &tips_ary);
     
-	//关闭EXCEL 文件
+	//!关闭EXCEL 文件
 	void close_excel_file();
 
-	//读枚举值
+	//!读枚举值
 	int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
 						QStringList &tips_info);
 
-    //!
-    int read_excel_table(const Illusion_Message *ils_msg,
+    //!根据illusion的message的信息，读取EXCEL SHEET 的数据
+    int read_excel_table(Illusion_Message *ils_msg,
                          QStringList &tips_ary);
 
 

@@ -80,7 +80,7 @@ public:
 	bool excelcfg_is_newer_ = false;
 	
 
-    //!
+    //!字段名称的行
     int fieldsname_line_ = 1;
     //!表格的第几行描述字段对应的protobuf
     int fullname_line_ = 2;
@@ -104,7 +104,7 @@ public:
 
 
 //!
-typedef std::vector<const Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
+typedef std::vector<Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
 
 //!
 typedef std::map <QString, ILLUSION_MESSAGE_ARRAY> QSTRING_2_ILLUSIONARY_MAP;

@@ -44,7 +44,7 @@ void VisionMainFrame::setup_ui()
     main_splitter_->setOrientation(Qt::Vertical);
 
 
-	illlusion_widget_ = new IllusionWidget(this);
+    illlusion_widget_ = new IllusionWidget(this);
     main_splitter_->addWidget(illlusion_widget_);
 
     //信息窗口
@@ -105,28 +105,28 @@ void VisionMainFrame::setup_action()
             this,
             &VisionMainFrame::eachdir_process);
 
-    act_proto_selectall_ = new QAction(QIcon(".\\res\\icon\\proto_selectall.png"),
-                                       QString::fromLocal8Bit("选择所有的Message 用于导出"),
-                                       this);
-    connect(act_proto_selectall_,
+    act_select_all_ = new QAction(QIcon(".\\res\\icon\\select_all.png"),
+                                  QString::fromLocal8Bit("选择所有的Message 用于导出"),
+                                  this);
+    connect(act_select_all_,
             &QAction::triggered,
-			this,
-            &VisionMainFrame::proto_select_all);
+            this,
+            &VisionMainFrame::select_all_message);
 
-    act_proto_selectnone_ = new QAction(QIcon(".\\res\\icon\\proto_selectnone.png"),
-                                        QString::fromLocal8Bit("取消所有的选择Message"),
-                                        this);
-    connect(act_proto_selectnone_,
+    act_select_none_ = new QAction(QIcon(".\\res\\icon\\select_none.png"),
+                                   QString::fromLocal8Bit("取消所有的选择Message"),
+                                   this);
+    connect(act_select_none_,
             &QAction::triggered,
-			this,
-            &VisionMainFrame::proto_select_none);
+            this,
+            &VisionMainFrame::select_none_message);
 
-    act_proto_readall_ = new QAction(QIcon(".\\res\\icon\\proto_readall.png"),
-                                     QString::fromLocal8Bit("对所有的选择的Message进行读取"),
-                                     this);
-    connect(act_proto_readall_,
+    act_read_all_ = new QAction(QIcon(".\\res\\icon\\read_all.png"),
+                                QString::fromLocal8Bit("对所有的选择的Message进行读取"),
+                                this);
+    connect(act_read_all_,
             &QAction::triggered,
-			this,
+            this,
             &VisionMainFrame::proto_read_all);
 
 
@@ -157,9 +157,9 @@ void VisionMainFrame::setup_action()
     toolbar_->addAction(act_eachdir_);
     toolbar_->addSeparator();
 
-    toolbar_->addAction(act_proto_selectall_);
-    toolbar_->addAction(act_proto_selectnone_);
-    toolbar_->addAction(act_proto_readall_);
+    toolbar_->addAction(act_select_all_);
+    toolbar_->addAction(act_select_none_);
+    toolbar_->addAction(act_read_all_);
     toolbar_->addSeparator();
 
     toolbar_->addAction(act_exit_);
@@ -192,7 +192,7 @@ void VisionMainFrame::eachdir_process()
                                   QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
             return;
         }
-		illlusion_widget_->loead_illusion();
+        illlusion_widget_->loead_illusion();
     }
 }
 
@@ -218,7 +218,7 @@ void VisionMainFrame::allinone_process()
                               QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
         return;
     }
-	illlusion_widget_->loead_illusion();
+    illlusion_widget_->loead_illusion();
 }
 
 
@@ -415,44 +415,44 @@ bool VisionMainFrame::write_config(const QString &section,
 
 
 //!PROTO TAB页面选择所有的Message
-void VisionMainFrame::proto_select_all()
+void VisionMainFrame::select_all_message()
 {
-	illlusion_widget_->select_all();
+    illlusion_widget_->select_all();
 }
 
 //!PROTO TAB页面所有的Message都不选
-void VisionMainFrame::proto_select_none()
+void VisionMainFrame::select_none_message()
 {
-	illlusion_widget_->select_none();
+    illlusion_widget_->select_none();
 }
 
 //!PROTO TAB页面
 void VisionMainFrame::proto_read_all()
 {
-	QStringList selected_msgary;
-	illlusion_widget_->selected_item(selected_msgary);
-	if (selected_msgary.size() <= 0)
-	{
-		QMessageBox::critical(VisionMainFrame::instance(),
-							  QString::fromLocal8Bit("错误"),
-							  QString::fromLocal8Bit("没有选择Message或者还咩有初始化导入Proto文件。请检查"));
-		out_info(PZ_ERROR, QString::fromLocal8Bit("没有选择Message或者还咩有初始化导入Proto文件。请检查。咩咩咩"));
-		return;
-	}
+    QStringList selected_msgary;
+    illlusion_widget_->selected_item(selected_msgary);
+    if (selected_msgary.size() <= 0)
+    {
+        QMessageBox::critical(VisionMainFrame::instance(),
+                              QString::fromLocal8Bit("错误"),
+                              QString::fromLocal8Bit("没有选择Message或者还咩有初始化导入Proto文件。请检查"));
+        out_info(PZ_ERROR, QString::fromLocal8Bit("没有选择Message或者还咩有初始化导入Proto文件。请检查。咩咩咩"));
+        return;
+    }
 
-	//!读取
-	int ret = 0;
-	for (int i = 0; i < selected_msgary.size(); ++i)
-	{
-		QStringList tips_ary;
-		ret |= Biko_Read_Config::instance()->read_one_message(selected_msgary[i],tips_ary);
-		out_tips_ary(tips_ary);
-	}
-	if (0 != ret)
-	{
-		QMessageBox::critical(VisionMainFrame::instance(),
-							  QString::fromLocal8Bit("错误"),
-							  QString::fromLocal8Bit("导出过程存在错误, 请检查输入参数，留意输出信息区的提示。"));
-		return;
-	}
+    //!读取
+    int ret = 0;
+    for (int i = 0; i < selected_msgary.size(); ++i)
+    {
+        QStringList tips_ary;
+        ret |= Biko_Read_Config::instance()->read_one_message(selected_msgary[i], tips_ary);
+        out_tips_ary(tips_ary);
+    }
+    if (0 != ret)
+    {
+        QMessageBox::critical(VisionMainFrame::instance(),
+                              QString::fromLocal8Bit("错误"),
+                              QString::fromLocal8Bit("导出过程存在错误, 请检查输入参数，留意输出信息区的提示。"));
+        return;
+    }
 }

@@ -9,6 +9,9 @@ int print_cmd_parameter()
 {
 	fprintf(stdout, "-c,--readconfig                 Read proto and excel file to create config \n");
 	fprintf(stdout, "                                to save in outer directory.\n");
+	fprintf(stdout, "-n,--newer                      If --readconfig sign ,at the same time sign --newer only .\n");
+	fprintf(stdout, "                                read newer excel file.If excel is old than outer file \n");
+	fprintf(stdout, "                                don't create outer file.\n");
 	fprintf(stdout, "-s,--savetitle                  Save proto message titile to excel file.\n");
 	fprintf(stdout, "-a[dir],--allinone=[dir]        Sign all in one directory.\n");
 	fprintf(stdout, "                                All in one directory must exist sub directory .\n");
@@ -74,6 +77,7 @@ int main(int argc, char *argv[])
 		{ "outer", required_argument,NULL, 'o' },
 		{ "import", required_argument,NULL, 'i' },
 		{ "message", required_argument,NULL, 'm' },
+		{ "newer", required_argument,NULL, 'n' },
 		{ "allinone", no_argument,NULL, 'a' },
 		{ "readconfg", no_argument,NULL, 'r' },
 		{ "savetitle", no_argument,NULL, 's' },
@@ -82,11 +86,11 @@ int main(int argc, char *argv[])
 	};
 
 	bool all_in_one = false, read_one_message = false;
-	bool save_title = false, read_config = false,print_help = false;
+	bool save_title = false, read_config = false,print_help = false,read_newer = false;
 	QString allinone_dir , messge_full_name, proto_dir, outer_dir, excel_dir;
 	QStringList import_list;
 	int long_index = 0;
-	const char RAPER_OPT_STRING[] = "x:p:o:m:i:a:rsh";
+	const char RAPER_OPT_STRING[] = "x:p:o:m:i:a:rsnh";
 	int opt = -1;
 	while (-1 != (opt = ZCE_LIB::getopt_long(argc, argv,
 											 RAPER_OPT_STRING,
@@ -100,6 +104,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			read_config = true;
+			break;
+		case 'n':
+			read_newer = true;
 			break;
 		case 'x':
 			excel_dir = optarg;
@@ -228,6 +235,10 @@ int main(int argc, char *argv[])
 		{
 			ret = Biko_Read_Config::instance()->read_one_message(messge_full_name,
 																 tips_ary);
+		}
+		else if (read_newer)
+		{
+			ret = Biko_Read_Config::instance()->read_newer_message(tips_ary);
 		}
 		else
 		{

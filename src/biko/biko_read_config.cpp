@@ -220,7 +220,7 @@ int Biko_Read_Config::init_protodir(const QString &proto_dir,
         return -1;
     }
     
-    source_tree_->MapPath("", proto_path_.path().toStdString());
+    source_tree_->MapPath("", proto_path_.path().toLocal8Bit().toStdString());
 
     //加载所有的.proto 文件
     for (int i = 0; i < proto_fileary_.size(); ++i)
@@ -407,6 +407,36 @@ int Biko_Read_Config::read_one_message(const QString &messge_full_name,
     return 0;
 }
 
+//读取有更新的EXCEL文件的Message
+int Biko_Read_Config::read_newer_message(QStringList &tips_ary)
+{
+	int ret = 0;
+	for (auto iter = illusion_msg_ary_.begin(); iter != illusion_msg_ary_.end(); ++iter)
+	{
+		if ((*iter)->exist_excel_file_ && (*iter)->excelcfg_is_newer_)
+		{
+			//打开EXCEL文件
+			ret = open_excel_file((*iter)->excel_file_name_,
+								  false,
+								  tips_ary);
+			if (0 != ret)
+			{
+				return ret;
+			}
+			ret = read_excel_table((*iter), tips_ary);
+			if (0 != ret)
+			{
+				close_excel_file();
+				return ret;
+			}
+
+			//关闭EXCEL 文件
+			close_excel_file();
+		}
+	}
+	return 0;
+}
+
 
 //
 int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
@@ -418,7 +448,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
 
     error_collector_.clear_error();
     QString proto_fname;
-    proto_fname = proto_file.absoluteFilePath();
+    proto_fname = proto_file.fileName();
 
     file_desc = protobuf_importer_->Import(proto_fname.toStdString());
     if (!file_desc)
@@ -470,7 +500,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             auto iter1 = proto_2_illusion_map_.find(proto_fname);
             if (iter1 == proto_2_illusion_map_.end())
             {
-                std::vector<const Illusion_Message *> ils_msg_ary;
+                std::vector<Illusion_Message *> ils_msg_ary;
                 ils_msg_ary.push_back(ok_ptr);
                 proto_2_illusion_map_[proto_fname] = ils_msg_ary;
             }
@@ -483,7 +513,7 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             auto iter2 = excel_2_illusion_map_.find(excel_fname);
             if (iter2 == excel_2_illusion_map_.end())
             {
-                std::vector<const Illusion_Message *> ils_msg_ary;
+                std::vector<Illusion_Message *> ils_msg_ary;
                 ils_msg_ary.push_back(ok_ptr);
                 excel_2_illusion_map_[excel_fname] = ils_msg_ary;
             }
@@ -584,7 +614,7 @@ void Biko_Read_Config::close_excel_file()
 }
 
 //读取一个EXCEL表中的配置
-int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
+int Biko_Read_Config::read_excel_table(Illusion_Message *ils_msg,
 									   QStringList &tips_ary)
 {
 	int ret = 0;
@@ -761,6 +791,7 @@ int Biko_Read_Config::read_excel_table(const Illusion_Message *ils_msg,
     {
         return ret;
     }
+	ils_msg->excelcfg_is_newer_ = false;
     return 0;
 }
 
@@ -901,5 +932,21 @@ int Biko_Read_Config::save_to_protocfg(const Illusion_Message *ils_msg,
 
 
 
+QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_proto_illusion_map()
+{
+	return &proto_2_illusion_map_;
+}
+
+//
+QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_excel_illusion_map()
+{
+	return &excel_2_illusion_map_;
+}
+
+
+QSTRING_2_ILSMSG_MAP *Biko_Read_Config::get_outer_illusion_map()
+{
+	return &outer_2_illusion_map_;
+}
 
 

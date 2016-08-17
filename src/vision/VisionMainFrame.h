@@ -51,10 +51,10 @@ protected:
 	void exit_appliaction();
 
 	//!PROTO TAB页面选择所有的Message
-	void proto_select_all();
+	void select_all_message();
 
 	//!PROTO TAB页面所有的Message都不选
-	void proto_select_none();
+	void select_none_message();
 
 	//!PROTO TAB页面
 	void proto_read_all();
@@ -91,9 +91,9 @@ private:
 	QAction *act_eachdir_ = NULL;
 	
 	//!
-	QAction *act_proto_selectall_ = NULL;
-	QAction *act_proto_selectnone_ = NULL;
-	QAction *act_proto_readall_ = NULL;
+	QAction *act_select_all_ = NULL;
+	QAction *act_select_none_ = NULL;
+	QAction *act_read_all_ = NULL;
 	
 	QAction *act_exit_ = NULL;
 
