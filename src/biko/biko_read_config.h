@@ -115,13 +115,6 @@ public:
 	//!
 	QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map();
 
-	//!
-	QSTRING_2_ILLUSIONARY_MAP *get_excel_illusion_map();
-
-	//!
-	QSTRING_2_ILSMSG_MAP *get_outer_illusion_map();
-
-	//!
 
 protected:
 
@@ -217,9 +210,6 @@ protected:
     //!EXCEL配置存放的目录
     QDir excel_path_;
 
-    //!日志输出的目录
-    QDir out_log_path_;
-
     //!PBC文件输出的目录路径，PBC protobuf config
     QDir out_pbc_path_;
 
@@ -248,9 +238,6 @@ protected:
 
     //!EXCEL 文件名称对应proto配置的信息
     std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_2_illusion_map_;
-
-    //!outer输出文件对用的proto配置的信息，便于查询
-    std::map <QString, Illusion_Message *> outer_2_illusion_map_;
 
     //!EXCEL文件列表
     QFileInfoList excel_fileary_;

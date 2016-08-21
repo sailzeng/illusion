@@ -42,21 +42,18 @@ void IllusionWidget::setup_ui()
 	proto_dir_tree_->setColumnWidth(0, 259);
 	proto_dir_tree_->setColumnWidth(1, 200);
 
+	connect(proto_dir_tree_,
+			&QTreeWidget::itemDoubleClicked,
+			this,
+			&IllusionWidget::item_double_clicked);
+
 	show_illusion_tab_->setTabsClosable(true);
 	//!
 	show_readme_ = new QTextEdit(show_illusion_tab_);
 	show_illusion_tab_->addTab(show_readme_,
 							   QString::fromLocal8Bit("README文件"));
 	
-	//show_excel_sheet_ = new QTableWidget(show_illusion_tab_);
-	//show_illusion_tab_->addTab(show_excel_sheet_, 
-	//						   QString::fromLocal8Bit("EXCEL Sheet表:"));
-	//show_message_fields_ = new QTableWidget(show_illusion_tab_);
-	//show_illusion_tab_->addTab(show_message_fields_,
-	//						   QString::fromLocal8Bit("Message字段:"));
-	//show_outer_file_ = new QTextEdit(show_illusion_tab_);
-	//show_illusion_tab_->addTab(show_outer_file_,
-	//						   QString::fromLocal8Bit("OUTER文件:"));
+	
 
 }
 
@@ -114,7 +111,7 @@ void IllusionWidget::loead_illusion()
 		root_list.clear();
 		root_list.append(QString::fromLocal8Bit("Proto 文件："));
 		root_list.append(iter->first);
-		QTreeWidgetItem *root = new QTreeWidgetItem(root_list);
+		QTreeWidgetItem *root = new QTreeWidgetItem(root_list, ITEM_PROTO_FILE);
 		proto_dir_tree_->addTopLevelItem(root);
 		root->setExpanded(true);
 
@@ -124,7 +121,7 @@ void IllusionWidget::loead_illusion()
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("Table Message 名称:"));
 			child_list.append(iter->second[i]->table_message_name_);
-			father = new QTreeWidgetItem(child_list);
+			father = new QTreeWidgetItem(child_list, ITEM_PROTO_TABLE_MESSAGE);
 			root->addChild(father);
 			father->setExpanded(true);
 			father->setFlags(father->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
@@ -136,29 +133,31 @@ void IllusionWidget::loead_illusion()
 			{
 				father->setCheckState(0, Qt::Unchecked);
 			}
+			
+
 			QTreeWidgetItem *child = NULL;
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("Line Message 名称:"));
 			child_list.append(iter->second[i]->line_message_name_);
-			child = new QTreeWidgetItem(child_list);
+			child = new QTreeWidgetItem(child_list, ITEM_PROTO_LINE_MESSAGE);
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("EXCEL文件名称:"));
 			child_list.append(iter->second[i]->excel_file_name_);
-			child = new QTreeWidgetItem(child_list);
+			child = new QTreeWidgetItem(child_list, ITEM_EXCEL_FILE);
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("EXCEL SHEET:"));
 			child_list.append(iter->second[i]->excel_sheet_name_);
-			child = new QTreeWidgetItem(child_list);
+			child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("输出文件名称:"));
 			child_list.append(iter->second[i]->outer_file_name_);
-			child = new QTreeWidgetItem(child_list);
+			child = new QTreeWidgetItem(child_list, ITEM_OUTER_FILE);
 			father->addChild(child);
 
 			child_list.clear();
@@ -197,6 +196,28 @@ void IllusionWidget::loead_illusion()
 }
 
 
-
+//!
+void IllusionWidget::item_double_clicked(QTreeWidgetItem* item, int colum)
+{
+	if (NULL == item)
+	{
+		return;
+	}
+	
+	TREE_ITEM_TYPE item_type = static_cast<TREE_ITEM_TYPE>( item->type());
+	switch(item_type)
+	{
+	case ITEM_PROTO_FILE:
+		break;
+	case ITEM_PROTO_LINE_MESSAGE:
+		break;
+	case ITEM_EXCEL_SHEET:
+		break;
+	case ITEM_OUTER_FILE:
+		break;
+	default:
+		break;
+	}
+}
 
 

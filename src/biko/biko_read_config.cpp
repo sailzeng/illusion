@@ -329,7 +329,6 @@ void Biko_Read_Config::clear()
 	msgname_2_illusion_map_.clear();
     excel_2_illusion_map_.clear();
     proto_2_illusion_map_.clear();
-    outer_2_illusion_map_.clear();
 	//
 	for (Illusion_Message *&ils_msg: illusion_msg_ary_)
 	{
@@ -520,13 +519,6 @@ int Biko_Read_Config::read_proto_file(const QFileInfo &proto_file,
             else
             {
                 iter2->second.push_back(ok_ptr);
-            }
-
-            QString outer_fname = ok_ptr->outer_file_name_;
-            auto iter3 = outer_2_illusion_map_.find(outer_fname);
-            if (iter3 == outer_2_illusion_map_.end())
-            {
-                outer_2_illusion_map_[outer_fname] = ok_ptr;
             }
 
         }
@@ -937,16 +929,8 @@ QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_proto_illusion_map()
 	return &proto_2_illusion_map_;
 }
 
-//
-QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_excel_illusion_map()
-{
-	return &excel_2_illusion_map_;
-}
 
 
-QSTRING_2_ILSMSG_MAP *Biko_Read_Config::get_outer_illusion_map()
-{
-	return &outer_2_illusion_map_;
-}
+
 
 

@@ -15,12 +15,24 @@ public:
 	void loead_illusion();
 
 protected:
-
-	///安装UI
+	//
+	enum TREE_ITEM_TYPE
+	{
+		ITEM_PROTO_FILE = 1001,
+		ITEM_PROTO_TABLE_MESSAGE = 1002,
+		ITEM_PROTO_LINE_MESSAGE = 1003,
+		ITEM_EXCEL_FILE = 2001,
+		ITEM_EXCEL_SHEET = 2002,
+		ITEM_OUTER_FILE = 3001,
+	};
+	//!安装UI
 	void setup_ui();
 
 	// SLOT
 public:
+
+	//!
+	void item_double_clicked(QTreeWidgetItem*, int);
 
 public:
 
@@ -43,14 +55,8 @@ protected:
 
 	//!
 	QTextEdit *show_readme_ = NULL;
-	////!
-	//QTableWidget *show_excel_sheet_ = NULL;
-	////!
-	//QTableWidget *show_message_fields_ = NULL;
-	////!
-	//QTextEdit *show_outer_file_ = NULL;
-
-
+	
+	//!
 	QSTRING_2_ILLUSIONARY_MAP *proto_2_ils_map_ = NULL;
 
 
