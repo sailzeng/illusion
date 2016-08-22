@@ -115,6 +115,14 @@ public:
 	//!
 	QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map();
 
+	//!取得Outer文件的目录路径
+	QString outer_path();
+
+	//!取得Excel文件的目录路径
+	QString excel_path();
+
+	//!取得Proto文件的目录路径
+	QString proto_path();
 
 protected:
 
@@ -191,10 +199,6 @@ protected:
                          const google::protobuf::Message *table_msg,
                          QStringList &tips_ary) const;
 
-	
-
-
-
 protected:
 
     //单子实例
@@ -211,7 +215,7 @@ protected:
     QDir excel_path_;
 
     //!PBC文件输出的目录路径，PBC protobuf config
-    QDir out_pbc_path_;
+    QDir outer_path_;
 
 
     //!Excel的处理对象,EXCEL的处理类

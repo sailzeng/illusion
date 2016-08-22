@@ -25,8 +25,15 @@ protected:
 		ITEM_EXCEL_SHEET = 2002,
 		ITEM_OUTER_FILE = 3001,
 	};
+	
 	//!安装UI
 	void setup_ui();
+
+	//!显示PROTO文件
+	void show_proto_file(const QString &file_name);
+
+	//!显示Outer文件，当然是文本的
+	void show_outer_file(const QString &file_name);
 
 	// SLOT
 public:

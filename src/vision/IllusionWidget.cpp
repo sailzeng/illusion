@@ -1,10 +1,10 @@
 #include "stdafx.h"
+#include "VisionMainFrame.h"
 #include "IllusionWidget.h"
 
 IllusionWidget::IllusionWidget(QWidget *parent)
 	: QSplitter(parent)
 {
-	proto_2_ils_map_ = Biko_Read_Config::instance()->get_proto_illusion_map();
 	setup_ui();
 }
 
@@ -46,6 +46,8 @@ void IllusionWidget::setup_ui()
 			&QTreeWidget::itemDoubleClicked,
 			this,
 			&IllusionWidget::item_double_clicked);
+
+	proto_dir_tree_->setExpandsOnDoubleClick(false);
 
 	show_illusion_tab_->setTabsClosable(true);
 	//!
@@ -97,6 +99,7 @@ void IllusionWidget::selected_item(QStringList & selected_message)
 //!
 void IllusionWidget::loead_illusion()
 {
+	proto_2_ils_map_ = Biko_Read_Config::instance()->get_proto_illusion_map();
 	if (proto_2_ils_map_->size() <= 0)
 	{
 		return;
@@ -114,7 +117,7 @@ void IllusionWidget::loead_illusion()
 		QTreeWidgetItem *root = new QTreeWidgetItem(root_list, ITEM_PROTO_FILE);
 		proto_dir_tree_->addTopLevelItem(root);
 		root->setExpanded(true);
-
+		root->setIcon(0, QIcon(".\\res\\icon\\illusion_proto.png"));
 		for (size_t i = 0; i < iter->second.size(); ++i)
 		{
 			QTreeWidgetItem *father = NULL;
@@ -133,37 +136,42 @@ void IllusionWidget::loead_illusion()
 			{
 				father->setCheckState(0, Qt::Unchecked);
 			}
-			
+			father->setIcon(0, QIcon(".\\res\\icon\\illusion_table.png"));
 
 			QTreeWidgetItem *child = NULL;
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("Line Message 名称:"));
 			child_list.append(iter->second[i]->line_message_name_);
 			child = new QTreeWidgetItem(child_list, ITEM_PROTO_LINE_MESSAGE);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_line.png"));
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("EXCEL文件名称:"));
 			child_list.append(iter->second[i]->excel_file_name_);
 			child = new QTreeWidgetItem(child_list, ITEM_EXCEL_FILE);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_excel.png"));
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("EXCEL SHEET:"));
 			child_list.append(iter->second[i]->excel_sheet_name_);
 			child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("输出文件名称:"));
 			child_list.append(iter->second[i]->outer_file_name_);
 			child = new QTreeWidgetItem(child_list, ITEM_OUTER_FILE);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_outer.png"));
 			father->addChild(child);
 
 			child_list.clear();
 			child_list.append(QString::fromLocal8Bit("字段数量（包括展开RPEATED）:"));
 			child_list.append(QString::number(iter->second[i]->column_field_count_));
 			child = new QTreeWidgetItem(child_list);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_number.png"));
 			father->addChild(child);
 
 			child_list.clear();
@@ -177,6 +185,7 @@ void IllusionWidget::loead_illusion()
 				child_list.append(QString::fromLocal8Bit("否"));
 			}
 			child = new QTreeWidgetItem(child_list);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_exist.png"));
 			father->addChild(child);
 
 			child_list.clear();
@@ -190,6 +199,7 @@ void IllusionWidget::loead_illusion()
 				child_list.append(QString::fromLocal8Bit("否"));
 			}
 			child = new QTreeWidgetItem(child_list);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_newer.png"));
 			father->addChild(child);
 		}
 	}
@@ -208,16 +218,65 @@ void IllusionWidget::item_double_clicked(QTreeWidgetItem* item, int colum)
 	switch(item_type)
 	{
 	case ITEM_PROTO_FILE:
+	{
+		QString proto_fname = item->text(1);
+		show_proto_file(proto_fname);
 		break;
+	}
 	case ITEM_PROTO_LINE_MESSAGE:
 		break;
 	case ITEM_EXCEL_SHEET:
 		break;
 	case ITEM_OUTER_FILE:
+	{
+		QString outer_fname = item->text(1);
+		show_outer_file(outer_fname);
 		break;
+	}
 	default:
 		break;
 	}
 }
 
+
+void IllusionWidget::show_proto_file(const QString &file_name)
+{
+	QString proto_path = Biko_Read_Config::instance()->proto_path();
+	QString proto_fname = proto_path + "\\" + file_name;
+	QFile file(proto_fname);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QMessageBox::critical(VisionMainFrame::instance(),
+							  QString::fromLocal8Bit("错误"),
+							  QString::fromLocal8Bit("打开PROTO文件[%1]失败。")
+							  .arg(proto_fname));
+		return;
+	}
+	QTextEdit *proto_text_edit = new QTextEdit(show_illusion_tab_);
+	show_illusion_tab_->addTab(proto_text_edit,
+							   file_name);
+	proto_text_edit->setText(file.readAll());
+	proto_text_edit->setReadOnly(true);
+}
+
+//!显示Outer文件，当然是文本的
+void IllusionWidget::show_outer_file(const QString &file_name)
+{
+	QString outer_path = Biko_Read_Config::instance()->outer_path();
+	QString outer_fname = outer_path + "\\" + file_name + ".txt";
+	QFile file(outer_fname);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QMessageBox::critical(VisionMainFrame::instance(),
+							  QString::fromLocal8Bit("错误"),
+							  QString::fromLocal8Bit("打开OUTER文件[%1]失败。")
+							  .arg(outer_fname));
+		return;
+	}
+	QTextEdit *outer_text_edit = new QTextEdit(show_illusion_tab_);
+	show_illusion_tab_->addTab(outer_text_edit,
+							   file_name);
+	outer_text_edit->setText(file.readAll());
+	outer_text_edit->setReadOnly(true);
+}
 

@@ -269,10 +269,10 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
 	QString tip_info;
     //pbc的路径没有可以创建
     path_str = outer_dir;
-    out_pbc_path_.setPath(path_str);
-    if (false == out_pbc_path_.exists())
+    outer_path_.setPath(path_str);
+    if (false == outer_path_.exists())
     {
-        if (false == out_pbc_path_.mkpath(path_str))
+        if (false == outer_path_.mkpath(path_str))
         {
 			tip_info = QString::fromLocal8Bit("OUTER目录[%1]不存在，而且不能创建这个目录，请检查参数。").
 							arg(outer_dir);
@@ -285,7 +285,7 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
 	for (Illusion_Message *&ils_msg : illusion_msg_ary_)
 	{
 		QString excel_fname = excel_path_.absolutePath() + "/" + ils_msg->excel_file_name_;
-		QString outer_fname = out_pbc_path_.absolutePath() + "/" + ils_msg->outer_file_name_;
+		QString outer_fname = outer_path_.absolutePath() + "/" + ils_msg->outer_file_name_;
 		QFileInfo excel_finfo(excel_fname);
 		if (excel_finfo.exists())
 		{
@@ -856,7 +856,7 @@ int Biko_Read_Config::save_to_protocfg(const Illusion_Message *ils_msg,
 		return -1;
 	}
 
-    QString pbc_file = out_pbc_path_.path() + "/";
+    QString pbc_file = outer_path_.path() + "/";
     pbc_file += ils_msg->outer_file_name_;
     QString txt_file = pbc_file + ".txt";
     QFile pbc_config(pbc_file);
@@ -929,7 +929,23 @@ QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_proto_illusion_map()
 	return &proto_2_illusion_map_;
 }
 
+//!取得Outer文件的目录路径
+QString Biko_Read_Config::outer_path()
+{
+	return outer_path_.absolutePath();
+}
 
+//!取得Excel文件的目录路径
+QString Biko_Read_Config::excel_path()
+{
+	return excel_path_.absolutePath();
+}
+
+//!取得Proto文件的目录路径
+QString Biko_Read_Config::proto_path()
+{
+	return proto_path_.absolutePath();
+}
 
 
 
