@@ -3,24 +3,28 @@ import "google/protobuf/descriptor.proto";
 package illusion;
 
 
-
+//MessageOptions的扩展，
 extend google.protobuf.MessageOptions 
 {
     //这个message对应的list message名称
     optional bool  cfg_message = 50001 [default = false];
+
+	//配置注释，中文名称
+	optional string cfg_comment = 50002;
+
     //读取的EXCEL配置文件名称
-    optional string excel_file = 50002;
+    optional string excel_file = 50003;
     //读取的表格SHEET名称
-    optional string excel_sheet = 50003;
+    optional string excel_sheet = 50004;
     //输出的proto配置文件名称
-    optional string outer_file = 50007;
+    optional string outer_file = 50005;
     
     //字段名称写在第几行，导成EXCEL时实用
-    optional int32  fieldsname_line = 50004[default = 1];
+    optional int32  fieldsname_line = 50006[default = 1];
     //字段的FULLNAME
-    optional int32  fullname_line = 50005 [default = 2];
+    optional int32  fullname_line = 50007 [default = 2];
     //读取的行
-    optional int32  read_line = 50006 [default = 3];
+    optional int32  read_line = 50008 [default = 3];
     
     
 }

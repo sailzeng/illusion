@@ -63,6 +63,9 @@ public:
     //!对应的repeat line message 结构的名称，
     QString table_message_name_;
 
+	//!注释的名称
+	QString cfg_comment_name_;
+
 	//!对应的PROTO 文件的名称
 	QString proto_file_name_;
 

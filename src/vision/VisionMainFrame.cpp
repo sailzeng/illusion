@@ -60,7 +60,7 @@ void VisionMainFrame::setup_ui()
     info_widget_->verticalHeader()->setVisible(false);
     info_widget_->setColumnWidth(0, 200);
     info_widget_->setColumnWidth(1, 60);
-    info_widget_->setColumnWidth(2, 800);
+    info_widget_->setColumnWidth(2, 1000);
     for (size_t i = 0; i < MAX_TIPS_INFO_NUMBER; ++i)
     {
         info_widget_->setRowHeight(i, 18);
@@ -232,19 +232,19 @@ void VisionMainFrame::out_tips_ary(const QStringList &tips_ary)
 {
 for (const QString & tips : tips_ary)
     {
-        if (tips[0] == '?')
+        if (tips[0] == QChar('?'))
         {
             out_info(PZ_DEBUG, tips);
         }
-        else if (tips[0] == '.')
+        else if (tips[0] == QChar('.'))
         {
             out_info(PZ_INFO, tips);
         }
-        else if (tips[0] == ':')
+        else if (tips[0] == QChar(':'))
         {
             out_info(PZ_WARNNING, tips);
         }
-        else if (tips[0] == '!')
+        else if (tips[0] == QChar('!'))
         {
             out_info(PZ_INFO, tips);
         }

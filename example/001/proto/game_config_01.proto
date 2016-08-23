@@ -32,6 +32,7 @@ message LIST_OF_GAME_CFG_STRUCT_1
 {
     //message的选项信息
     option (illusion.cfg_message) = true;
+    option (illusion.cfg_comment) = "游戏配置测试结构1";
     option (illusion.excel_file) = "game_config_01.xlsx";
     option (illusion.excel_sheet) = "GAME_CFG_STRUCT_1";
     option (illusion.outer_file) = "GAME_CFG_STRUCT_1.bin";

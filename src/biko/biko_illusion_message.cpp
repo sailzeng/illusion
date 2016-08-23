@@ -52,6 +52,7 @@ int Illusion_Message::initialize(const QString &proto_file,
 
     std::string table_messge_name = table_msg_desc_->full_name();
     std::string line_messge_name = line_field_desc->message_type()->full_name();
+	std::string cfg_comment = mo.GetExtension(illusion::cfg_comment);
     std::string excel_filename = mo.GetExtension(illusion::excel_file);
     std::string excel_sheetname = mo.GetExtension(illusion::excel_sheet);
     int fieldsname_line = mo.GetExtension(illusion::fieldsname_line);
@@ -93,7 +94,8 @@ int Illusion_Message::initialize(const QString &proto_file,
     }
 
 
-    //没有进行本地转码，考虑Message 应该都是ascii
+    //默认会从UTF8 转换，考虑Message 应该都是ascii
+	cfg_comment_name_ = cfg_comment.c_str();
     table_message_name_ = table_messge_name.c_str();
     line_message_name_ = line_messge_name.c_str();
     excel_file_name_ = excel_filename.c_str();

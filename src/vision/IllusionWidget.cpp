@@ -23,7 +23,7 @@ void IllusionWidget::setup_ui()
 	//配置的棋盘滚动区域
 
 	proto_dir_tree_ = new QTreeWidget();
-	proto_dir_tree_->setGeometry(QRect(0, 0, 1000, 600));
+	proto_dir_tree_->setGeometry(QRect(0, 0, 400, 600));
 
 	this->addWidget(proto_dir_tree_);
 
@@ -32,14 +32,14 @@ void IllusionWidget::setup_ui()
 	this->addWidget(show_illusion_tab_);
 
 	this->setStretchFactor(0, 4);
-	this->setStretchFactor(1, 6);
+	this->setStretchFactor(1, 8);
 
 	proto_dir_tree_->setColumnCount(2);
 	QStringList headers;
 	headers << QString::fromLocal8Bit("项目字段")
 		<< QString::fromLocal8Bit("数值");
 	proto_dir_tree_->setHeaderLabels(headers);
-	proto_dir_tree_->setColumnWidth(0, 259);
+	proto_dir_tree_->setColumnWidth(0, 200);
 	proto_dir_tree_->setColumnWidth(1, 200);
 
 	connect(proto_dir_tree_,
@@ -106,7 +106,7 @@ void IllusionWidget::loead_illusion()
 	}
 	proto_dir_tree_->clear();
 	QStringList root_list,child_list;
-	//!
+	//!https://www.iconfinder.com/icons/1106243/business_excel_table_icon#size=128
 	for (auto iter = proto_2_ils_map_->begin(); 
 		 iter != proto_2_ils_map_->end();
 		 ++iter)
@@ -144,6 +144,14 @@ void IllusionWidget::loead_illusion()
 			child_list.append(iter->second[i]->line_message_name_);
 			child = new QTreeWidgetItem(child_list, ITEM_PROTO_LINE_MESSAGE);
 			child->setIcon(0, QIcon(".\\res\\icon\\illusion_line.png"));
+			child->setData(0, Qt::UserRole, QVariant::fromValue((void *)(iter->second[i])) );
+			father->addChild(child);
+
+			child_list.clear();
+			child_list.append(QString::fromLocal8Bit("注释名称:"));
+			child_list.append(iter->second[i]->cfg_comment_name_);
+			child = new QTreeWidgetItem(child_list, ITEM_PROTO_COMMENT_NAME);
+			child->setIcon(0, QIcon(".\\res\\icon\\illusion_comment.png"));
 			father->addChild(child);
 
 			child_list.clear();
@@ -158,6 +166,7 @@ void IllusionWidget::loead_illusion()
 			child_list.append(iter->second[i]->excel_sheet_name_);
 			child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
 			child->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
+			child->setData(0, Qt::UserRole, iter->second[i]->excel_file_name_);
 			father->addChild(child);
 
 			child_list.clear();
@@ -224,7 +233,12 @@ void IllusionWidget::item_double_clicked(QTreeWidgetItem* item, int colum)
 		break;
 	}
 	case ITEM_PROTO_LINE_MESSAGE:
+	{
+		Illusion_Message *ils_msg = (Illusion_Message *)(item->data(0, Qt::UserRole).value<void *>());
+		QString line_name = item->text(1);
+		show_line_message(line_name,ils_msg);
 		break;
+	}
 	case ITEM_EXCEL_SHEET:
 		break;
 	case ITEM_OUTER_FILE:
@@ -257,9 +271,10 @@ void IllusionWidget::show_proto_file(const QString &file_name)
 							   file_name);
 	proto_text_edit->setText(file.readAll());
 	proto_text_edit->setReadOnly(true);
+	show_illusion_tab_->setCurrentWidget(proto_text_edit);
 }
 
-//!显示Outer文件，当然是文本的
+//显示Outer文件，当然是文本的
 void IllusionWidget::show_outer_file(const QString &file_name)
 {
 	QString outer_path = Biko_Read_Config::instance()->outer_path();
@@ -278,5 +293,30 @@ void IllusionWidget::show_outer_file(const QString &file_name)
 							   file_name);
 	outer_text_edit->setText(file.readAll());
 	outer_text_edit->setReadOnly(true);
+	show_illusion_tab_->setCurrentWidget(outer_text_edit);
 }
+
+//!显示Line Message
+void IllusionWidget::show_line_message(const QString &line_name,
+									   const Illusion_Message *ils_msg)
+{
+	QTableWidget *ils_msg_table = new QTableWidget();
+	show_illusion_tab_->addTab(ils_msg_table,
+							   line_name);
+	ils_msg_table->setColumnCount(5);
+	ils_msg_table->verticalHeader()->setVisible(false);
+	ils_msg_table->setRowCount(1);
+	QStringList headers;
+	headers << QString::fromLocal8Bit("编号")
+		<< QString::fromLocal8Bit("字段名称")
+		<< QString::fromLocal8Bit("字段fullname")
+		<< QString::fromLocal8Bit("字段类型")
+		<< QString::fromLocal8Bit("字段描述");
+	ils_msg_table->setHorizontalHeaderLabels(headers);
+	ils_msg_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	ils_msg_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+	show_illusion_tab_->setCurrentWidget(ils_msg_table);
+}
+
 
