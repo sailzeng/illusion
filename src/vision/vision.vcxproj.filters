@@ -76,6 +76,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_IllusionWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="OverrideCursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="vision.qrc">
@@ -99,6 +102,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OverrideCursor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include "IllusionWidget.h"
 #include "SelectEachDirDialog.h"
 #include "SelectOneDirDialog.h"
+#include "OverrideCursor.h"
 #include "VisionMainFrame.h"
 
 //实例指针
@@ -192,6 +193,7 @@ void VisionMainFrame::eachdir_process()
                                   QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
             return;
         }
+		OverrideWaitCursor wait;
         illlusion_widget_->loead_illusion();
     }
 }
@@ -218,6 +220,7 @@ void VisionMainFrame::allinone_process()
                               QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
         return;
     }
+	OverrideWaitCursor wait;
     illlusion_widget_->loead_illusion();
 }
 

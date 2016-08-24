@@ -119,6 +119,7 @@
     </ClCompile>
     <ClCompile Include="IllusionWidget.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OverrideCursor.cpp" />
     <ClCompile Include="SelectEachDirDialog.cpp" />
     <ClCompile Include="SelectOneDirDialog.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -158,6 +159,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../IllusionWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_MULTIMEDIAWIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\ActiveQt" "-I$(QTDIR)\include\QtWidgets" "-I$(SolutionDir)..\depend\protobuf-2.6.1\src" "-I$(SolutionDir)\biko" "-I$(SolutionDir)\import" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtMultimediaWidgets"</Command>
     </CustomBuild>
+    <ClInclude Include="OverrideCursor.h" />
     <ClInclude Include="stdafx.h" />
     <CustomBuild Include="VisionMainFrame.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

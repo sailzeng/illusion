@@ -37,13 +37,20 @@ protected:
 	void show_outer_file(const QString &file_name);
 
 	//!ÏÔÊ¾Line Message
-	void show_line_message(const QString &line_name,const Illusion_Message *ils_msg);
+	void show_line_message(const QString &line_name,
+						   const Illusion_Message *ils_msg);
 
+	//!ÏÔÊ¾EXCELµÄSheet
+	void show_excel_sheet(const QString &file_name,
+						  const QString &sheet_name);
 	// SLOT
-public:
+protected:
 
 	//!
 	void item_double_clicked(QTreeWidgetItem*, int);
+
+	//!
+	void close_tab(int index);
 
 public:
 

@@ -9,7 +9,6 @@ QtAxExcelEngine::QtAxExcelEngine()
 
 QtAxExcelEngine::~QtAxExcelEngine()
 {
-
     finalize();
 }
 
@@ -19,21 +18,20 @@ bool QtAxExcelEngine::initialize(bool visible)
 {
 
     HRESULT r = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (r != S_OK )
+    if (r == S_OK )
     {
-        fprintf(stderr,"QtActiveX: Could not initialize OLE CoInitializeEx (ret %x error %x) .\n", 
+		com_init_byself_ = true;
+    }
+	else
+	{
+		fprintf(stderr, "QtActiveX: Could not initialize OLE CoInitializeEx (ret %x error %x) .\n",
 			(unsigned int)r,
-			::GetLastError());
-		if (r == S_FALSE)
+				::GetLastError());
+		if (r == S_FALSE || r == RPC_E_CHANGED_MODE)
 		{
-			return false;
-		}
-		else
-		{
-			//r==RPC_E_CHANGED_MODE
 			//如果是这个错误，放弃，没啥忍了
 		}
-    }
+	}
     is_visible_ = visible;
     //
     if (NULL == excel_instance_)
@@ -81,8 +79,11 @@ void QtAxExcelEngine::finalize()
 
 		xls_file_.clear();
     }
-
-    ::CoUninitialize();
+	if (com_init_byself_)
+	{
+		::CoUninitialize();
+	}
+    
 }
 
 //打开EXCEL文件

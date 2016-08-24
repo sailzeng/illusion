@@ -234,6 +234,9 @@ private:
 	//是否是一个新建的文件
 	bool is_newfile_ = false;
 
+	//!
+	bool com_init_byself_ = false;
+
 };
 
 #endif // QT_EXCELENGINE_H
