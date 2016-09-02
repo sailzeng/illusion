@@ -45,8 +45,8 @@ bool QtAxExcelEngine::initialize(bool visible)
             is_open_ = false;
             return is_open_;
         }
-
-        excel_instance_->dynamicCall("SetVisible(bool)", is_visible_);
+		//在部分机器的DEBUG版本发现有断言错误，参数数量不一致，原因未知，
+        excel_instance_->dynamicCall("SetVisible(bool )", is_visible_);
     }
     return true;
 }
@@ -79,6 +79,7 @@ void QtAxExcelEngine::finalize()
 
 		xls_file_.clear();
     }
+	//不是自己初始化的，步销毁，否则有问题
 	if (com_init_byself_)
 	{
 		::CoUninitialize();
