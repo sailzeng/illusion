@@ -4,9 +4,9 @@
 class OverrideWaitCursor
 {
 public:
-	OverrideWaitCursor();
+    OverrideWaitCursor();
 
-	~OverrideWaitCursor();
+    ~OverrideWaitCursor();
 };
 
 #endif

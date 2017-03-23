@@ -52,7 +52,7 @@ int Illusion_Message::initialize(const QString &proto_file,
 
     std::string table_messge_name = table_msg_desc_->full_name();
     std::string line_messge_name = line_field_desc->message_type()->full_name();
-	std::string cfg_comment = mo.GetExtension(illusion::cfg_comment);
+    std::string cfg_comment = mo.GetExtension(illusion::cfg_comment);
     std::string excel_filename = mo.GetExtension(illusion::excel_file);
     std::string excel_sheetname = mo.GetExtension(illusion::excel_sheet);
     int fieldsname_line = mo.GetExtension(illusion::fieldsname_line);
@@ -85,17 +85,17 @@ int Illusion_Message::initialize(const QString &proto_file,
         0 >= read_data_line )
     {
         tips_ary.append(QString::fromLocal8Bit("!TABLE Message描述错误, File[%1] 表对应 message[%2] 行对应Message[%3]"
-											   "缺少必要的信息，读取行小于0等。注意前面的输出信息.").
+                                               "缺少必要的信息，读取行小于0等。注意前面的输出信息.").
                         arg(proto_file_name_).
                         arg(table_msg_desc_->full_name().c_str()).
                         arg(line_field_desc->message_type()->full_name().c_str()));
-		illusion::process_tips(tip_info, tips_ary);
+        illusion::process_tips(tip_info, tips_ary);
         return -2;
     }
 
 
     //默认会从UTF8 转换，考虑Message 应该都是ascii
-	cfg_comment_name_ = cfg_comment.c_str();
+    cfg_comment_name_ = cfg_comment.c_str();
     table_message_name_ = table_messge_name.c_str();
     line_message_name_ = line_messge_name.c_str();
     excel_file_name_ = excel_filename.c_str();
@@ -126,7 +126,7 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
                                       QStringList &tips_ary)
 {
     int ret = 0;
-	QString tip_info;
+    QString tip_info;
     for (int j = 0; j < msg_desc->field_count(); ++j)
     {
         const google::protobuf::FieldDescriptor *field_desc =
@@ -152,12 +152,12 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
             repeated_num = fo.GetExtension(illusion::repeat_size);
             if (repeated_num <= 0)
             {
-				tip_info = QString::fromLocal8Bit("!Line Message描述扩展错误, File[%1] Line Message[%2] "
-                                                       "字段[%3] 扩展 repeat_size <=0 或者没有定义扩展(repeat_size).").
-                                arg(proto_file_name_).
-                                arg(msg_desc->full_name().c_str()).
-                                arg(field_desc->full_name().c_str());
-				illusion::process_tips(tip_info, tips_ary);
+                tip_info = QString::fromLocal8Bit("!Line Message描述扩展错误, File[%1] Line Message[%2] "
+                                                  "字段[%3] 扩展 repeat_size <=0 或者没有定义扩展(repeat_size).").
+                           arg(proto_file_name_).
+                           arg(msg_desc->full_name().c_str()).
+                           arg(field_desc->full_name().c_str());
+                illusion::process_tips(tip_info, tips_ary);
                 return -1;
             }
             is_repeated = true;
@@ -165,12 +165,12 @@ int Illusion_Message::recursive_proto(const google::protobuf::Descriptor *msg_de
 
 #if defined _DEBUG || defined DEBUG
         //col_field_name 可能是中文，
-		tip_info = QString::fromLocal8Bit(".Line Message [%1] 有需要转换的配置[%2] extend 字段名称是[%3] 字段重复次数 [%4].").
-				arg(msg_desc->full_name().c_str()).
-				arg(field_desc->full_name().c_str()).
-				arg(col_field_name).
-				arg(repeated_num);
-		illusion::process_tips(tip_info, tips_ary);
+        tip_info = QString::fromLocal8Bit(".Line Message [%1] 有需要转换的配置[%2] extend 字段名称是[%3] 字段重复次数 [%4].").
+                   arg(msg_desc->full_name().c_str()).
+                   arg(field_desc->full_name().c_str()).
+                   arg(col_field_name).
+                   arg(repeated_num);
+        illusion::process_tips(tip_info, tips_ary);
 #endif
 
         for (int k = 0; k < repeated_num; ++k)
@@ -210,24 +210,24 @@ int Illusion_Message::new_table_mesage(google::protobuf::DynamicMessageFactory *
                                        google::protobuf::Message *&table_msg,
                                        QStringList &tips_ary) const
 {
-	QString tip_info;
+    QString tip_info;
     // build a dynamic message by "table_msg_desc_" proto
     const google::protobuf::Message *message = msg_factory->GetPrototype(table_msg_desc_);
     if (!message)
     {
-		tip_info = QString::fromLocal8Bit("!获取Message失败，Google Protobuf DynamicMessageFactory "
-                                               "GetPrototype by name [%2] fail.").
-                        arg(table_msg_desc_->full_name().c_str());
-		illusion::process_tips(tip_info, tips_ary);
+        tip_info = QString::fromLocal8Bit("!获取Message失败，Google Protobuf DynamicMessageFactory "
+                                          "GetPrototype by name [%2] fail.").
+                   arg(table_msg_desc_->full_name().c_str());
+        illusion::process_tips(tip_info, tips_ary);
         return -1;
     }
 
     table_msg = message->New();
     if (NULL == table_msg)
     {
-		tip_info = QString::fromLocal8Bit("!创建Message失败， Table Message [%2] New fail.").
-                        arg(table_msg_desc_->full_name().c_str());
-		illusion::process_tips(tip_info, tips_ary);
+        tip_info = QString::fromLocal8Bit("!创建Message失败， Table Message [%2] New fail.").
+                   arg(table_msg_desc_->full_name().c_str());
+        illusion::process_tips(tip_info, tips_ary);
         return -1;
     }
     return 0;
@@ -243,11 +243,11 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
     //其实相当于添加一个line_message
     google::protobuf::Message *line_message = NULL;
 
-	//这里获取的就是待转换message里面的第一个repeated字段，他是待转换的 messge 的filed
-	//也是一个repeated的message
+    //这里获取的就是待转换message里面的第一个repeated字段，他是待转换的 messge 的filed
+    //也是一个repeated的message
     const google::protobuf::FieldDescriptor *list_field_desc = table_msg_desc_->field(0);
 
-	//往待转换的message中添加一个repeated描述的message
+    //往待转换的message中添加一个repeated描述的message
     ret = Protobuf_Reflect_AUX::locate_msgfield(table_msg,
                                                 list_field_desc,
                                                 line_message,
@@ -260,8 +260,8 @@ int Illusion_Message::add_line(google::protobuf::Message *table_msg,
     //!每个字段对应的Message，用于方便插入操作处理的临时数据而已(每次都必须更新)，其他地方不用关心
     std::vector<google::protobuf::Message *> line_fieldmsg_ary;
 
-	//展开一个repeated描述的message，就是一个真正的行
-	//收集从开始到结束的字段所属message名字 
+    //展开一个repeated描述的message，就是一个真正的行
+    //收集从开始到结束的字段所属message名字
     ret = recursive_msgfield(line_message, &line_fieldmsg_ary);
     if (0 != ret)
     {
@@ -323,7 +323,7 @@ int Illusion_Message::recursive_msgfield(google::protobuf::Message *msg,
                 return -1;
             }
         }
-		
+
         for (int k = 0; k < repeated_num; ++k)
         {
             if (field_desc->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE)

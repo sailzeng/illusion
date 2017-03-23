@@ -261,285 +261,285 @@ int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
 }
 
 int Protobuf_Reflect_AUX::set_fielddata(google::protobuf::Message *msg,
-										const google::protobuf::FieldDescriptor *field,
-										const QString &set_data)
+                                        const google::protobuf::FieldDescriptor *field,
+                                        const QString &set_data)
 {
-	assert(field);
-	assert(msg);
-	const google::protobuf::Reflection *reflection = msg->GetReflection();
+    assert(field);
+    assert(msg);
+    const google::protobuf::Reflection *reflection = msg->GetReflection();
 
-	//如果没有设置数据，看看是否是必要字段，而且是否有默认值
-	if (set_data.length() == 0)
-	{
-		if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED)
-		{
-			fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.\n",
-					field->full_name().c_str());
-			return -1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
+    //如果没有设置数据，看看是否是必要字段，而且是否有默认值
+    if (set_data.length() == 0)
+    {
+        if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED)
+        {
+            fprintf(stderr, "set_data is null but field name [%s] label is REQUIRED.\n",
+                    field->full_name().c_str());
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 
-	if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED ||
-		field->label() == google::protobuf::FieldDescriptor::Label::LABEL_OPTIONAL)
-	{
-		// double, exactly eight bytes on the wire.
-		if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
-		{
-			reflection->SetDouble(msg, field, set_data.toDouble());
-		}
-		// float, exactly four bytes on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
-		{
-			reflection->SetFloat(msg, field, set_data.toFloat());
-		}
-		// int64, varint on the wire.  Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT64)
-		{
-			reflection->SetInt64(msg, field, set_data.toLongLong());
-		}
-		// uint64, exactly eight bytes on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
-		{
-			reflection->SetUInt64(msg, field, set_data.toULongLong());
-		}
-		//int32, varint on the wire.Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
-		{
-			reflection->SetInt32(msg, field, set_data.toInt());
-		}
-		//
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED64)
-		{
-			reflection->SetUInt64(msg, field, set_data.toULongLong());
-		}
-		// uint32, exactly four bytes on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED32)
-		{
-			reflection->SetUInt32(msg, field, set_data.toUInt());
-		}
-		// bool, varint on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
-		{
-			reflection->SetBool(msg, field, qstring_to_bool(set_data));
-		}
-		// UTF-8 text.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
-		{
-			reflection->SetString(msg, field, set_data.toUtf8().toStdString());
-		}
-		// Arbitrary byte array.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
-		{
-			reflection->SetString(msg, field, set_data.toLocal8Bit().toStdString());
-		}
-		// uint32, varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
-		{
-			reflection->SetUInt32(msg, field, set_data.toUInt());
-		}
-		// Enum, varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
-		{
-			const google::protobuf::EnumDescriptor *enum_desc =
-				field->enum_type();
-			const google::protobuf::EnumValueDescriptor *evalue_desc = 
-				enum_desc->FindValueByName(set_data.toStdString());
-			if (evalue_desc)
-			{
-				reflection->SetEnum(msg, field, evalue_desc);
-			}
-			else
-			{
-				int ev_count = enum_desc->value_count();
-				int x = 0;
-				for (; x < ev_count; ++x)
-				{
-					evalue_desc = enum_desc->value(x);
-					const google::protobuf::EnumValueOptions &evo = evalue_desc->options();
-					if (evo.GetExtension(illusion::enum_name) == set_data.toStdString())
-					{
-						reflection->SetEnum(msg, field, evalue_desc);
-						break;
-					}
-				}
-				if (ev_count == x)
-				{
-					fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
-							set_data.toStdString().c_str(),
-							enum_desc->full_name().c_str());
-					return -1;
-				}
-			}
+    if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REQUIRED ||
+        field->label() == google::protobuf::FieldDescriptor::Label::LABEL_OPTIONAL)
+    {
+        // double, exactly eight bytes on the wire.
+        if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
+        {
+            reflection->SetDouble(msg, field, set_data.toDouble());
+        }
+        // float, exactly four bytes on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
+        {
+            reflection->SetFloat(msg, field, set_data.toFloat());
+        }
+        // int64, varint on the wire.  Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT64)
+        {
+            reflection->SetInt64(msg, field, set_data.toLongLong());
+        }
+        // uint64, exactly eight bytes on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
+        {
+            reflection->SetUInt64(msg, field, set_data.toULongLong());
+        }
+        //int32, varint on the wire.Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+        {
+            reflection->SetInt32(msg, field, set_data.toInt());
+        }
+        //
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED64)
+        {
+            reflection->SetUInt64(msg, field, set_data.toULongLong());
+        }
+        // uint32, exactly four bytes on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED32)
+        {
+            reflection->SetUInt32(msg, field, set_data.toUInt());
+        }
+        // bool, varint on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
+        {
+            reflection->SetBool(msg, field, qstring_to_bool(set_data));
+        }
+        // UTF-8 text.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
+        {
+            reflection->SetString(msg, field, set_data.toUtf8().toStdString());
+        }
+        // Arbitrary byte array.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
+        {
+            reflection->SetString(msg, field, set_data.toLocal8Bit().toStdString());
+        }
+        // uint32, varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
+        {
+            reflection->SetUInt32(msg, field, set_data.toUInt());
+        }
+        // Enum, varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
+        {
+            const google::protobuf::EnumDescriptor *enum_desc =
+                field->enum_type();
+            const google::protobuf::EnumValueDescriptor *evalue_desc =
+                enum_desc->FindValueByName(set_data.toStdString());
+            if (evalue_desc)
+            {
+                reflection->SetEnum(msg, field, evalue_desc);
+            }
+            else
+            {
+                int ev_count = enum_desc->value_count();
+                int x = 0;
+                for (; x < ev_count; ++x)
+                {
+                    evalue_desc = enum_desc->value(x);
+                    const google::protobuf::EnumValueOptions &evo = evalue_desc->options();
+                    if (evo.GetExtension(illusion::enum_name) == set_data.toStdString())
+                    {
+                        reflection->SetEnum(msg, field, evalue_desc);
+                        break;
+                    }
+                }
+                if (ev_count == x)
+                {
+                    fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
+                            set_data.toStdString().c_str(),
+                            enum_desc->full_name().c_str());
+                    return -1;
+                }
+            }
 
-		}
-		// int32, exactly four bytes on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32)
-		{
-			reflection->SetInt32(msg, field, set_data.toInt());
-		}
-		// int64, exactly eight bytes on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64)
-		{
-			reflection->SetInt64(msg, field, set_data.toLongLong());
-		}
-		// int32, ZigZag-encoded varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT32)
-		{
-			reflection->SetInt32(msg, field, set_data.toInt());
-		}
-		// int64, ZigZag-encoded varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT64)
-		{
-			reflection->SetInt64(msg, field, set_data.toLongLong());
-		}
-		else
-		{
-			//不支持的类型，这个地方如果出现TYPE_MESSAGE。也是不正常的。
-			fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
-					field->full_name().c_str(),
-					field->type(),
-					field->type_name());
-			assert(false);
-			return -1;
-		}
-	}
-	//数组
-	else if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REPEATED)
-	{
-		// double, exactly eight bytes on the wire.
-		if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
-		{
-			reflection->AddDouble(msg, field, set_data.toDouble());
-		}
-		// float, exactly four bytes on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
-		{
-			reflection->AddFloat(msg, field, set_data.toFloat());
-		}
-		// int64, varint on the wire.  Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT64)
-		{
-			reflection->AddInt64(msg, field, set_data.toLongLong());
-		}
-		// uint64, exactly eight bytes on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
-		{
-			reflection->AddUInt64(msg, field, set_data.toULongLong());
-		}
-		//int32, varint on the wire.Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
-		{
-			reflection->AddInt32(msg, field, set_data.toInt());
-		}
-		//
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED64)
-		{
-			reflection->AddUInt64(msg, field, set_data.toULongLong());
-		}
-		// uint32, exactly four bytes on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED32)
-		{
-			reflection->AddUInt32(msg, field, set_data.toUInt());
-		}
-		// bool, varint on the wire.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
-		{
-			reflection->AddBool(msg, field, qstring_to_bool(set_data));
-		}
-		// UTF-8 text.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
-		{
-			reflection->AddString(msg, field, set_data.toUtf8().toStdString());
-		}
-		// Arbitrary byte array.
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
-		{
-			reflection->AddString(msg, field, set_data.toLocal8Bit().toStdString());
-		}
-		// uint32, varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
-		{
-			reflection->AddUInt32(msg, field, set_data.toUInt());
-		}
-		// Enum, varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
-		{
-			const google::protobuf::EnumDescriptor *enum_desc =
-				field->enum_type();
-			const google::protobuf::EnumValueDescriptor *evalue_desc = enum_desc->FindValueByName(set_data.toStdString());
-			if (evalue_desc)
-			{
-				reflection->AddEnum(msg, field, evalue_desc);
-			}
-			else
-			{
-				int ev_count = enum_desc->value_count();
-				int x = 0;
-				for (; x < ev_count; ++x)
-				{
-					evalue_desc = enum_desc->value(x);
-					const google::protobuf::EnumValueOptions &evo = evalue_desc->options();
-					if (evo.GetExtension(illusion::enum_name) == set_data.toStdString())
-					{
-						reflection->SetEnum(msg, field, evalue_desc);
-						break;
-					}
-				}
-				if (ev_count == x)
-				{
-					fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
-							set_data.toStdString().c_str(),
-							enum_desc->full_name().c_str());
-					return -1;
-				}
-			}
+        }
+        // int32, exactly four bytes on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32)
+        {
+            reflection->SetInt32(msg, field, set_data.toInt());
+        }
+        // int64, exactly eight bytes on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64)
+        {
+            reflection->SetInt64(msg, field, set_data.toLongLong());
+        }
+        // int32, ZigZag-encoded varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT32)
+        {
+            reflection->SetInt32(msg, field, set_data.toInt());
+        }
+        // int64, ZigZag-encoded varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT64)
+        {
+            reflection->SetInt64(msg, field, set_data.toLongLong());
+        }
+        else
+        {
+            //不支持的类型，这个地方如果出现TYPE_MESSAGE。也是不正常的。
+            fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
+                    field->full_name().c_str(),
+                    field->type(),
+                    field->type_name());
+            assert(false);
+            return -1;
+        }
+    }
+    //数组
+    else if (field->label() == google::protobuf::FieldDescriptor::Label::LABEL_REPEATED)
+    {
+        // double, exactly eight bytes on the wire.
+        if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
+        {
+            reflection->AddDouble(msg, field, set_data.toDouble());
+        }
+        // float, exactly four bytes on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
+        {
+            reflection->AddFloat(msg, field, set_data.toFloat());
+        }
+        // int64, varint on the wire.  Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT64)
+        {
+            reflection->AddInt64(msg, field, set_data.toLongLong());
+        }
+        // uint64, exactly eight bytes on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
+        {
+            reflection->AddUInt64(msg, field, set_data.toULongLong());
+        }
+        //int32, varint on the wire.Negative numbers take 10 bytes.  Use TYPE_SINT32 if negative values are likely.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+        {
+            reflection->AddInt32(msg, field, set_data.toInt());
+        }
+        //
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED64)
+        {
+            reflection->AddUInt64(msg, field, set_data.toULongLong());
+        }
+        // uint32, exactly four bytes on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_FIXED32)
+        {
+            reflection->AddUInt32(msg, field, set_data.toUInt());
+        }
+        // bool, varint on the wire.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
+        {
+            reflection->AddBool(msg, field, qstring_to_bool(set_data));
+        }
+        // UTF-8 text.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_STRING)
+        {
+            reflection->AddString(msg, field, set_data.toUtf8().toStdString());
+        }
+        // Arbitrary byte array.
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_BYTES)
+        {
+            reflection->AddString(msg, field, set_data.toLocal8Bit().toStdString());
+        }
+        // uint32, varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
+        {
+            reflection->AddUInt32(msg, field, set_data.toUInt());
+        }
+        // Enum, varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
+        {
+            const google::protobuf::EnumDescriptor *enum_desc =
+                field->enum_type();
+            const google::protobuf::EnumValueDescriptor *evalue_desc = enum_desc->FindValueByName(set_data.toStdString());
+            if (evalue_desc)
+            {
+                reflection->AddEnum(msg, field, evalue_desc);
+            }
+            else
+            {
+                int ev_count = enum_desc->value_count();
+                int x = 0;
+                for (; x < ev_count; ++x)
+                {
+                    evalue_desc = enum_desc->value(x);
+                    const google::protobuf::EnumValueOptions &evo = evalue_desc->options();
+                    if (evo.GetExtension(illusion::enum_name) == set_data.toStdString())
+                    {
+                        reflection->SetEnum(msg, field, evalue_desc);
+                        break;
+                    }
+                }
+                if (ev_count == x)
+                {
+                    fprintf(stderr, "Don't find EnumValueDescriptor by name [%s] in enum [%s].\n",
+                            set_data.toStdString().c_str(),
+                            enum_desc->full_name().c_str());
+                    return -1;
+                }
+            }
 
-		}
-		// int32, exactly four bytes on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32)
-		{
-			reflection->AddInt32(msg, field, set_data.toInt());
-		}
-		// int64, exactly eight bytes on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64)
-		{
-			reflection->AddInt64(msg, field, set_data.toLongLong());
-		}
-		// int32, ZigZag-encoded varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT32)
-		{
-			reflection->AddInt32(msg, field, set_data.toInt());
-		}
-		// int64, ZigZag-encoded varint on the wire
-		else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT64)
-		{
-			reflection->AddInt64(msg, field, set_data.toLongLong());
-		}
-		else
-		{
-			fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
-					field->full_name().c_str(),
-					field->type(),
-					field->type_name());
-			assert(false);
-			return -1;
-		}
-	}
-	else
-	{
-		fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
-				field->full_name().c_str(),
-				field->type(),
-				field->type_name());
-		assert(false);
-		return -1;
-	}
+        }
+        // int32, exactly four bytes on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32)
+        {
+            reflection->AddInt32(msg, field, set_data.toInt());
+        }
+        // int64, exactly eight bytes on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64)
+        {
+            reflection->AddInt64(msg, field, set_data.toLongLong());
+        }
+        // int32, ZigZag-encoded varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT32)
+        {
+            reflection->AddInt32(msg, field, set_data.toInt());
+        }
+        // int64, ZigZag-encoded varint on the wire
+        else if (field->type() == google::protobuf::FieldDescriptor::Type::TYPE_SINT64)
+        {
+            reflection->AddInt64(msg, field, set_data.toLongLong());
+        }
+        else
+        {
+            fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
+                    field->full_name().c_str(),
+                    field->type(),
+                    field->type_name());
+            assert(false);
+            return -1;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "I don't field [%s] support this type.%d %s \n",
+                field->full_name().c_str(),
+                field->type(),
+                field->type_name());
+        assert(false);
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 //定位一个子结构
@@ -1268,15 +1268,15 @@ bool Protobuf_Reflect_AUX::string_to_bool(const std::string &str)
 bool Protobuf_Reflect_AUX::qstring_to_bool(const QString &str)
 {
 
-	if (0 == str.compare("TRUE",Qt::CaseInsensitive))
-	{
-		return true;
-	}
-	else if (1 == str.toInt())
-	{
-		return true;
-	}
-	return false;
+    if (0 == str.compare("TRUE", Qt::CaseInsensitive))
+    {
+        return true;
+    }
+    else if (1 == str.toInt())
+    {
+        return true;
+    }
+    return false;
 }
 
 

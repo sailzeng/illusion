@@ -10,7 +10,7 @@ public:
     Illusion_Message();
     ~Illusion_Message();
 
-	
+
     /*!
     * @brief      初始化 Illusion Message
     * @return     int 返回值 == 0 标识成功
@@ -19,8 +19,8 @@ public:
     * @param      tips_ary  返回的提示信息
     */
     int initialize(const QString &proto_file,
-		           const google::protobuf::Descriptor *table_msg_desc,
-			       QStringList &tips_ary);
+                   const google::protobuf::Descriptor *table_msg_desc,
+                   QStringList &tips_ary);
 
 
     /*!
@@ -31,21 +31,21 @@ public:
     */
     int new_table_mesage(google::protobuf::DynamicMessageFactory *msg_factory,
                          google::protobuf::Message *&table_msg,
-						 QStringList &tips_ary) const;
+                         QStringList &tips_ary) const;
 
     //!
     int add_line(google::protobuf::Message *table_msg,
                  std::vector<QString> &line_str_ary,
-				 int &error_field_no,
-				 const google::protobuf::FieldDescriptor *&error_field_desc) const;
+                 int &error_field_no,
+                 const google::protobuf::FieldDescriptor *&error_field_desc) const;
 
 
 
 protected:
 
     //!因为一个message可能有子message，必须递归处理
-	int recursive_proto(const google::protobuf::Descriptor *msg_desc,
-						QStringList &tips_ary);
+    int recursive_proto(const google::protobuf::Descriptor *msg_desc,
+                        QStringList &tips_ary);
     //!
     int recursive_msgfield(google::protobuf::Message *msg,
                            std::vector<google::protobuf::Message *> *tb_message_ary) const;
@@ -63,25 +63,25 @@ public:
     //!对应的repeat line message 结构的名称，
     QString table_message_name_;
 
-	//!注释的名称
-	QString cfg_comment_name_;
+    //!注释的名称
+    QString cfg_comment_name_;
 
-	//!对应的PROTO 文件的名称
-	QString proto_file_name_;
+    //!对应的PROTO 文件的名称
+    QString proto_file_name_;
 
     //!表格名称
     QString excel_file_name_;
     //!表格名称
     QString excel_sheet_name_;
 
-	//存放protobuf配置数据的的文件名称
-	QString outer_file_name_;
+    //存放protobuf配置数据的的文件名称
+    QString outer_file_name_;
 
-	//!是否存在EXCEL 文件
-	bool exist_excel_file_ = false;
-	//!EXCEL文件配置是更新的
-	bool excelcfg_is_newer_ = false;
-	
+    //!是否存在EXCEL 文件
+    bool exist_excel_file_ = false;
+    //!EXCEL文件配置是更新的
+    bool excelcfg_is_newer_ = false;
+
 
     //!字段名称的行
     int fieldsname_line_ = 1;
@@ -89,7 +89,7 @@ public:
     int fullname_line_ = 2;
     //!表格数据从第几行读取
     int read_data_line_ = 3;
-    
+
 
     //!对应表格的展开的字段数量，包括repeated,sub message的字段,都递归展开，记算
     int column_field_count_ = 0;

@@ -28,19 +28,19 @@ public:
 
 public:
 
-	//!
+    //!
     virtual void AddError(const std::string &filename,
                           int line,
                           int column,
                           const std::string &message);
-	//!
+    //!
     void clear_error();
 
-	//!
-	void to_qstringlist(QStringList &tips_ary);
+    //!
+    void to_qstringlist(QStringList &tips_ary);
 
-	//!打印各种信息
-	void print_tostdout();
+    //!打印各种信息
+    void print_tostdout();
 public:
     //
     PROTO_ERROR_ARRAY error_array_;
@@ -80,12 +80,12 @@ public:
     * @param[in]  proto_dir 根据proto_dir目录下的meta文件反射，
     * @param[in]  excel_dir 读取excel_dir目录下所有的EXCEL文件
     * @param[in]  outer_dir 转换成位置文件输出到outer_dir目录，如果为NULL，则表示用当前目录输出
-	* @param[in]  import_list import proto 目录的列表，可以有多个
+    * @param[in]  import_list import proto 目录的列表，可以有多个
     */
     int init_read_all(const QString &proto_dir,
                       const QString &excel_dir,
                       const QString &outer_dir,
-					  const QStringList &import_list,
+                      const QStringList &import_list,
                       QStringList &tips_ary);
 
     //!所有的目录都在一个目录下的快捷处理方式
@@ -95,46 +95,46 @@ public:
     //!12312
     void finalize();
 
-	//!读取所有的Message
+    //!读取所有的Message
     int read_all_message(QStringList &tips_info);
 
-	//!读取一个Message
+    //!读取一个Message
     int read_one_message(const QString &messge_full_name,
                          QStringList &tips_ary);
 
-	//!读取有更新的EXCEL文件的Message
-	int read_newer_message(QStringList &tips_ary);
+    //!读取有更新的EXCEL文件的Message
+    int read_newer_message(QStringList &tips_ary);
 
-	//!保存EXCEL的表头
-	int save_excel_tablehead(const QString &messge_full_name,
-							 QStringList &tips_ary);
+    //!保存EXCEL的表头
+    int save_excel_tablehead(const QString &messge_full_name,
+                             QStringList &tips_ary);
 
     //清理所有的读取数据
     void clear();
 
-	//!
-	QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map();
+    //!
+    QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map();
 
-	//!取得Outer文件的目录路径
-	QString outer_path();
+    //!取得Outer文件的目录路径
+    QString outer_path();
 
-	//!取得Excel文件的目录路径
-	QString excel_path();
+    //!取得Excel文件的目录路径
+    QString excel_path();
 
-	//!取得Proto文件的目录路径
-	QString proto_path();
+    //!取得Proto文件的目录路径
+    QString proto_path();
 
 protected:
 
 
-	
-	/*!
-	* @brief      Proto 的import的目录，可以是多个
-	* @param      import_dir  import的目录列表
-	* @param      tips_ary
-	*/
-	void init_importdir(const QStringList &import_list,
-						QStringList &tips_ary);
+
+    /*!
+    * @brief      Proto 的import的目录，可以是多个
+    * @param      import_dir  import的目录列表
+    * @param      tips_ary
+    */
+    void init_importdir(const QStringList &import_list,
+                        QStringList &tips_ary);
 
     /*!
     * @brief
@@ -157,7 +157,7 @@ protected:
 
 
     /*!
-    * @brief      
+    * @brief
     * @return     int
     * @param      excel_dir EXCEL 目录
     * @param      tips_ary  提示信息
@@ -174,13 +174,13 @@ protected:
     int open_excel_file(const QString &excel_file_name,
                         bool not_exist_new,
                         QStringList &tips_ary);
-    
-	//!关闭EXCEL 文件
-	void close_excel_file();
 
-	//!读枚举值
-	int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
-						QStringList &tips_info);
+    //!关闭EXCEL 文件
+    void close_excel_file();
+
+    //!读枚举值
+    int read_table_enum(MAP_QSTRING_TO_QSTRING &enum_map,
+                        QStringList &tips_info);
 
     //!根据illusion的message的信息，读取EXCEL SHEET 的数据
     int read_excel_table(Illusion_Message *ils_msg,

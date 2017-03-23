@@ -4,12 +4,12 @@
 
 OverrideWaitCursor::OverrideWaitCursor()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 }
 
 OverrideWaitCursor::~OverrideWaitCursor()
 {
-	QApplication::restoreOverrideCursor();
+    QApplication::restoreOverrideCursor();
 }
 
 

@@ -14,7 +14,7 @@ class SelectOneDirDialog : public QDialog
 public:
 
     //
-	SelectOneDirDialog(QWidget *parent);
+    SelectOneDirDialog(QWidget *parent);
     ~SelectOneDirDialog();
 
 
@@ -43,7 +43,7 @@ private:
 
     //!文件目录输入框
     QLineEdit *le_allinone_dir_ = NULL;
-    
+
     //!选择目录的目录
     QPushButton *bt_allinone_dir_ = NULL;
 
