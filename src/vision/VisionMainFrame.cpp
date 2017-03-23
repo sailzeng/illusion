@@ -194,7 +194,7 @@ void VisionMainFrame::eachdir_process()
             return;
         }
         OverrideWaitCursor wait;
-        illlusion_widget_->loead_illusion();
+        illlusion_widget_->load_illusion();
     }
 }
 
@@ -221,7 +221,7 @@ void VisionMainFrame::allinone_process()
         return;
     }
     OverrideWaitCursor wait;
-    illlusion_widget_->loead_illusion();
+    illlusion_widget_->load_illusion();
 }
 
 

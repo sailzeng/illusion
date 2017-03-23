@@ -115,6 +115,8 @@ public:
     //!
     QSTRING_2_ILLUSIONARY_MAP *get_proto_illusion_map();
 
+	ILLUSION_MESSAGE_ARRAY *get_illusion_sheetmsg_ary();
+
     //!取得Outer文件的目录路径
     QString outer_path();
 
@@ -232,16 +234,16 @@ protected:
     ZCE_Error_Collector error_collector_;
 
     //!每个分析的Message分析得到Illusion_Message，在这儿保存他们,
-    std::vector <Illusion_Message *> illusion_msg_ary_;
+	ILLUSION_MESSAGE_ARRAY illusion_msg_ary_;
 
     //!每个message的 full name 对应的Illusion_Message ，便于通过名字找Illusion_Message
     std::map <QString, Illusion_Message *> msgname_2_illusion_map_;
 
     //!proto 文件名称对应 Illusion_Message 列表，一个.proto可以有多个Illusion_Message
-    std::map <QString, ILLUSION_MESSAGE_ARRAY> proto_2_illusion_map_;
+	QSTRING_2_ILLUSIONARY_MAP proto_2_illusion_map_;
 
     //!EXCEL 文件名称对应proto配置的信息
-    std::map <QString, ILLUSION_MESSAGE_ARRAY> excel_2_illusion_map_;
+	QSTRING_2_ILLUSIONARY_MAP excel_2_illusion_map_;
 
     //!EXCEL文件列表
     QFileInfoList excel_fileary_;

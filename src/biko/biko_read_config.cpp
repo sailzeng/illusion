@@ -929,6 +929,14 @@ QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_proto_illusion_map()
     return &proto_2_illusion_map_;
 }
 
+
+ILLUSION_MESSAGE_ARRAY *Biko_Read_Config::get_illusion_sheetmsg_ary()
+{
+	return &illusion_msg_ary_;
+}
+
+
+
 //!取得Outer文件的目录路径
 QString Biko_Read_Config::outer_path()
 {

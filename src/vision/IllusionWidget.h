@@ -11,8 +11,10 @@ public:
     IllusionWidget(QWidget *parent);
     ~IllusionWidget();
 
-    //!
-    void loead_illusion();
+    //!加载显示所有的ILLUSION 信息
+    void load_illusion();
+
+	
 
 protected:
     //
@@ -43,6 +45,17 @@ protected:
     //!显示EXCEL的Sheet
     void show_excel_sheet(const QString &file_name,
                           const QString &sheet_name);
+
+	//!加载按PROTO 文件分类的ILLUSION 
+	void load_proto_illusion();
+
+	//!加载每个EXCEL SHEET表格的ILLUSION 
+	void load_sheetmsg_illusion();
+
+	//!加载按EXCEL文件分类的ILLUSION 
+	void load_excel_illusion();
+	
+
     // SLOT
 protected:
 
@@ -65,11 +78,19 @@ public:
 
 protected:
 
+	//!PROTO 文件信息
+	QTreeWidget *sheet_msg_tree_ = NULL;
     //!PROTO 文件信息
-    QTreeWidget *proto_dir_tree_ = NULL;
+    QTreeWidget *proto_file_tree_ = NULL;
+	//!PROTO 文件信息
+	QTreeWidget *excel_file_tree_ = NULL;
+
 
     //!测试棋盘的操作
-    QTabWidget *show_illusion_tab_ = NULL;
+    QTabWidget *show_config_tab_ = NULL;
+
+	//!显示文件各种表格
+	QTabWidget *show_tree_tab_ = NULL;
 
     //!
     QTextEdit *show_readme_ = NULL;
@@ -77,7 +98,8 @@ protected:
     //!
     QSTRING_2_ILLUSIONARY_MAP *proto_2_ils_map_ = NULL;
 
-
+	//!
+	ILLUSION_MESSAGE_ARRAY *illusion_sheetmsg_ary_ = NULL;
 };
 
 #endif // PROTO_DIR_TAB_H
