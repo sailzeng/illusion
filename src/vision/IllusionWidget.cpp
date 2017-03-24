@@ -30,12 +30,9 @@ void IllusionWidget::setup_ui()
 	sheet_msg_tree_->setGeometry(QRect(0, 0, 400, 600));
 	proto_file_tree_ = new QTreeWidget();
 	proto_file_tree_->setGeometry(QRect(0, 0, 400, 600));
-	excel_file_tree_ = new QTreeWidget();
-	excel_file_tree_->setGeometry(QRect(0, 0, 400, 600));
 
 	show_tree_tab_->addTab(sheet_msg_tree_, QString::fromLocal8Bit("SHEET导航"));
 	show_tree_tab_->addTab(proto_file_tree_, QString::fromLocal8Bit("PROTO导航"));
-	show_tree_tab_->addTab(excel_file_tree_, QString::fromLocal8Bit("MESSAGE导航"));
 
     show_config_tab_ = new QTabWidget();
     show_config_tab_->setTabPosition(QTabWidget::North);
@@ -68,16 +65,6 @@ void IllusionWidget::setup_ui()
 			this,
 			&IllusionWidget::item_double_clicked);
 	proto_file_tree_->setExpandsOnDoubleClick(false);
-
-	excel_file_tree_->setColumnCount(2);
-	excel_file_tree_->setHeaderLabels(headers);
-	excel_file_tree_->setColumnWidth(0, 300);
-	excel_file_tree_->setColumnWidth(1, 200);
-	connect(excel_file_tree_,
-			&QTreeWidget::itemDoubleClicked,
-			this,
-			&IllusionWidget::item_double_clicked);
-	excel_file_tree_->setExpandsOnDoubleClick(false);
 
 
     show_config_tab_->setTabsClosable(true);
@@ -117,12 +104,12 @@ void IllusionWidget::select_none()
 
 void IllusionWidget::selected_item(QStringList &selected_message)
 {
-    int root_count = proto_file_tree_->topLevelItemCount();
+    int root_count = sheet_msg_tree_->topLevelItemCount();
     for (int i = 0; i < root_count; ++i)
     {
-        QTreeWidgetItem *root = proto_file_tree_->topLevelItem(i);
+        QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
         QTreeWidgetItem *father = root->child(0);
-        if (father->checkState(0) == Qt::Checked)
+        if (root->checkState(0) == Qt::Checked)
         {
             selected_message.append(father->text(1));
         }
@@ -134,7 +121,6 @@ void IllusionWidget::load_illusion()
 {
 	load_sheetmsg_illusion();
 	load_proto_illusion();
-	load_excel_illusion();
 }
 
 //!
@@ -156,28 +142,26 @@ void IllusionWidget::load_proto_illusion()
         root_list.clear();
         root_list.append(QString::fromLocal8Bit("Proto 文件："));
         root_list.append(iter->first);
-        QTreeWidgetItem *root = new QTreeWidgetItem(root_list, ITEM_PROTO_FILE);
+        QTreeWidgetItem *root = new QTreeWidgetItem(root_list, ITEM_PROTO_ROOT);
         proto_file_tree_->addTopLevelItem(root);
         root->setExpanded(true);
         root->setIcon(0, QIcon(".\\res\\icon\\illusion_proto.png"));
         for (size_t i = 0; i < iter->second.size(); ++i)
         {
             QTreeWidgetItem *father = NULL;
+
+            child_list.clear();
+            child_list.append(QString::fromLocal8Bit("Proto 文件："));
+            child_list.append(iter->second[i]->proto_file_name_);
+            father = new QTreeWidgetItem(child_list, ITEM_PROTO_FILE);
+            root->addChild(father);
+            father->setIcon(0, QIcon(".\\res\\icon\\illusion_proto.png"));
+
             child_list.clear();
             child_list.append(QString::fromLocal8Bit("Table Message 名称:"));
             child_list.append(iter->second[i]->table_message_name_);
             father = new QTreeWidgetItem(child_list, ITEM_PROTO_TABLE_MESSAGE);
             root->addChild(father);
-            father->setExpanded(true);
-            father->setFlags(father->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-            if (iter->second[i]->excelcfg_is_newer_)
-            {
-                father->setCheckState(0, Qt::Checked);
-            }
-            else
-            {
-                father->setCheckState(0, Qt::Unchecked);
-            }
             father->setIcon(0, QIcon(".\\res\\icon\\illusion_table.png"));
 
             QTreeWidgetItem *child = NULL;
@@ -190,7 +174,7 @@ void IllusionWidget::load_proto_illusion()
             father->addChild(child);
 
             child_list.clear();
-            child_list.append(QString::fromLocal8Bit("注释名称:"));
+            child_list.append(QString::fromLocal8Bit("注释名称(可选):"));
             child_list.append(iter->second[i]->cfg_comment_name_);
             child = new QTreeWidgetItem(child_list, ITEM_PROTO_COMMENT_NAME);
             child->setIcon(0, QIcon(".\\res\\icon\\illusion_comment.png"));
@@ -238,6 +222,7 @@ void IllusionWidget::load_proto_illusion()
             child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
             child->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
             child->setData(0, Qt::UserRole, iter->second[i]->excel_file_name_);
+            child->setData(1, Qt::UserRole, iter->second[i]->excel_sheet_name_);
             father->addChild(child);
             QTreeWidgetItem *excel_sheet = child;
 
@@ -282,149 +267,160 @@ void IllusionWidget::load_proto_illusion()
 void IllusionWidget::load_sheetmsg_illusion()
 {
 	
-	//illusion_sheetmsg_ary_ = Biko_Read_Config::instance()->get_illusion_sheetmsg_ary();
-	//if (illusion_sheetmsg_ary_->size() <= 0)
-	//{
-	//	return;
-	//}
-	//sheet_msg_tree_->clear();
-	//QStringList root_list, child_list;
-	////!https://www.iconfinder.com/icons/1106243/business_excel_table_icon#size=128
-	//for (auto iter = illusion_sheetmsg_ary_->begin();
-	//	 iter != illusion_sheetmsg_ary_->end();
-	//	 ++iter)
-	//{
-	//	root_list.clear();
-	//	root_list.append(QString::fromLocal8Bit("SHEET Message名称："));
-	//	root_list.append(iter->first);
-	//	QTreeWidgetItem *root = new QTreeWidgetItem(root_list, ITEM_PROTO_FILE);
-	//	proto_file_tree_->addTopLevelItem(root);
-	//	root->setExpanded(true);
-	//	root->setIcon(0, QIcon(".\\res\\icon\\illusion_proto.png"));
-	//	for (size_t i = 0; i < iter->second.size(); ++i)
-	//	{
-	//		QTreeWidgetItem *father = NULL;
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("Table Message 名称:"));
-	//		child_list.append(iter->second[i]->table_message_name_);
-	//		father = new QTreeWidgetItem(child_list, ITEM_PROTO_TABLE_MESSAGE);
-	//		root->addChild(father);
-	//		father->setExpanded(true);
-	//		father->setFlags(father->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-	//		if (iter->second[i]->excelcfg_is_newer_)
-	//		{
-	//			father->setCheckState(0, Qt::Checked);
-	//		}
-	//		else
-	//		{
-	//			father->setCheckState(0, Qt::Unchecked);
-	//		}
-	//		father->setIcon(0, QIcon(".\\res\\icon\\illusion_table.png"));
+	illusion_sheetmsg_ary_ = Biko_Read_Config::instance()->get_illusion_sheetmsg_ary();
+	if (illusion_sheetmsg_ary_->size() <= 0)
+	{
+		return;
+	}
+	sheet_msg_tree_->clear();
+	QStringList root_list, child_list;
+	//!https://www.iconfinder.com/icons/1106243/business_excel_table_icon#size=128
+	for (auto iter = illusion_sheetmsg_ary_->begin();
+		 iter != illusion_sheetmsg_ary_->end();
+		 ++iter)
+	{
+		root_list.clear();
+		root_list.append((*iter)->excel_sheet_name_);
+		root_list.append((*iter)->excel_file_name_);
+		QTreeWidgetItem *root = new QTreeWidgetItem(root_list, ITEM_EXCEL_SHEET);
+        sheet_msg_tree_->addTopLevelItem(root);
+		root->setExpanded(false);
+		root->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
+        root->setData(0, Qt::UserRole, (*iter)->excel_file_name_);
+        root->setData(1, Qt::UserRole, (*iter)->excel_sheet_name_);
+        root->setFlags(root->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+        if ((*iter)->excelcfg_is_newer_)
+        {
+            root->setCheckState(0, Qt::Checked);
+        }
+        else
+        {
+            root->setCheckState(0, Qt::Unchecked);
+        }
+        QFont  my_font = root->font(0);
+        my_font.setBold(true);
+        root->setFont(0, my_font);
+		
+        QTreeWidgetItem *child = NULL;
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("Table Message 名称:"));
+        child_list.append((*iter)->table_message_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_PROTO_TABLE_MESSAGE);
+        root->addChild(child);
+        child->setExpanded(false);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_table.png"));
 
-	//		QTreeWidgetItem *child = NULL;
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("Line Message 名称:"));
-	//		child_list.append(iter->second[i]->line_message_name_);
-	//		child = new QTreeWidgetItem(child_list, ITEM_PROTO_LINE_MESSAGE);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_line.png"));
-	//		child->setData(0, Qt::UserRole, QVariant::fromValue((void *)(iter->second[i])));
-	//		father->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("Proto 文件："));
+        child_list.append((*iter)->proto_file_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_PROTO_FILE);
+        root->addChild(child);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_proto.png"));
+        
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("Line Message 名称:"));
+        child_list.append((*iter)->line_message_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_PROTO_LINE_MESSAGE);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_line.png"));
+        child->setData(0, Qt::UserRole, QVariant::fromValue((void *)((*iter))));
+        root->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("注释名称:"));
-	//		child_list.append(iter->second[i]->cfg_comment_name_);
-	//		child = new QTreeWidgetItem(child_list, ITEM_PROTO_COMMENT_NAME);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_comment.png"));
-	//		father->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("注释名称:"));
+        child_list.append((*iter)->cfg_comment_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_PROTO_COMMENT_NAME);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_comment.png"));
+        root->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("EXCEL文件名称:"));
-	//		child_list.append(iter->second[i]->excel_file_name_);
-	//		child = new QTreeWidgetItem(child_list, ITEM_EXCEL_FILE);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_excel.png"));
-	//		father->addChild(child);
-	//		QTreeWidgetItem *excel_file = child;
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("EXCEL文件名称:"));
+        child_list.append((*iter)->excel_file_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_EXCEL_FILE);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_excel.png"));
+        root->addChild(child);
+        QTreeWidgetItem *excel_file = child;
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否存在:"));
-	//		if (iter->second[i]->exist_excel_file_)
-	//		{
-	//			child_list.append(QString::fromLocal8Bit("是"));
-	//		}
-	//		else
-	//		{
-	//			child_list.append(QString::fromLocal8Bit("否"));
-	//		}
-	//		child = new QTreeWidgetItem(child_list);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_exist.png"));
-	//		excel_file->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否存在:"));
+        if ((*iter)->exist_excel_file_)
+        {
+            child_list.append(QString::fromLocal8Bit("是"));
+        }
+        else
+        {
+            child_list.append(QString::fromLocal8Bit("否"));
+        }
+        child = new QTreeWidgetItem(child_list);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_exist.png"));
+        excel_file->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否更新:"));
-	//		if (iter->second[i]->excelcfg_is_newer_)
-	//		{
-	//			child_list.append(QString::fromLocal8Bit("是"));
-	//		}
-	//		else
-	//		{
-	//			child_list.append(QString::fromLocal8Bit("否"));
-	//		}
-	//		child = new QTreeWidgetItem(child_list);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_newer.png"));
-	//		excel_file->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("对应的EXCEL文件是否更新:"));
+        if ((*iter)->excelcfg_is_newer_)
+        {
+            child_list.append(QString::fromLocal8Bit("是"));
+        }
+        else
+        {
+            child_list.append(QString::fromLocal8Bit("否"));
+        }
+        child = new QTreeWidgetItem(child_list);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_newer.png"));
+        excel_file->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("EXCEL SHEET:"));
-	//		child_list.append(iter->second[i]->excel_sheet_name_);
-	//		child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
-	//		child->setData(0, Qt::UserRole, iter->second[i]->excel_file_name_);
-	//		father->addChild(child);
-	//		QTreeWidgetItem *excel_sheet = child;
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("注释名称(可选):"));
+        child_list.append((*iter)->cfg_comment_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_PROTO_COMMENT_NAME);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_comment.png"));
+        root->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("字段数量（包括展开RPEATED）:"));
-	//		child_list.append(QString::number(iter->second[i]->column_field_count_));
-	//		child = new QTreeWidgetItem(child_list);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_number.png"));
-	//		excel_sheet->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("EXCEL SHEET:"));
+        child_list.append((*iter)->excel_sheet_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
+        child->setData(0, Qt::UserRole, (*iter)->excel_file_name_);
+        root->addChild(child);
+        QTreeWidgetItem *excel_sheet = child;
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("字段标题行:"));
-	//		child_list.append(QString::number(iter->second[i]->fullname_line_));
-	//		child = new QTreeWidgetItem(child_list);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_title_line.png"));
-	//		excel_sheet->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("字段数量（包括展开RPEATED）:"));
+        child_list.append(QString::number((*iter)->column_field_count_));
+        child = new QTreeWidgetItem(child_list);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_number.png"));
+        excel_sheet->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("FULLNAME行(可选):"));
-	//		child_list.append(QString::number(iter->second[i]->fieldsname_line_));
-	//		child = new QTreeWidgetItem(child_list);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_fullname_line.png"));
-	//		excel_sheet->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("字段标题行:"));
+        child_list.append(QString::number((*iter)->fullname_line_));
+        child = new QTreeWidgetItem(child_list);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_title_line.png"));
+        excel_sheet->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("读取数据起始行:"));
-	//		child_list.append(QString::number(iter->second[i]->read_data_line_));
-	//		child = new QTreeWidgetItem(child_list);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_readdata_line.png"));
-	//		excel_sheet->addChild(child);
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("FULLNAME行(可选):"));
+        child_list.append(QString::number((*iter)->fieldsname_line_));
+        child = new QTreeWidgetItem(child_list);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_fullname_line.png"));
+        excel_sheet->addChild(child);
 
-	//		child_list.clear();
-	//		child_list.append(QString::fromLocal8Bit("输出文件名称:"));
-	//		child_list.append(iter->second[i]->outer_file_name_);
-	//		child = new QTreeWidgetItem(child_list, ITEM_OUTER_FILE);
-	//		child->setIcon(0, QIcon(".\\res\\icon\\illusion_outer.png"));
-	//		father->addChild(child);
-	//	}
-	//}
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("读取数据起始行:"));
+        child_list.append(QString::number((*iter)->read_data_line_));
+        child = new QTreeWidgetItem(child_list);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_readdata_line.png"));
+        excel_sheet->addChild(child);
+
+        child_list.clear();
+        child_list.append(QString::fromLocal8Bit("输出文件名称:"));
+        child_list.append((*iter)->outer_file_name_);
+        child = new QTreeWidgetItem(child_list, ITEM_OUTER_FILE);
+        child->setIcon(0, QIcon(".\\res\\icon\\illusion_outer.png"));
+        root->addChild(child);
+	}
 }
 
-
-void IllusionWidget::load_excel_illusion()
-{
-
-}
 
 //!
 void IllusionWidget::item_double_clicked(QTreeWidgetItem *item, int colum)
@@ -453,7 +449,7 @@ void IllusionWidget::item_double_clicked(QTreeWidgetItem *item, int colum)
         case ITEM_EXCEL_SHEET:
         {
             QString excel_fname = item->data(0, Qt::UserRole).toString();
-            QString sheet_name = item->text(1);
+            QString sheet_name = item->data(1, Qt::UserRole).toString();
             show_excel_sheet(excel_fname, sheet_name);
             break;
         }

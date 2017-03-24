@@ -56,8 +56,11 @@ protected:
     //!PROTO TAB页面所有的Message都不选
     void select_none_message();
 
-    //!PROTO TAB页面
-    void proto_read_all();
+	//!PROTO TAB页面
+	void proto_read_all();
+    void clear_info();
+    //初始化
+    void save_info_to_txt();
 public:
 
     //设置实例指针
@@ -81,7 +84,7 @@ protected:
     static VisionMainFrame *instace_;
 
     //最大消息数量
-    static const size_t MAX_TIPS_INFO_NUMBER = 128;
+    static const size_t MAX_TIPS_INFO_NUMBER = 512;
 
 private:
 
@@ -94,7 +97,8 @@ private:
     QAction *act_select_all_ = NULL;
     QAction *act_select_none_ = NULL;
     QAction *act_read_all_ = NULL;
-
+    QAction *act_clear_info_ = NULL;
+    QAction *act_save_info_ = NULL;
     QAction *act_exit_ = NULL;
 
     //!分割线

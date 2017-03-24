@@ -80,6 +80,7 @@ void VisionMainFrame::setup_ui()
     m_alarm = new QSound(".\\res\\alarm\\alarm.wav", this);
 
     QMetaObject::connectSlotsByName(this);
+    init_data();
 }
 
 
@@ -123,13 +124,27 @@ void VisionMainFrame::setup_action()
             &VisionMainFrame::select_none_message);
 
     act_read_all_ = new QAction(QIcon(".\\res\\icon\\read_all.png"),
-                                QString::fromLocal8Bit("对所有的选择的Message进行读取"),
+                                QString::fromLocal8Bit("对所有的选择的Message进行导表,读取相应的EXCEL转换为BIN文件"),
                                 this);
     connect(act_read_all_,
             &QAction::triggered,
             this,
             &VisionMainFrame::proto_read_all);
 
+    act_clear_info_ = new QAction(QIcon(".\\res\\icon\\clear_info.png"),
+                                  QString::fromLocal8Bit("清理INFO 区的数据"),
+                                  this);
+    connect(act_clear_info_,
+            &QAction::triggered,
+            this,
+            &VisionMainFrame::clear_info);
+    act_save_info_ = new QAction(QIcon(".\\res\\icon\\save_info.png"),
+                                 QString::fromLocal8Bit("保存INFO 区的数据"),
+                                 this);
+    connect(act_save_info_,
+            &QAction::triggered,
+            this,
+            &VisionMainFrame::save_info_to_txt);
 
     act_exit_ = new QAction(QIcon(".\\res\\icon\\exit.png"),
                             QString::fromLocal8Bit("退出"),
@@ -162,9 +177,16 @@ void VisionMainFrame::setup_action()
     toolbar_->addAction(act_select_none_);
     toolbar_->addAction(act_read_all_);
     toolbar_->addSeparator();
+    toolbar_->addAction(act_clear_info_);
+    toolbar_->addAction(act_save_info_);
+    toolbar_->addSeparator();
 
     toolbar_->addAction(act_exit_);
     this->addToolBar(Qt::TopToolBarArea, toolbar_);
+}
+void VisionMainFrame::clear_info()
+{
+    info_widget_->clear();
 }
 
 //
@@ -193,6 +215,12 @@ void VisionMainFrame::eachdir_process()
                                   QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
             return;
         }
+        else
+        {
+            QMessageBox::information(VisionMainFrame::instance(),
+                                     QString::fromLocal8Bit("成功"),
+                                     QString::fromLocal8Bit("初始化成功,你简直他奶奶的是个天才。"));
+        }
         OverrideWaitCursor wait;
         illlusion_widget_->load_illusion();
     }
@@ -220,6 +248,12 @@ void VisionMainFrame::allinone_process()
                               QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
         return;
     }
+    else
+    {
+        QMessageBox::information(VisionMainFrame::instance(),
+                                 QString::fromLocal8Bit("成功"),
+                                 QString::fromLocal8Bit("初始化成功,你简直他奶奶的是个天才。"));
+    }
     OverrideWaitCursor wait;
     illlusion_widget_->load_illusion();
 }
@@ -235,6 +269,10 @@ void VisionMainFrame::out_tips_ary(const QStringList &tips_ary)
 {
 for (const QString & tips : tips_ary)
     {
+        if (tips.length() <= 0)
+        {
+            continue;
+        }
         if (tips[0] == QChar('?'))
         {
             out_info(PZ_DEBUG, tips);
@@ -416,6 +454,34 @@ bool VisionMainFrame::write_config(const QString &section,
     return true;
 }
 
+void VisionMainFrame::init_data()
+{
+    QVariant var;
+    read_config("recently", "proto_path", var);
+    QString proto_path = var.toString();
+    VisionMainFrame::instance()->read_config("recently", "excel_path", var);
+    QString excel_path = var.toString();
+    VisionMainFrame::instance()->read_config("recently", "outer_path", var);
+    QString outer_path = var.toString();
+    VisionMainFrame::instance()->read_config("recently", "import_list", var);
+    QStringList import_list = var.toStringList();
+    QStringList tips_ary;
+    int ret = Biko_Read_Config::instance()->init_read_all(proto_path,
+        excel_path,
+        outer_path,
+        import_list,
+        tips_ary);
+    out_tips_ary(tips_ary);
+    if (0 != ret)
+    {
+        QMessageBox::critical(VisionMainFrame::instance(),
+            QString::fromLocal8Bit("错误"),
+            QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
+        return;
+    }
+    OverrideWaitCursor wait;
+    illlusion_widget_->load_illusion();
+}
 
 //!PROTO TAB页面选择所有的Message
 void VisionMainFrame::select_all_message()
@@ -458,4 +524,50 @@ void VisionMainFrame::proto_read_all()
                               QString::fromLocal8Bit("导出过程存在错误, 请检查输入参数，留意输出信息区的提示。"));
         return;
     }
+    QMessageBox::critical(VisionMainFrame::instance(),
+        QString::fromLocal8Bit("转表成功"),
+        QString::fromLocal8Bit("转表成功"));
+}
+
+
+void VisionMainFrame::save_info_to_txt()
+{
+    QFileDialog file_dialog;
+    file_dialog.setWindowTitle(QString::fromLocal8Bit("保存棋OUT INFO 列表(保存.txt文件)"));
+    file_dialog.setFilter(QDir::Files);
+    file_dialog.setViewMode(QFileDialog::Detail);
+    file_dialog.setAcceptMode(QFileDialog::AcceptSave);
+    file_dialog.setDefaultSuffix("bin");
+    file_dialog.selectFile("OUT_INFO.txt");
+    QStringList filters;
+    filters << "Protobuf config files (*.txt)";
+    filters << "All files (*.*)";
+    file_dialog.setNameFilters(filters);
+    if (file_dialog.exec() != QDialog::Accepted)
+    {
+        return;
+    }
+    QString file_name = file_dialog.selectedFiles()[0];
+    QFile outer_file(file_name);
+    bool open_ok = outer_file.open(QIODevice::ReadWrite | QIODevice::Truncate);
+    if (!open_ok)
+    {
+        VisionMainFrame::instance()->out_info(PZ_INFO,
+                                              QString::fromLocal8Bit("读取的配置文件[%1]错误,请检查.").
+                                              arg(outer_file.fileName()));
+        return;
+    }
+    for (int i = 0; i < cur_info_row_; ++i)
+    {
+        QString write_data = QString::fromLocal8Bit("%1 ,%2 ,%3 \n")
+                             .arg(info_widget_->item(i, 0)->text())
+                             .arg(info_widget_->item(i, 1)->text())
+                             .arg(info_widget_->item(i, 2)->text());
+        outer_file.write(write_data.toLocal8Bit());
+    }
+    outer_file.close();
+    VisionMainFrame::instance()->out_info(PZ_INFO,
+                                          QString::fromLocal8Bit("输出OUT INFO[%1]行结束，统计文件请在[%2]文件中寻找。")
+                                          .arg(info_widget_->rowCount())
+                                          .arg(outer_file.fileName()));
 }

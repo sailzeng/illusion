@@ -20,10 +20,11 @@ protected:
     //
     enum TREE_ITEM_TYPE
     {
-        ITEM_PROTO_FILE = 1001,
-        ITEM_PROTO_TABLE_MESSAGE = 1002,
-        ITEM_PROTO_LINE_MESSAGE = 1003,
-        ITEM_PROTO_COMMENT_NAME = 1004,
+        ITEM_PROTO_ROOT = 1001,
+        ITEM_PROTO_FILE = 1002,
+        ITEM_PROTO_TABLE_MESSAGE = 1003,
+        ITEM_PROTO_LINE_MESSAGE = 1004,
+        ITEM_PROTO_COMMENT_NAME = 1005,
         ITEM_EXCEL_FILE = 2001,
         ITEM_EXCEL_SHEET = 2002,
         ITEM_OUTER_FILE = 3001,
@@ -52,10 +53,6 @@ protected:
 	//!加载每个EXCEL SHEET表格的ILLUSION 
 	void load_sheetmsg_illusion();
 
-	//!加载按EXCEL文件分类的ILLUSION 
-	void load_excel_illusion();
-	
-
     // SLOT
 protected:
 
@@ -82,8 +79,6 @@ protected:
 	QTreeWidget *sheet_msg_tree_ = NULL;
     //!PROTO 文件信息
     QTreeWidget *proto_file_tree_ = NULL;
-	//!PROTO 文件信息
-	QTreeWidget *excel_file_tree_ = NULL;
 
 
     //!测试棋盘的操作
