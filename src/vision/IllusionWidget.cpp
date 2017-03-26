@@ -70,6 +70,12 @@ void IllusionWidget::setup_ui()
     show_config_tab_->setTabsClosable(true);
     //!
     show_readme_ = new QTextEdit(show_config_tab_);
+	QFile file("./readme.html");
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		show_readme_->setHtml(file.readAll());
+	}
+	
     show_config_tab_->addTab(show_readme_,
                                QString::fromLocal8Bit("READMEÎÄ¼þ"));
 

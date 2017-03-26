@@ -80,7 +80,6 @@ void VisionMainFrame::setup_ui()
     m_alarm = new QSound(".\\res\\alarm\\alarm.wav", this);
 
     QMetaObject::connectSlotsByName(this);
-    init_data();
 }
 
 
@@ -454,34 +453,6 @@ bool VisionMainFrame::write_config(const QString &section,
     return true;
 }
 
-void VisionMainFrame::init_data()
-{
-    QVariant var;
-    read_config("recently", "proto_path", var);
-    QString proto_path = var.toString();
-    VisionMainFrame::instance()->read_config("recently", "excel_path", var);
-    QString excel_path = var.toString();
-    VisionMainFrame::instance()->read_config("recently", "outer_path", var);
-    QString outer_path = var.toString();
-    VisionMainFrame::instance()->read_config("recently", "import_list", var);
-    QStringList import_list = var.toStringList();
-    QStringList tips_ary;
-    int ret = Biko_Read_Config::instance()->init_read_all(proto_path,
-        excel_path,
-        outer_path,
-        import_list,
-        tips_ary);
-    out_tips_ary(tips_ary);
-    if (0 != ret)
-    {
-        QMessageBox::critical(VisionMainFrame::instance(),
-            QString::fromLocal8Bit("错误"),
-            QString::fromLocal8Bit("初始化失败, 请检查输入参数，留意输出信息区的提示。"));
-        return;
-    }
-    OverrideWaitCursor wait;
-    illlusion_widget_->load_illusion();
-}
 
 //!PROTO TAB页面选择所有的Message
 void VisionMainFrame::select_all_message()
