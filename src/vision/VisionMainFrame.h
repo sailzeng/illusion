@@ -38,9 +38,6 @@ protected:
 
     //SLOT
 protected:
-
-
-
     //!每个目录都处理
     void eachdir_process();
 
@@ -58,9 +55,12 @@ protected:
 
 	//!PROTO TAB页面
 	void proto_read_all();
+    
+    //清理OUTER信息区
     void clear_info();
-    //初始化
+
     void save_info_to_txt();
+
 public:
 
     //设置实例指针

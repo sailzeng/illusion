@@ -88,23 +88,21 @@ void IllusionWidget::setup_ui()
 
 void IllusionWidget::select_all()
 {
-    int root_count = proto_file_tree_->topLevelItemCount();
+    int root_count = sheet_msg_tree_->topLevelItemCount();
     for (int i = 0; i < root_count; ++i)
     {
-        QTreeWidgetItem *root = proto_file_tree_->topLevelItem(i);
-        QTreeWidgetItem *father = root->child(0);
-        father->setCheckState(0, Qt::Checked);
+        QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
+        root->setCheckState(0, Qt::Checked);
     }
 }
 
 void IllusionWidget::select_none()
 {
-    int root_count = proto_file_tree_->topLevelItemCount();
+    int root_count = sheet_msg_tree_->topLevelItemCount();
     for (int i = 0; i < root_count; ++i)
     {
-        QTreeWidgetItem *root = proto_file_tree_->topLevelItem(i);
-        QTreeWidgetItem *father = root->child(0);
-        father->setCheckState(0, Qt::Unchecked);
+        QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
+        root->setCheckState(0, Qt::Unchecked);
     }
 }
 
@@ -332,13 +330,6 @@ void IllusionWidget::load_sheetmsg_illusion()
         root->addChild(child);
 
         child_list.clear();
-        child_list.append(QString::fromLocal8Bit("注释名称:"));
-        child_list.append((*iter)->cfg_comment_name_);
-        child = new QTreeWidgetItem(child_list, ITEM_PROTO_COMMENT_NAME);
-        child->setIcon(0, QIcon(".\\res\\icon\\illusion_comment.png"));
-        root->addChild(child);
-
-        child_list.clear();
         child_list.append(QString::fromLocal8Bit("EXCEL文件名称:"));
         child_list.append((*iter)->excel_file_name_);
         child = new QTreeWidgetItem(child_list, ITEM_EXCEL_FILE);
@@ -387,6 +378,7 @@ void IllusionWidget::load_sheetmsg_illusion()
         child = new QTreeWidgetItem(child_list, ITEM_EXCEL_SHEET);
         child->setIcon(0, QIcon(".\\res\\icon\\illusion_sheet.png"));
         child->setData(0, Qt::UserRole, (*iter)->excel_file_name_);
+        child->setData(1, Qt::UserRole, (*iter)->excel_sheet_name_);
         root->addChild(child);
         QTreeWidgetItem *excel_sheet = child;
 
@@ -473,8 +465,8 @@ void IllusionWidget::item_double_clicked(QTreeWidgetItem *item, int colum)
 
 void IllusionWidget::show_proto_file(const QString &file_name)
 {
-    QString proto_path = Biko_Read_Config::instance()->proto_path();
-    QString proto_fname = proto_path + "\\" + file_name;
+    
+    QString proto_fname = file_name;
     QFile file(proto_fname);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {

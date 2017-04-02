@@ -87,9 +87,7 @@ void VisionMainFrame::setup_ui()
 void VisionMainFrame::setup_action()
 {
     //图标来自
-    //https://www.iconfinder.com/icons/474135/construction_home_spanner_tool_wrench_icon#size=32
-    //https://www.iconfinder.com/icons/852004/check_clipboard_select_tasks_icon#size=128
-    //https://www.iconfinder.com/icons/822958/check_clipboard_select_tasks_icon#size=128
+    //https://www.iconfinder.com/iconsets/designers-and-developers-icon-set
     act_allinone_ = new QAction(QIcon(".\\res\\icon\\allinone.png"),
                                 QString::fromLocal8Bit("选择ALLINONE目录，适合所有目录放在一个目录下的处理."),
                                 this);
@@ -114,6 +112,7 @@ void VisionMainFrame::setup_action()
             this,
             &VisionMainFrame::select_all_message);
 
+
     act_select_none_ = new QAction(QIcon(".\\res\\icon\\select_none.png"),
                                    QString::fromLocal8Bit("取消所有的选择Message"),
                                    this);
@@ -137,6 +136,7 @@ void VisionMainFrame::setup_action()
             &QAction::triggered,
             this,
             &VisionMainFrame::clear_info);
+
     act_save_info_ = new QAction(QIcon(".\\res\\icon\\save_info.png"),
                                  QString::fromLocal8Bit("保存INFO 区的数据"),
                                  this);
@@ -183,6 +183,8 @@ void VisionMainFrame::setup_action()
     toolbar_->addAction(act_exit_);
     this->addToolBar(Qt::TopToolBarArea, toolbar_);
 }
+
+//清理OUTER信息区
 void VisionMainFrame::clear_info()
 {
     info_widget_->clear();
@@ -202,10 +204,10 @@ void VisionMainFrame::eachdir_process()
         QStringList tips_ary;
         dialog.get_path_str(proto_path, excel_path, outer_path, import_list);
         ret = Biko_Read_Config::instance()->init_read_all(proto_path,
-                                                          excel_path,
-                                                          outer_path,
-                                                          import_list,
-                                                          tips_ary);
+                excel_path,
+                outer_path,
+                import_list,
+                tips_ary);
         out_tips_ary(tips_ary);
         if (0 != ret)
         {
@@ -238,7 +240,7 @@ void VisionMainFrame::allinone_process()
     QStringList tips_ary;
     dialog.get_path_str(allinone_path);
     ret = Biko_Read_Config::instance()->init_read_all2(allinone_path,
-                                                       tips_ary);
+            tips_ary);
     out_tips_ary(tips_ary);
     if (0 != ret)
     {
@@ -266,7 +268,7 @@ void VisionMainFrame::exit_appliaction()
 
 void VisionMainFrame::out_tips_ary(const QStringList &tips_ary)
 {
-for (const QString & tips : tips_ary)
+    for (const QString &tips : tips_ary)
     {
         if (tips.length() <= 0)
         {
@@ -495,9 +497,9 @@ void VisionMainFrame::proto_read_all()
                               QString::fromLocal8Bit("导出过程存在错误, 请检查输入参数，留意输出信息区的提示。"));
         return;
     }
-    QMessageBox::critical(VisionMainFrame::instance(),
-        QString::fromLocal8Bit("转表成功"),
-        QString::fromLocal8Bit("转表成功"));
+    QMessageBox::information(VisionMainFrame::instance(),
+                             QString::fromLocal8Bit("成功"),
+                             QString::fromLocal8Bit("您选择的表格已经转表成功，胆似铁打骨似精钢,胸襟百千丈眼光万里长."));
 }
 
 
@@ -528,6 +530,7 @@ void VisionMainFrame::save_info_to_txt()
                                               arg(outer_file.fileName()));
         return;
     }
+
     for (int i = 0; i < cur_info_row_; ++i)
     {
         QString write_data = QString::fromLocal8Bit("%1 ,%2 ,%3 \n")
@@ -542,3 +545,5 @@ void VisionMainFrame::save_info_to_txt()
                                           .arg(info_widget_->rowCount())
                                           .arg(outer_file.fileName()));
 }
+
+
