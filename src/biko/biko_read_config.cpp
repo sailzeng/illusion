@@ -282,7 +282,7 @@ int Biko_Read_Config::init_outdir(const QString &outer_dir,
     }
 
     //比较文件谁更新鲜
-for (Illusion_Message *&ils_msg : illusion_msg_ary_)
+    for (Illusion_Message *&ils_msg : illusion_msg_ary_)
     {
         QString excel_fname = excel_path_.absolutePath() + "/" + ils_msg->excel_file_name_;
         QString outer_fname = outer_path_.absolutePath() + "/" + ils_msg->outer_file_name_;
@@ -330,7 +330,7 @@ void Biko_Read_Config::clear()
     excel_2_illusion_map_.clear();
     proto_2_illusion_map_.clear();
     //
-for (Illusion_Message *&ils_msg: illusion_msg_ary_)
+    for (Illusion_Message *&ils_msg : illusion_msg_ary_)
     {
         delete ils_msg;
         ils_msg = NULL;
@@ -860,7 +860,7 @@ int Biko_Read_Config::save_to_protocfg(const Illusion_Message *ils_msg,
     pbc_file += ils_msg->outer_file_name_;
     QString txt_file = pbc_file + ".txt";
     QFile pbc_config(pbc_file);
-    pbc_config.open(QIODevice::ReadWrite| QIODevice::Truncate);
+    pbc_config.open(QIODevice::ReadWrite | QIODevice::Truncate);
     if (!pbc_config.isWritable())
     {
         tip_info = QString::fromLocal8Bit("!保存的文件 [%1] 无法写入.Table message[%1]").
@@ -932,7 +932,7 @@ QSTRING_2_ILLUSIONARY_MAP *Biko_Read_Config::get_proto_illusion_map()
 
 ILLUSION_MESSAGE_ARRAY *Biko_Read_Config::get_illusion_sheetmsg_ary()
 {
-	return &illusion_msg_ary_;
+    return &illusion_msg_ary_;
 }
 
 

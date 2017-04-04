@@ -1,7 +1,7 @@
+//需要引入import 目录的illusion.proto, 而illusion.proto会引入google/protobuf/descriptor.proto文件
 import "google/protobuf/descriptor.proto";
 
 package illusion;
-
 
 //MessageOptions的扩展，
 extend google.protobuf.MessageOptions 
@@ -25,25 +25,23 @@ extend google.protobuf.MessageOptions
     optional int32  fullname_line = 50007 [default = 2];
     //读取的行
     optional int32  read_line = 50008 [default = 3];
-    
-    
+  
 }
 
+//对应字段域的扩展选项
 extend google.protobuf.FieldOptions 
 {
     //这个message对应的list message名称
     optional bool  cfg_field = 51001 [default = true];
-    
     //域选项的名字，
     optional string fields_name = 51002;
-    
     //域选项，如果是一个repeat的字段，其长度
     optional int32 repeat_size = 51003;
 }
 
-
+//对应枚举的扩展选项，可以给枚举起中文名称，在EXCEL中使用
 extend google.protobuf.EnumValueOptions 
 {
-    //枚举值的选项
+    //枚举值的扩展选项，用于给这个值取一个别名，用于EXCEL中实用别名来方便选择
     optional string enum_name = 50004;
 }

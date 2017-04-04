@@ -129,6 +129,14 @@ void VisionMainFrame::setup_action()
             this,
             &VisionMainFrame::proto_read_all);
 
+	act_create_excel_ = new QAction(QIcon(".\\res\\icon\\create_excel.png"),
+								QString::fromLocal8Bit("根据.proto文件，生产相应的EXCEL文件，方便配置"),
+								this);
+	connect(act_create_excel_,
+			&QAction::triggered,
+			this,
+			&VisionMainFrame::create_excel);
+
     act_clear_info_ = new QAction(QIcon(".\\res\\icon\\clear_info.png"),
                                   QString::fromLocal8Bit("清理INFO 区的数据"),
                                   this);
@@ -174,6 +182,8 @@ void VisionMainFrame::setup_action()
 
     toolbar_->addAction(act_select_all_);
     toolbar_->addAction(act_select_none_);
+	toolbar_->addSeparator();
+	toolbar_->addAction(act_create_excel_);
     toolbar_->addAction(act_read_all_);
     toolbar_->addSeparator();
     toolbar_->addAction(act_clear_info_);
@@ -288,7 +298,7 @@ void VisionMainFrame::out_tips_ary(const QStringList &tips_ary)
         }
         else if (tips[0] == QChar('!'))
         {
-            out_info(PZ_INFO, tips);
+            out_info(PZ_ERROR, tips);
         }
         else
         {
@@ -472,13 +482,13 @@ void VisionMainFrame::select_none_message()
 void VisionMainFrame::proto_read_all()
 {
     QStringList selected_msgary;
-    illlusion_widget_->selected_item(selected_msgary);
+    illlusion_widget_->selected_list(selected_msgary);
     if (selected_msgary.size() <= 0)
     {
         QMessageBox::critical(VisionMainFrame::instance(),
                               QString::fromLocal8Bit("错误"),
                               QString::fromLocal8Bit("没有选择Message或者还咩有初始化导入Proto文件。请检查"));
-        out_info(PZ_ERROR, QString::fromLocal8Bit("没有选择Message或者还咩有初始化导入Proto文件。请检查。咩咩咩"));
+        out_info(PZ_ERROR, QString::fromLocal8Bit("!没有选择Message或者还咩有初始化导入Proto文件。请检查。咩咩咩"));
         return;
     }
 
@@ -494,12 +504,45 @@ void VisionMainFrame::proto_read_all()
     {
         QMessageBox::critical(VisionMainFrame::instance(),
                               QString::fromLocal8Bit("错误"),
-                              QString::fromLocal8Bit("导出过程存在错误, 请检查输入参数，留意输出信息区的提示。"));
+                              QString::fromLocal8Bit("导出过程存在错误, 请检查输入参数，留意输出信息区的提示。"
+							  "命运就算颠沛流离 命运就算曲折离奇 命运就算恐吓着你做人没趣味 别流泪 心酸 更不应舍弃"));
         return;
     }
     QMessageBox::information(VisionMainFrame::instance(),
                              QString::fromLocal8Bit("成功"),
                              QString::fromLocal8Bit("您选择的表格已经转表成功，胆似铁打骨似精钢,胸襟百千丈眼光万里长."));
+}
+
+void VisionMainFrame::create_excel()
+{
+	QStringList noexcel_ary;
+	illlusion_widget_->noexcel_list(noexcel_ary);
+	if (noexcel_ary.size() <= 0)
+	{
+		QMessageBox::critical(VisionMainFrame::instance(),
+							  QString::fromLocal8Bit("错误"),
+							  QString::fromLocal8Bit("所有的文件都有对应的EXCEL文件存在，所以无需生产EXCEL文件。请检查"));
+		out_info(PZ_ERROR, QString::fromLocal8Bit("!所有的文件都有对应的EXCEL文件存在，所以无需生产EXCEL文件。请检查。咩咩咩"));
+		return;
+	}
+	int ret = 0;
+	for (int i = 0; i < noexcel_ary.size(); ++i)
+	{
+		QStringList tips_ary;
+		ret |= Biko_Read_Config::instance()->save_excel_tablehead(noexcel_ary[i], tips_ary);
+		out_tips_ary(tips_ary);
+	}
+	if (0 != ret)
+	{
+		QMessageBox::critical(VisionMainFrame::instance(),
+							  QString::fromLocal8Bit("错误"),
+							  QString::fromLocal8Bit("保存EXCEL表头存在错误, 请检查输入参数，留意输出信息区的提示。"
+							  "命运就算颠沛流离 命运就算曲折离奇 命运就算恐吓着你做人没趣味 别流泪 心酸 更不应舍弃"));
+		return;
+	}
+	QMessageBox::information(VisionMainFrame::instance(),
+							 QString::fromLocal8Bit("成功"),
+							 QString::fromLocal8Bit("您选择的表格已经转表成功，我要带你到处去飞翔 走遍世界各地去观赏."));
 }
 
 

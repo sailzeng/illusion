@@ -1,7 +1,8 @@
 //option optimize_for = LITE_RUNTIME;
-
+//必须引入illusion.proto文件，这样我们才能实用这些选项扩展
 import "illusion.proto";
 
+//定义的枚举结构
 enum ENUM_COUNTRY
 {
 	AUSTRALIA =          61;         // Australia
@@ -29,6 +30,7 @@ enum ENUM_COUNTRY
 	UNITED_STATES =      1;           // United States
 }
 
+//子结构A，illusion.fields_name对应EXCEL Sheet表中的字段名称
 message SUB_STRUCT_A
 {
 	optional double sub_a_1 = 1 [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置A1"];
@@ -37,28 +39,30 @@ message SUB_STRUCT_A
 	optional bytes sub_a_4 = 4  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置A4"];
 }
 
+//子结构B，
 message SUB_STRUCT_B
 {
 	optional int32 sub_b_1 = 1  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B1"];
 	optional int64 sub_b_2 = 2  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B2"];
 	optional uint32 sub_b_3 = 3 [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B3"];
 	optional int64 sub_b_4 = 4  [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置B4"];
-    //注意这是一个false
+    //注意这是一个false，这个字段不作为配置实用
     optional int64 sub_b_5 = 5  [(illusion.cfg_field)=false];
 }
 
-
+//配置结构的一行对应的结构的描述，
 message GAME_CFG_STRUCT_2
 {
+    //枚举定义，其中illusion.enum_name定义对应的中文或者EXCEL表格中操作的别名，
 	enum NESTED_ENUM 
 	{
-		MON = 1;
-		TUE = 2;
-		WED = 3;
-		THU = 4;
-		FRI = 5;
-		SAT = 6;
-		SUN = 7;
+        MON = 1    [(illusion.enum_name)="星期一"];
+        TUE = 2    [(illusion.enum_name)="星期二"];  
+        WED = 3    [(illusion.enum_name)="星期三"];
+        THU = 4    [(illusion.enum_name)="星期四"];
+        FRI = 5    [(illusion.enum_name)="星期五"];
+        SAT = 6    [(illusion.enum_name)="星期六"];
+        SUN = 7    [(illusion.enum_name)="星期日"];
 	}
 	
 	message NESTED_STRUCT_C
@@ -90,6 +94,7 @@ message GAME_CFG_STRUCT_2
 	required ENUM_COUNTRY s2_j = 10           [(illusion.cfg_field)=true,  (illusion.fields_name) ="配置S2-10",  (illusion.repeat_size) =1];
 }
 
+//配置对应EXCEL Sheet的描述，他就是一个repeated GAME_CFG_STRUCT_2的数组，最后生产的配置结构也就是这个结构
 message LIST_OF_GAME_CFG_STRUCT_2
 {
     //message的选项信息
@@ -101,6 +106,6 @@ message LIST_OF_GAME_CFG_STRUCT_2
     option (illusion.fieldsname_line) = 1;
     option (illusion.fullname_line) = 2;
     option (illusion.read_line) = 3;
-    
+    //这个字段的名字必须是 list_data，注意，再注意
     repeated GAME_CFG_STRUCT_2 list_data = 1;
 }

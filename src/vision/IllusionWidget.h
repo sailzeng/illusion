@@ -71,7 +71,10 @@ public:
     void select_none();
 
     //!取得所有的取得的ITEM
-    void selected_item(QStringList &selected_message);
+    void selected_list(QStringList &selected_message);
+
+	//取得还没有EXCEL文件的列表
+	void noexcel_list(QStringList &selected_message);
 
 protected:
 

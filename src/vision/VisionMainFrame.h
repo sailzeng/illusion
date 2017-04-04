@@ -53,8 +53,11 @@ protected:
     //!PROTO TAB页面所有的Message都不选
     void select_none_message();
 
-	//!PROTO TAB页面
+	//!读取所有选择的PROTO文件
 	void proto_read_all();
+
+	//!根据.proto文件，对所有没有对应EXCEL文件的生成相应的EXCEL文件
+	void create_excel();
     
     //清理OUTER信息区
     void clear_info();
@@ -97,6 +100,7 @@ private:
     QAction *act_select_all_ = NULL;
     QAction *act_select_none_ = NULL;
     QAction *act_read_all_ = NULL;
+	QAction *act_create_excel_ = NULL;
     QAction *act_clear_info_ = NULL;
     QAction *act_save_info_ = NULL;
     QAction *act_exit_ = NULL;

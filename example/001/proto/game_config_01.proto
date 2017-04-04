@@ -1,6 +1,8 @@
 //option optimize_for = LITE_RUNTIME;
+//必须引入illusion.proto文件，这样我们才能实用这些选项扩展
 import "illusion.proto";
 
+//枚举定义，其中illusion.enum_name定义对应的中文或者EXCEL表格中操作的名称，
 enum ENUM_WEEK 
 {
     MON = 1    [(illusion.enum_name)="星期一"];
@@ -12,6 +14,10 @@ enum ENUM_WEEK
     SUN = 7    [(illusion.enum_name)="星期日"];
 }
 
+//对应的配置结构描述， 其中 
+//illusion.cfg_field 标识是否在EXCEL表中有对应的字段，
+//illusion.fields_name 标识是否在EXCEL表中对应的字段名称，
+//illusion.repeat_size 标识这个字段是一个repeated字段，其在EXCEL表中重复了几次
 message GAME_CFG_STRUCT_1
 {
 	optional int32 s1_a = 1      [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_1"];
@@ -28,6 +34,7 @@ message GAME_CFG_STRUCT_1
 	optional ENUM_WEEK s1_l = 12 [(illusion.cfg_field)=true,  (illusion.fields_name) ="CFG_12"];;
 }
 
+//配置对应EXCEL Sheet的描述
 message LIST_OF_GAME_CFG_STRUCT_1
 {
     //message的选项信息

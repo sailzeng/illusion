@@ -110,7 +110,7 @@ public:
 typedef std::vector<Illusion_Message *> ILLUSION_MESSAGE_ARRAY;
 
 //!
-typedef std::map <QString, ILLUSION_MESSAGE_ARRAY> QSTRING_2_ILLUSIONARY_MAP;
+typedef std::map <QString,ILLUSION_MESSAGE_ARRAY> QSTRING_2_ILLUSIONARY_MAP;
 
 //!
-typedef std::map <QString, Illusion_Message *> QSTRING_2_ILSMSG_MAP;
+typedef std::map <QString,Illusion_Message *> QSTRING_2_ILSMSG_MAP;

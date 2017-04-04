@@ -26,98 +26,111 @@ void IllusionWidget::setup_ui()
 	show_tree_tab_->setTabPosition(QTabWidget::South);
 	this->addWidget(show_tree_tab_);
 
-	sheet_msg_tree_ = new QTreeWidget();
-	sheet_msg_tree_->setGeometry(QRect(0, 0, 400, 600));
-	proto_file_tree_ = new QTreeWidget();
-	proto_file_tree_->setGeometry(QRect(0, 0, 400, 600));
+sheet_msg_tree_ = new QTreeWidget();
+sheet_msg_tree_->setGeometry(QRect(0, 0, 400, 600));
+proto_file_tree_ = new QTreeWidget();
+proto_file_tree_->setGeometry(QRect(0, 0, 400, 600));
 
-	show_tree_tab_->addTab(sheet_msg_tree_, QString::fromLocal8Bit("SHEET导航"));
-	show_tree_tab_->addTab(proto_file_tree_, QString::fromLocal8Bit("PROTO导航"));
+show_tree_tab_->addTab(sheet_msg_tree_, QString::fromLocal8Bit("SHEET导航"));
+show_tree_tab_->addTab(proto_file_tree_, QString::fromLocal8Bit("PROTO导航"));
 
-    show_config_tab_ = new QTabWidget();
-    show_config_tab_->setTabPosition(QTabWidget::North);
-    this->addWidget(show_config_tab_);
+show_config_tab_ = new QTabWidget();
+show_config_tab_->setTabPosition(QTabWidget::North);
+this->addWidget(show_config_tab_);
 
-    this->setStretchFactor(0, 4);
-    this->setStretchFactor(1, 10);
-
-    
-    QStringList headers;
-    headers << QString::fromLocal8Bit("项目字段")
-            << QString::fromLocal8Bit("数值");
-
-	sheet_msg_tree_->setColumnCount(2);
-	sheet_msg_tree_->setHeaderLabels(headers);
-	sheet_msg_tree_->setColumnWidth(0, 300);
-	sheet_msg_tree_->setColumnWidth(1, 200);
-    connect(sheet_msg_tree_,
-            &QTreeWidget::itemDoubleClicked,
-            this,
-            &IllusionWidget::item_double_clicked);
-	sheet_msg_tree_->setExpandsOnDoubleClick(false);
-
-	proto_file_tree_->setColumnCount(2);
-	proto_file_tree_->setHeaderLabels(headers);
-	proto_file_tree_->setColumnWidth(0, 300);
-	proto_file_tree_->setColumnWidth(1, 200);
-	connect(proto_file_tree_,
-			&QTreeWidget::itemDoubleClicked,
-			this,
-			&IllusionWidget::item_double_clicked);
-	proto_file_tree_->setExpandsOnDoubleClick(false);
+this->setStretchFactor(0, 4);
+this->setStretchFactor(1, 10);
 
 
-    show_config_tab_->setTabsClosable(true);
-    //!
-    show_readme_ = new QTextEdit(show_config_tab_);
-	QFile file("./readme.html");
-	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		show_readme_->setHtml(file.readAll());
-	}
-	
-    show_config_tab_->addTab(show_readme_,
-                               QString::fromLocal8Bit("README文件"));
+QStringList headers;
+headers << QString::fromLocal8Bit("项目字段")
+<< QString::fromLocal8Bit("数值");
 
-    connect(show_config_tab_,
-            &QTabWidget::tabCloseRequested,
-            this,
-            &IllusionWidget::close_tab);
+sheet_msg_tree_->setColumnCount(2);
+sheet_msg_tree_->setHeaderLabels(headers);
+sheet_msg_tree_->setColumnWidth(0, 300);
+sheet_msg_tree_->setColumnWidth(1, 200);
+connect(sheet_msg_tree_,
+		&QTreeWidget::itemDoubleClicked,
+		this,
+		&IllusionWidget::item_double_clicked);
+sheet_msg_tree_->setExpandsOnDoubleClick(false);
+
+proto_file_tree_->setColumnCount(2);
+proto_file_tree_->setHeaderLabels(headers);
+proto_file_tree_->setColumnWidth(0, 300);
+proto_file_tree_->setColumnWidth(1, 200);
+connect(proto_file_tree_,
+		&QTreeWidget::itemDoubleClicked,
+		this,
+		&IllusionWidget::item_double_clicked);
+proto_file_tree_->setExpandsOnDoubleClick(false);
+
+
+show_config_tab_->setTabsClosable(true);
+//!
+show_readme_ = new QTextEdit(show_config_tab_);
+QFile file("./readme.html");
+if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+{
+	show_readme_->setHtml(file.readAll());
+}
+
+show_config_tab_->addTab(show_readme_,
+						 QString::fromLocal8Bit("README文件"));
+
+connect(show_config_tab_,
+		&QTabWidget::tabCloseRequested,
+		this,
+		&IllusionWidget::close_tab);
 
 }
 
 void IllusionWidget::select_all()
 {
-    int root_count = sheet_msg_tree_->topLevelItemCount();
-    for (int i = 0; i < root_count; ++i)
-    {
-        QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
-        root->setCheckState(0, Qt::Checked);
-    }
+	int root_count = sheet_msg_tree_->topLevelItemCount();
+	for (int i = 0; i < root_count; ++i)
+	{
+		QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
+		root->setCheckState(0, Qt::Checked);
+	}
 }
 
 void IllusionWidget::select_none()
 {
-    int root_count = sheet_msg_tree_->topLevelItemCount();
-    for (int i = 0; i < root_count; ++i)
-    {
-        QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
-        root->setCheckState(0, Qt::Unchecked);
-    }
+	int root_count = sheet_msg_tree_->topLevelItemCount();
+	for (int i = 0; i < root_count; ++i)
+	{
+		QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
+		root->setCheckState(0, Qt::Unchecked);
+	}
 }
 
-void IllusionWidget::selected_item(QStringList &selected_message)
+void IllusionWidget::selected_list(QStringList &selected_message)
 {
-    int root_count = sheet_msg_tree_->topLevelItemCount();
-    for (int i = 0; i < root_count; ++i)
-    {
-        QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
-        QTreeWidgetItem *father = root->child(0);
-        if (root->checkState(0) == Qt::Checked)
-        {
-            selected_message.append(father->text(1));
-        }
-    }
+	int root_count = sheet_msg_tree_->topLevelItemCount();
+	for (int i = 0; i < root_count; ++i)
+	{
+		QTreeWidgetItem *root = sheet_msg_tree_->topLevelItem(i);
+		QTreeWidgetItem *father = root->child(0);
+		if (root->checkState(0) == Qt::Checked)
+		{
+			selected_message.append(father->text(1));
+		}
+	}
+}
+
+
+void IllusionWidget::noexcel_list(QStringList &selected_message)
+{
+	for (size_t i = 0; i < illusion_sheetmsg_ary_->size(); ++i)
+	{
+		if (false == (*illusion_sheetmsg_ary_)[i]->exist_excel_file_)
+		{
+			selected_message.push_back((*illusion_sheetmsg_ary_)[i]->table_message_name_);
+		}
+	}
+
 }
 
 
