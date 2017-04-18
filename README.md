@@ -8,13 +8,13 @@
 
 ## 工具简介
 
-**illusion** 的图形化工具 **vision** 采用典型的左树右图 UI 界面。编译运行 `bin` 目录下的 `vision-release.exe` 程序，打开图形化工具。左边是配置表集合的导航树。右边是配置文件打开预览区，相应目录的 PB(.proto) 文件，Excel(.xls,.xlsx) 文件都可以在这个区域形成预览。方便您迅速的了解相关配置信息。工具界面如下图：
+**illusion** 的图形化工具 **vision** 采用典型的左树右图 UI 界面。编译运行 `bin` 目录下的 `vision-release.exe` 程序，打开图形化工具。左边是配置表集合的导航树。右边是配置文件打开预览区，相应目录的 PB (`.proto`) 文件，Excel (`.xls`, `.xlsx`) 文件都可以在这个区域形成预览。方便您迅速的了解相关配置信息。工具界面如下图：
 
 ![](http://i1.piimg.com/588926/f0486520c653ec7e.png)
 
 使用工具初始化有 2 种方式：
 
-1. 一种是分别配置不同的子目录，**illusion** 有 4 种数据，Protobuf `.proto` 文件放置的目录；Excel `.xls,.xlsx` 文件放置的目录；Protobuf import 文件放置的目录（**illusion** 使用，所以也有自己的 import 目录），熟悉 Protobuf 的同学应该知道用途，以及生产文件 `.bin` 文件放置的目录。配置的时候选择 Toolbar 工具条上的第二个按钮。打开界面如下：
+1. 一种是分别配置不同的子目录，**illusion** 有 4 种数据，Protobuf (`.proto`) 文件放置的目录；Excel (`.xls`, `.xlsx`) 文件放置的目录；Protobuf import 文件放置的目录（**illusion** 使用，所以也有自己的 import 目录），熟悉 Protobuf 的同学应该知道用途，以及生产文件 `.bin` 文件放置的目录。配置的时候选择 Toolbar 工具条上的第二个按钮。打开界面如下：
 
   ![](http://i2.buimg.com/588926/0a907b1d32e16eb5.png)
   
@@ -82,7 +82,7 @@ extend google.protobuf.EnumValueOptions
 
 ```
 
-然后我们定义我们自己的PB文件，我们用example的002的例子讲解一下。如下：
+然后我们定义我们自己的 PB 文件，我们用 example 的 002 的例子讲解一下。如下：
 
 ```
 //option optimize_for = LITE_RUNTIME;
@@ -199,15 +199,14 @@ message LIST_OF_GAME_CFG_STRUCT_2
 
 ```
 
-proto 文件里面可以定义N个表结构，每个表结构都是一个包含 repeated 行结构成员字段名称为 **list_data** 的结构。注意其中的字段名称必须是**list_data**，不能是其他名称。而这个结构里面有若干 message 扩展选项信息，包括 **illusion.cfg_message** 决定这个结构是否是配置的 Message 信息，**illusion.cfg_comment** 是这个结构的备注名称。**illusion.excel_file** 定义对应的EXCEL文件名称，**illusion.excel_sheet** 定义对应的Excel Sheet 名称。**illusion.outer_file** 对应相应的输出文件名称。**illusion.fieldsname_line** 定义相应的字段名称在 Sheet 表中间的第几行（你可以自由的控制格式），注意 **illusion** 是根据字段名称去查询对应的字段信息的，所以其实 Excel Sheet表格中，你可以自己控制跳过若干列用于自己的配置数据管理。**illusion.fullname_line** 是字段的 full name 对应的行，这个主要是为了方便程序员对应查询相应的问题。非必须字段。**illusion.read_line** 标识从几行开始进行读取操作。
+proto 文件里面可以定义 N 个表结构，每个表结构都是一个包含 repeated 行结构成员字段名称为 **list_data** 的结构。注意其中的字段名称必须是**list_data**，不能是其他名称。而这个结构里面有若干 message 扩展选项信息，包括 **illusion.cfg_message** 决定这个结构是否是配置的 Message 信息，**illusion.cfg_comment** 是这个结构的备注名称。**illusion.excel_file** 定义对应的 Excel 文件名称，**illusion.excel_sheet** 定义对应的Excel Sheet 名称。**illusion.outer_file** 对应相应的输出文件名称。**illusion.fieldsname_line** 定义相应的字段名称在 Sheet 表中间的第几行（你可以自由的控制格式），注意 **illusion** 是根据字段名称去查询对应的字段信息的，所以其实 Excel Sheet 表格中，你可以自己控制跳过若干列用于自己的配置数据管理。**illusion.fullname_line** 是字段的 full name 对应的行，这个主要是为了方便程序员对应查询相应的问题。非必须字段。**illusion.read_line** 标识从几行开始进行读取操作。
 
-上面例子里面 **LIST_OF_GAME_CFG_STRUCT_2** 对应相应的 Sheet 信息。其 repeated 结构是 **GAME_CFG_STRUCT_2** 而， **GAME_CFG_STRUCT_2** 里面包含了 **ENUM_COUNTRY**，**SUB_STRUCT_A**，**SUB_STRUCT_B**，以及内嵌的结构枚举，**NESTED_STRUCT_C**，**NESTED_STRUCT_D** 等。这些结构的 fields 字段有扩展选项，其中 **illusion.cfg_field** 扩展选项标识这个字段是否是配置需要字段。**illusion.fields_name** 字段标识在Sheet中对应的列标题，从Message **LIST_OF_GAME_CFG_STRUCT_2** 里面标识的 **illusion.fields_line** 行里面的字段查找对应的名称。枚举值可以有枚举值的扩展选项 **illusion.enum_name** ，用于给枚举值取一个别名，在EXCEL中可以用别名标识对应的值，方便我们进行某些转换。
+上面例子里面 **LIST_OF_GAME_CFG_STRUCT_2** 对应相应的 Sheet 信息。其 repeated 结构是 **GAME_CFG_STRUCT_2** 而，**GAME_CFG_STRUCT_2** 里面包含了 **ENUM_COUNTRY**，**SUB_STRUCT_A**，**SUB_STRUCT_B**，以及内嵌的结构枚举，**NESTED_STRUCT_C**，**NESTED_STRUCT_D** 等。这些结构的 fields 字段有扩展选项，其中 **illusion.cfg_field** 扩展选项标识这个字段是否是配置需要字段。**illusion.fields_name** 字段标识在 Sheet 中对应的列标题，从Message **LIST_OF_GAME_CFG_STRUCT_2** 里面标识的 **illusion.fields_line** 行里面的字段查找对应的名称。枚举值可以有枚举值的扩展选项 **illusion.enum_name** ，用于给枚举值取一个别名，在 Excel 中可以用别名标识对应的值，方便我们进行某些转换。
 
 ### 2. 使用工具生产 Excel
 
-#### 填写EXCEL文件
-
-#### 导出bin文件
+1. 填写EXCEL文件
+2. 导出bin文件
 
 ## 代码说明
 
