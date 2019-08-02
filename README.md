@@ -3,7 +3,8 @@
 **illusion**是一个使用[Protobuf](https://developers.google.com/protocol-buffers/)（Google  Protocol Buffers 2.0）文件作为配置描述，然后读取EXCEL文件里面相关的配置，然后将配置信息生产配置数据文件的工具。
 **illusion**主要用于游戏配置管理等。程序开发可以快速的在PB文件里面定义配置结构信息，以及配置结构和EXCEL表直接的关系（ 生成EXCEL配置模版），策划可以方便的直接使用EXCEL进行数据配置。
 希望通过这个工具提高游戏开发团队的开发效率。
-##工具简介
+
+## 工具简介
 **illusion**的图形化工具**vision**采用典型的左树右图UI界面。编译运行bin目录下的vision-release.exe程序，打开图形化工具。左边是配置表集合的导航树。右边是配置文件打开预览区，相应目录的PB(.proto)文件,EXCEL(.xls,.xlsx)文件都可以在这个区域形成预览。方便您迅速的了解相关配置信息。工具界面如下图：
 ![](http://i1.piimg.com/588926/f0486520c653ec7e.png)
 
@@ -16,10 +17,12 @@
 配置好目录后，**illusion**会分析proto文件目录，得到对应信息，同时检查相应的EXCEL文件和最后生成的配置文件是否存在，那个更新。然后会根据这些信息生产配置导航树。然后就可以在导航树上选择需要导出的配置表了。导航树默认的SHEET导航是用EXCEL的SHEET表名称作为树的根节点的。
 只有相应有新的EXCEL配置的表格，程序会自动勾选。
 
-##使用流程说明
-###1.程序开发定义PB文件
+## 使用流程说明
+
+### 1.程序开发定义PB文件
 使用**illusion**进行配置，你需要先定义一个proto文件，其使用[google protobuf Options](https://developers.google.com/protocol-buffers/docs/proto#options) 的扩展功能，来描述你的配置结构和EXCEL表格（Sheet）之间的对应关系。所有的PB描述文件都需要包含**illusion.proto**文件，这个文件对相应的字段域，Message，枚举，做了一些扩展选项。这些选项会辅助我们建立我们自己的PB描述和EXCEL配置表格之间的关系。**illusion.proto**文件很简单，如下：
-```
+
+```protobuf
 //illusion.proto会引入google/protobuf/descriptor.proto文件
 import "google/protobuf/descriptor.proto";
 
@@ -70,7 +73,7 @@ extend google.protobuf.EnumValueOptions
 
 ```
 然后我们定义我们自己的PB文件，我们用example的002的例子讲解一下。如下：
-```
+```protobuf
 //option optimize_for = LITE_RUNTIME;
 //必须引入illusion.proto文件，这样我们才能实用这些选项扩展
 import "illusion.proto";
@@ -187,18 +190,18 @@ message LIST_OF_GAME_CFG_STRUCT_2
 proto文件里面可以定义N个表结构，每个表结构都是一个包含repeated 行结构 成员字段名称为 **list_data** 的结构。注意其中的字段名称必须是**list_data**,不能是其他名称。而这个结构里面有若干 message 扩展选项信息，包括**illusion.cfg_message** 决定这个结构是否是配置的Message信息，**illusion.cfg_comment**是这个结构的备注名称。**illusion.excel_file**定义对应的EXCEL文件名称，  **illusion.excel_sheet**定义对应的EXCEL Sheet名称。**illusion.outer_file**对应相应的输出文件名称。**illusion.fieldsname_line**定义相应的字段名称在Sheet表中间的第几行（你可以自由的控制格式），注意**illusion**是根据字段名称去查询对应的字段信息的，所以其实EXCEL Sheet表格中，你可以自己控制跳过若干列用于自己的配置数据管理。**illusion.fullname_line**是字段的full name 对应的行，这个主要是为了方便程序员对应查询相应的问题。非必须字段。**illusion.read_line**标识从几行开始进行读取操作。
 上面例子里面**LIST_OF_GAME_CFG_STRUCT_2**对应相应的Sheet信息。其repeated结构是**GAME_CFG_STRUCT_2**而，**GAME_CFG_STRUCT_2**里面包含了**ENUM_COUNTRY**，**SUB_STRUCT_A**，**SUB_STRUCT_B**，以及内嵌的结构枚举，**NESTED_STRUCT_C**，**NESTED_STRUCT_D**等。这些结构的fields字段有扩展选项，其中**illusion.cfg_field**扩展选项标识这个字段是否是配置需要字段。**illusion.fields_name**字段标识在Sheet中对应的列标题，从Message **LIST_OF_GAME_CFG_STRUCT_2** 里面标识的**illusion.fields_line**行里面的字段查找对应的名称。枚举值可以有枚举值的扩展选项**illusion.enum_name**，用于给枚举值取一个别名，在EXCEL中可以用别名标识对应的值，方便我们进行某些转换。
 
+### 2.使用工具生产EXCEL
 
-###2.使用工具生产EXCEL
+### 填写EXCEL文件
 
-###填写EXCEL文件
+### 导出bin文件
 
-###导出bin文件
+## 代码说明
 
-##代码说明
-
-###1.代码目录说明
+### 1.代码目录说明
 GitHub上存放有**illusion**的主要源代码代码目录，包括ProtoBuf 2.6的代码，但不包括Qt的代码，所以请自己下载。目前还不包括可执行程序的代码代码目录，等更加稳定一点，估计会开始打包正式版本。
-```
+
+```shell
 illusion
    |--------<bin>  可执行程序目录
    |--------<lib>  编译的库存放目录
@@ -222,14 +225,16 @@ illusion
              |---------illusion.sln 工程文件,Visual Studio 2015 C++工程
 ```
 
-###2.外部库
+### 2.外部库
+
 **illusion**使用了一些外部库提供辅助功能。
-####Protobuf V2
+
+#### Protobuf V2
 **illusion**目前实用Protobuf V2作为，一方面因为目前版本2还是主流。一方面是部分实用我工具的团队目前是用Protobuf V3有问题。所以暂未升级。但支持起来应该没啥困难。
 
-####Qt5
+#### Qt5
 **illusion**主要实用Qt 完成工具界面的开发，以及相应的读取EXCEL部分的功能。**illusion**目前实用的是Qt5.6版本进行的编译，
 
-##感谢
+## 感谢
 **illusion**的设计思路来自yingqiliu，而我自己当时的设计思路，PB文件不使用扩展，是在EXCEL里面配置和Proto的对应关系完成配置，使用PB的反射生产bin配置文件。yingqiliu的方法的优势来自在于策划和程序开发的工作可以分开，程序在编写完成PB后，不需要再折腾EXCEL文件。如何使用PB扩展完成的相应的功能andrewli 给出过一些例子参考。
 

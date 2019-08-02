@@ -24,23 +24,23 @@
 
 #pragma warning ( push )
 #pragma warning ( disable : 4127)
-#include <qt_windows.h>
+#include <QtCore/qt_windows.h>
 
-#include <QtWidgets>
-#include <QObject>
-#include <QFile>
-#include <QString>
-#include <QStringList>
-#include <QVariant>
-#include <QAxBase>
-#include <QAxObject>
+#include <QtWidgets/QtWidgets>
+#include <QtCore/QObject>
+#include <QtCore/QFile>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
+#include <ActiveQt/QAxBase>
+#include <ActiveQt/QAxObject>
 
-#include <QTableWidget>
-#include <QTableView>
-#include <QTableWidgetItem>
-#include <QDebug>
-#include <QDialog>
-#include <QKeyEvent>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QTableWidgetItem>
+#include <QtCore/QDebug>
+#include <QtWidgets/QDialog>
+#include <QtGui/QKeyEvent>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
